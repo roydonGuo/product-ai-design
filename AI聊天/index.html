@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI聊天应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .browser-frame {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            height: 850px;
+            width: 1620px;
+            position: relative;
+        }
+
+        .browser-header {
+            height: 40px;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e8f0 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .browser-url {
+            flex-grow: 1;
+            margin: 0 15px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            padding: 0 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            color: #64748b;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .message-enter {
+            animation: messageEnter 0.3s ease-out;
+        }
+
+        @keyframes messageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center p-10">
+    <div class="browser-frame">
+        <div class="browser-header">
+            <div class="browser-dots">
+                <div class="browser-dot bg-red-400"></div>
+                <div class="browser-dot bg-yellow-400"></div>
+                <div class="browser-dot bg-green-400"></div>
+            </div>
+            <div class="browser-url">https://ai-chat-app.com/conversation</div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-ellipsis-h text-gray-500 text-sm"></i>
+            </div>
+        </div>
+
+        <div class="flex h-full" style="height: calc(100% - 40px);">
+            <!-- 侧边栏 -->
+            <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
+                <div class="p-4 border-b border-gray-200">
+                    <h1 class="text-xl font-semibold text-gray-800">AI助手</h1>
+                    <p class="text-sm text-gray-500 mt-1">探索AI的无限可能</p>
+                </div>
+
+                <div class="p-4">
+                    <button
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        <i class="fas fa-plus"></i>
+                        <span>新对话</span>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto">
+                    <div class="px-4 py-2">
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">今天</h2>
+                        <div class="space-y-2">
+                            <div class="p-3 rounded-lg bg-blue-50 border border-blue-100 cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-800 truncate">网站设计建议</h3>
+                                    <span class="text-xs text-gray-500">12:30</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 truncate">关于现代UI设计趋势的讨论...</p>
+                            </div>
+                            <div
+                                class="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-200 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-800 truncate">旅行计划</h3>
+                                    <span class="text-xs text-gray-500">10:15</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 truncate">日本春季旅行建议...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-4 py-2">
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">昨天</h2>
+                        <div class="space-y-2">
+                            <div
+                                class="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-200 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-800 truncate">编程问题</h3>
+                                    <span class="text-xs text-gray-500">昨天</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 truncate">React性能优化技巧...</p>
+                            </div>
+                            <div
+                                class="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-200 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-800 truncate">食谱建议</h3>
+                                    <span class="text-xs text-gray-500">昨天</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 truncate">素食主义者的晚餐选择...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 border-t border-gray-200">
+                    <div
+                        class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800">用户账号</h3>
+                            <p class="text-xs text-gray-500">专业版</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="flex-1 flex flex-col gradient-bg">
+                <!-- 功能切换标签 -->
+                <div class="flex border-b border-gray-200">
+                    <div class="px-6 py-3 border-b-2 border-blue-500 text-blue-500 font-medium cursor-pointer">
+                        <i class="fas fa-comment-dots mr-2"></i>聊天
+                    </div>
+                    <div
+                        class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium cursor-pointer flex items-center">
+                        <i class="fas fa-paint-brush mr-2"></i>绘画
+                    </div>
+                    <div
+                        class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium cursor-pointer flex items-center">
+                        <i class="fas fa-video mr-2"></i>视频
+                    </div>
+                </div>
+
+                <!-- 聊天区域 -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <!-- AI欢迎消息 -->
+                    <div class="flex items-start gap-4 max-w-3xl mx-auto message-enter">
+                        <div
+                            class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                            <h3 class="font-medium text-gray-800">AI助手</h3>
+                            <p class="text-gray-700 mt-1">您好！我是您的AI助手，可以为您提供各种帮助。您可以向我提问、让我生成图像，甚至将文字转换为视频。今天有什么可以帮您的吗？
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息 -->
+                    <div class="flex items-start gap-4 max-w-3xl mx-auto ml-auto justify-end message-enter">
+                        <div class="bg-blue-500 p-4 rounded-xl shadow-sm text-white flex-1 max-w-xl">
+                            <p>我需要一些关于现代网站设计的建议，特别是色彩搭配方面。</p>
+                        </div>
+                        <div
+                            class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+
+                    <!-- AI回复 -->
+                    <div class="flex items-start gap-4 max-w-3xl mx-auto message-enter">
+                        <div
+                            class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex-1">
+                            <h3 class="font-medium text-gray-800">AI助手</h3>
+                            <p class="text-gray-700 mt-1">现代网站设计的色彩搭配趋势倾向于柔和、自然的色调，同时结合鲜明的强调色。以下是一些建议：</p>
+
+                            <div class="mt-4 grid grid-cols-3 gap-4">
+                                <div class="p-3 rounded-lg border border-gray-200">
+                                    <div class="h-16 rounded-md mb-2"
+                                        style="background: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%);"></div>
+                                    <h4 class="text-sm font-medium text-gray-800">极简中性</h4>
+                                    <p class="text-xs text-gray-500 mt-1">适合专业、干净的风格</p>
+                                </div>
+                                <div class="p-3 rounded-lg border border-gray-200">
+                                    <div class="h-16 rounded-md mb-2"
+                                        style="background: linear-gradient(135deg, #E6FCF5 0%, #C3FAE8 100%);"></div>
+                                    <h4 class="text-sm font-medium text-gray-800">自然柔和</h4>
+                                    <p class="text-xs text-gray-500 mt-1">带来平静、有机的感觉</p>
+                                </div>
+                                <div class="p-3 rounded-lg border border-gray-200">
+                                    <div class="h-16 rounded-md mb-2"
+                                        style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);"></div>
+                                    <h4 class="text-sm font-medium text-gray-800">科技蓝色</h4>
+                                    <p class="text-xs text-gray-500 mt-1">传达信任与专业性</p>
+                                </div>
+                            </div>
+
+                            <p class="text-gray-700 mt-4">您希望我为某个特定行业推荐色彩方案吗？或者您需要我生成一些设计示例图像？</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="p-4 border-t border-gray-200">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="relative">
+                            <textarea
+                                class="w-full p-4 pr-12 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none transition-all"
+                                rows="2" placeholder="输入您的消息或指令..."></textarea>
+                            <div class="absolute right-3 bottom-3 flex gap-2">
+                                <button
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                                <button
+                                    class="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white transition-colors">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-3 px-2">
+                            <div class="text-xs text-gray-500">
+                                <span>AI助手 4.0</span>
+                                <span class="mx-2">•</span>
+                                <span>联网搜索已开启</span>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <button class="hover:text-gray-700">快捷指令</button>
+                                <span class="mx-2">•</span>
+                                <button class="hover:text-gray-700">设置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧工具面板 -->
+            <div class="w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">工具与设置</h2>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-gray-500"></i>
+                            <span>对话设置</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">AI模式</label>
+                                <select
+                                    class="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500">
+                                    <option>平衡模式</option>
+                                    <option>创意模式</option>
+                                    <option>精确模式</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">温度 (创造力)</label>
+                                <input type="range" class="w-full" min="0" max="1" step="0.1" value="0.7">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>精确</span>
+                                    <span>平衡</span>
+                                    <span>创意</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-image text-gray-500"></i>
+                            <span>图像生成</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">风格</label>
+                                <select
+                                    class="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500">
+                                    <option>数字艺术</option>
+                                    <option>照片级真实</option>
+                                    <option>插画</option>
+                                    <option>3D渲染</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">质量</label>
+                                <select
+                                    class="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500">
+                                    <option>标准</option>
+                                    <option>高清</option>
+                                </select>
+                            </div>
+                            <button
+                                class="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition-colors">
+                                生成示例图像
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-share-alt text-gray-500"></i>
+                            <span>分享与导出</span>
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button
+                                class="text-sm border border-gray-300 rounded-md py-2 px-3 hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
+                                <i class="fas fa-copy text-gray-500"></i>
+                                <span>复制</span>
+                            </button>
+                            <button
+                                class="text-sm border border-gray-300 rounded-md py-2 px-3 hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
+                                <i class="fas fa-download text-gray-500"></i>
+                                <span>导出</span>
+                            </button>
+                            <button
+                                class="text-sm border border-gray-300 rounded-md py-2 px-3 hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
+                                <i class="fas fa-link text-gray-500"></i>
+                                <span>分享</span>
+                            </button>
+                            <button
+                                class="text-sm border border-gray-300 rounded-md py-2 px-3 hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
+                                <i class="fas fa-print text-gray-500"></i>
+                                <span>打印</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
