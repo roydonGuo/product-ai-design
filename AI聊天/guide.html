@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能AI聊天助手 - 引导页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    }
+
+    .browser-frame {
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .browser-header {
+      background: linear-gradient(90deg, #edf2f7 0%, #e2e8f0 100%);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .chat-bubble {
+      border-radius: 24px 24px 24px 4px;
+    }
+
+    .chat-bubble.ai {
+      border-radius: 24px 24px 4px 24px;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-8">
+  <div class="browser-frame w-[1620px] h-[880px] bg-white flex flex-col">
+    <!-- 浏览器顶部栏 -->
+    <div class="browser-header h-12 flex items-center px-4 space-x-2">
+      <div class="w-3 h-3 rounded-full bg-red-400"></div>
+      <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+      <div class="w-3 h-3 rounded-full bg-green-400"></div>
+      <div class="flex-1 text-center text-sm text-gray-500">智能AI聊天助手</div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 overflow-y-auto p-12">
+      <!-- 英雄区域 -->
+      <section class="flex items-center justify-between mb-24">
+        <div class="w-1/2">
+          <h1 class="text-5xl font-bold mb-6">与<span class="gradient-text">AI</span>开启<span
+              class="gradient-text">智慧对话</span></h1>
+          <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+            我们的AI聊天助手能够理解您的需求，提供准确、有用的回答。
+            无论是工作问题、学习辅导还是创意灵感，都能为您提供帮助。
+          </p>
+          <div class="flex space-x-4">
+            <button
+              class="px-8 py-3 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-all shadow-md hover:shadow-lg">
+              立即体验
+            </button>
+            <button
+              class="px-8 py-3 border border-blue-500 text-blue-500 rounded-full font-medium hover:bg-blue-50 transition-all">
+              观看演示
+            </button>
+          </div>
+        </div>
+        <div class="w-1/2 flex justify-center">
+          <div class="relative w-96 h-96">
+            <!-- 聊天气泡示例 -->
+            <div class="absolute top-0 left-0 bg-blue-100 p-4 chat-bubble w-64">
+              <p class="text-gray-800">你好！今天有什么我可以帮助你的吗？</p>
+            </div>
+            <div class="absolute top-24 right-0 bg-blue-500 text-white p-4 chat-bubble ai w-72">
+              <p>我想学习关于机器学习的基础知识，有什么推荐的学习路径吗？</p>
+            </div>
+            <div class="absolute top-48 left-0 bg-blue-100 p-4 chat-bubble w-80">
+              <p class="text-gray-800">当然可以！机器学习入门可以从Python编程和线性代数开始，然后学习基础算法如线性回归和决策树...</p>
+            </div>
+            <div class="absolute top-72 right-0 bg-blue-500 text-white p-4 chat-bubble ai w-64">
+              <p>太好了！能推荐一些具体的学习资源吗？</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 功能亮点 -->
+      <section class="mb-24">
+        <h2 class="text-3xl font-bold text-center mb-4">核心功能</h2>
+        <p class="text-gray-500 text-center mb-12 max-w-2xl mx-auto">
+          我们的AI聊天助手拥有多项强大功能，为您提供卓越的对话体验
+        </p>
+
+        <div class="grid grid-cols-3 gap-8">
+          <!-- 功能卡片1 -->
+          <div
+            class="feature-card bg-white p-8 rounded-xl shadow-md transition-all duration-300 border border-gray-100">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-comment-dots text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">自然对话</h3>
+            <p class="text-gray-600">
+              采用最先进的自然语言处理技术，理解您的意图，提供流畅自然的对话体验，就像与真人交流一样。
+            </p>
+          </div>
+
+          <!-- 功能卡片2 -->
+          <div
+            class="feature-card bg-white p-8 rounded-xl shadow-md transition-all duration-300 border border-gray-100">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-brain text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">多领域知识</h3>
+            <p class="text-gray-600">
+              覆盖科技、商业、教育、创意写作等多个领域，为您提供专业、准确的信息和建议。
+            </p>
+          </div>
+
+          <!-- 功能卡片3 -->
+          <div
+            class="feature-card bg-white p-8 rounded-xl shadow-md transition-all duration-300 border border-gray-100">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-bolt text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">快速响应</h3>
+            <p class="text-gray-600">
+              毫秒级的响应速度，无需等待，即时获取您需要的信息和答案，提高工作效率。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 使用场景 -->
+      <section class="mb-24">
+        <h2 class="text-3xl font-bold text-center mb-4">应用场景</h2>
+        <p class="text-gray-500 text-center mb-12 max-w-2xl mx-auto">
+          无论您是需要工作协助、学习辅导还是创意激发，我们的AI都能胜任
+        </p>
+
+        <div class="grid grid-cols-4 gap-6">
+          <!-- 场景1 -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-blue-500 mb-3">
+              <i class="fas fa-laptop-code text-2xl"></i>
+            </div>
+            <h4 class="font-semibold mb-2">编程辅助</h4>
+            <p class="text-sm text-gray-600">代码调试、算法解释、最佳实践建议</p>
+          </div>
+
+          <!-- 场景2 -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-blue-500 mb-3">
+              <i class="fas fa-book text-2xl"></i>
+            </div>
+            <h4 class="font-semibold mb-2">学习辅导</h4>
+            <p class="text-sm text-gray-600">概念解释、学习计划、题目解答</p>
+          </div>
+
+          <!-- 场景3 -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-blue-500 mb-3">
+              <i class="fas fa-lightbulb text-2xl"></i>
+            </div>
+            <h4 class="font-semibold mb-2">创意生成</h4>
+            <p class="text-sm text-gray-600">写作灵感、头脑风暴、内容创作</p>
+          </div>
+
+          <!-- 场景4 -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-blue-500 mb-3">
+              <i class="fas fa-briefcase text-2xl"></i>
+            </div>
+            <h4 class="font-semibold mb-2">商业应用</h4>
+            <p class="text-sm text-gray-600">市场分析、商业计划、邮件撰写</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA区域 -->
+      <section class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-12 text-center">
+        <h2 class="text-3xl font-bold mb-4">准备好体验智能对话了吗？</h2>
+        <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+          立即注册，开启您的AI对话之旅。无需信用卡，免费试用我们的高级功能。
+        </p>
+        <button
+          class="px-10 py-4 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl text-lg">
+          开始免费试用
+        </button>
+      </section>
+    </div>
+
+    <!-- 浏览器底部状态栏 -->
+    <div class="h-8 bg-gray-50 border-t border-gray-200 flex items-center px-4 text-sm text-gray-500">
+      <div>智能AI聊天助手 © 2023 - 安全、可靠、智能</div>
+      <div class="ml-auto flex space-x-4">
+        <span><i class="fas fa-lock mr-1"></i> 端到端加密</span>
+        <span><i class="fas fa-shield-alt mr-1"></i> 隐私保护</span>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
