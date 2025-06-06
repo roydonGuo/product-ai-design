@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI知识库管理系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3b82f6',
+            'primary-light': '#dbeafe',
+            gradient: {
+              start: '#e0f2fe',
+              end: '#dbeafe'
+            }
+          },
+          boxShadow: {
+            'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'soft-lg': '0 10px 30px rgba(0, 0, 0, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+            body {
+                @apply bg-gradient-to-br from-gradient-start to-gradient-end min-h-screen;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            }
+            .browser-frame {
+                @apply border border-gray-200 rounded-xl shadow-soft-lg overflow-hidden;
+                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer utilities {
+            .transition-smooth {
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .card-hover {
+                @apply transition-smooth hover:shadow-soft-lg hover:-translate-y-0.5;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- 浏览器框架 -->
+    <div class="browser-frame bg-white">
+      <!-- 浏览器顶部栏 -->
+      <div class="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50">
+        <div class="flex items-center space-x-2">
+          <div class="w-3 h-3 rounded-full bg-red-400"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+          <div class="w-3 h-3 rounded-full bg-green-400"></div>
+        </div>
+        <div class="flex-1 mx-4">
+          <div class="bg-gray-100 rounded-lg py-2 px-4 text-center text-sm text-gray-500">
+            https://knowledgebase.ai/dashboard
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center">
+            <i class="ri-user-3-line text-primary"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主内容区域 -->
+      <div class="p-6 md:p-8">
+        <!-- 顶部标题和操作区 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">知识库管理</h1>
+            <p class="text-gray-500 mt-2">管理您的AI知识库集合</p>
+          </div>
+          <button id="addBtn"
+            class="mt-4 md:mt-0 flex items-center bg-primary hover:bg-blue-700 text-white py-2.5 px-5 rounded-lg transition-smooth">
+            <i class="ri-add-line mr-2"></i> 新建知识库
+          </button>
+        </div>
+
+        <!-- 搜索和筛选区 -->
+        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4 mb-8">
+          <div class="flex-1 relative">
+            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="搜索知识库..."
+              class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-smooth">
+          </div>
+          <div class="flex space-x-3">
+            <select
+              class="py-3 px-4 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-smooth">
+              <option>所有模型</option>
+              <option>GPT-4</option>
+              <option>Claude 3</option>
+              <option>Gemini</option>
+              <option>Llama 3</option>
+            </select>
+            <select
+              class="py-3 px-4 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-smooth">
+              <option>最近更新</option>
+              <option>名称 (A-Z)</option>
+              <option>创建时间</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 知识库列表 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 知识库卡片 1 -->
+          <div class="card-hover bg-white rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+                  <i class="ri-book-2-line text-indigo-500 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h3 class="font-semibold text-gray-900">产品文档</h3>
+                  <span class="text-xs py-1 px-2 bg-blue-50 text-blue-600 rounded-full mt-1 inline-block">GPT-4</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="ri-more-2-fill"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 mt-4 mb-6 text-sm">包含所有产品特性和使用说明的详细文档</p>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="text-xs text-gray-500">最后更新: 2023-11-15</div>
+              <div class="flex space-x-2">
+                <button class="text-gray-500 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-50 transition-smooth">
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button class="text-gray-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-smooth">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库卡片 2 -->
+          <div class="card-hover bg-white rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <i class="ri-customer-service-line text-purple-500 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h3 class="font-semibold text-gray-900">客服知识</h3>
+                  <span class="text-xs py-1 px-2 bg-purple-50 text-purple-600 rounded-full mt-1 inline-block">Claude
+                    3</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="ri-more-2-fill"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 mt-4 mb-6 text-sm">客服常见问题与解决方案知识库</p>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="text-xs text-gray-500">最后更新: 2023-11-10</div>
+              <div class="flex space-x-2">
+                <button class="text-gray-500 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-50 transition-smooth">
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button class="text-gray-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-smooth">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库卡片 3 -->
+          <div class="card-hover bg-white rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center">
+                  <i class="ri-code-line text-cyan-500 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h3 class="font-semibold text-gray-900">开发文档</h3>
+                  <span class="text-xs py-1 px-2 bg-cyan-50 text-cyan-600 rounded-full mt-1 inline-block">Llama 3</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="ri-more-2-fill"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 mt-4 mb-6 text-sm">API参考、SDK文档和开发指南</p>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="text-xs text-gray-500">最后更新: 2023-11-05</div>
+              <div class="flex space-x-2">
+                <button class="text-gray-500 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-50 transition-smooth">
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button class="text-gray-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-smooth">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库卡片 4 -->
+          <div class="card-hover bg-white rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
+                  <i class="ri-lightbulb-flash-line text-amber-500 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h3 class="font-semibold text-gray-900">市场研究</h3>
+                  <span
+                    class="text-xs py-1 px-2 bg-amber-50 text-amber-600 rounded-full mt-1 inline-block">Gemini</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="ri-more-2-fill"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 mt-4 mb-6 text-sm">行业趋势、竞争对手分析和市场数据</p>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="text-xs text-gray-500">最后更新: 2023-10-28</div>
+              <div class="flex space-x-2">
+                <button class="text-gray-500 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-50 transition-smooth">
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button class="text-gray-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-smooth">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库卡片 5 -->
+          <div class="card-hover bg-white rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                  <i class="ri-team-line text-blue-500 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h3 class="font-semibold text-gray-900">人力资源</h3>
+                  <span class="text-xs py-1 px-2 bg-blue-50 text-blue-600 rounded-full mt-1 inline-block">GPT-4</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="ri-more-2-fill"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 mt-4 mb-6 text-sm">公司政策、员工手册和HR流程文档</p>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="text-xs text-gray-500">最后更新: 2023-10-20</div>
+              <div class="flex space-x-2">
+                <button class="text-gray-500 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-50 transition-smooth">
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button class="text-gray-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-smooth">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库卡片 6 - 空状态 -->
+          <div
+            class="border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center p-8 text-center hover:border-primary transition-smooth">
+            <div class="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center mb-4">
+              <i class="ri-add-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="font-medium text-gray-900 mb-1">添加新知识库</h3>
+            <p class="text-gray-500 text-sm mb-4">点击创建新的知识库集合</p>
+            <button id="addBtn2" class="text-primary font-medium flex items-center">
+              <i class="ri-add-line mr-1"></i> 新建知识库
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加知识库模态框 -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-gray-900">添加新知识库</h3>
+        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+          <i class="ri-close-line text-xl"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-2">知识库名称</label>
+          <input type="text"
+            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-smooth"
+            placeholder="例如：产品文档">
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-2">图标</label>
+          <div class="flex space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center cursor-pointer">
+              <i class="ri-book-2-line text-indigo-500 text-xl"></i>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center cursor-pointer">
+              <i class="ri-customer-service-line text-purple-500 text-xl"></i>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center cursor-pointer">
+              <i class="ri-code-line text-cyan-500 text-xl"></i>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center cursor-pointer">
+              <i class="ri-lightbulb-flash-line text-amber-500 text-xl"></i>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center cursor-pointer">
+              <i class="ri-team-line text-blue-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">向量模型</label>
+          <select
+            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary-light outline-none transition-smooth">
+            <option>OpenAI text-embedding-ada-002</option>
+            <option>Cohere Embed v3</option>
+            <option>Google Gecko Embedding</option>
+            <option>Anthropic Claude Embeddings</option>
+          </select>
+        </div>
+
+        <div class="flex space-x-3">
+          <button id="cancelBtn"
+            class="flex-1 py-3 px-4 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-smooth">取消</button>
+          <button
+            class="flex-1 py-3 px-4 rounded-lg bg-primary hover:bg-blue-700 text-white transition-smooth">创建知识库</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模态框控制逻辑
+    const modal = document.getElementById('modal');
+    const addBtn = document.getElementById('addBtn');
+    const addBtn2 = document.getElementById('addBtn2');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    [addBtn, addBtn2].forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+      });
+    });
+
+    [closeModal, cancelBtn].forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    });
+
+    // 点击模态框外部关闭
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+
+</html>

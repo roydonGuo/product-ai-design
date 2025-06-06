@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售工作台 - CRM系统</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Remix Icon 图标库 -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        accent: '#93c5fd'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        .card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+        }
+
+        .tab-active {
+            position: relative;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e5e7eb;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+        }
+
+        .visit-card {
+            transition: all 0.2s ease;
+            border-left: 4px solid #93c5fd;
+        }
+
+        .visit-card:hover {
+            transform: translateX(5px);
+            border-left-color: #3b82f6;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+    </style>
+</head>
+
+<body class="h-full  p-4">
+    <!-- 浏览器窗口模拟 -->
+    <div class="w-full h-full border-4 border-gray-200 rounded-xl overflow-hidden flex flex-col bg-white shadow-2xl">
+        <!-- 浏览器顶部栏 -->
+        <div class="h-10 bg-gray-100 border-b border-gray-200 flex items-center px-4 space-x-2">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+            <div class="flex-1 text-center text-gray-500 text-sm font-medium">销售工作台 - CRM系统</div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- 头部导航 -->
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-black flex items-center">
+                            <i class="ri-user-3-line mr-3 text-blue-500"></i>
+                            销售1 - 工作台
+                        </h1>
+                        <p class="text-gray-500 mt-1 flex items-center">
+                            <i class="ri-calendar-line mr-2"></i>
+                            2025年5月21日
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i
+                                class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="搜索客户、拜访记录..."
+                                class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 w-64">
+                        </div>
+                        <button
+                            class="flex items-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="ri-add-line"></i>
+                            <span>新建拜访</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区 -->
+            <div class="flex flex-col md:flex-row p-6 gap-6">
+                <!-- 左侧业绩卡片 -->
+                <div class="w-full md:w-1/3 flex flex-col gap-6">
+                    <!-- 销售业绩卡片 -->
+                    <div class="bg-white p-5 card">
+                        <div class="flex items-center justify-between mb-5">
+                            <h2 class="text-xl font-bold text-black flex items-center">
+                                <i class="ri-line-chart-line mr-2 text-blue-500"></i>
+                                销售业绩
+                            </h2>
+                            <button class="text-gray-400 hover:text-blue-500">
+                                <i class="ri-more-2-line"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                                        <i class="ri-money-cny-circle-line text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">当日回款</p>
+                                        <p class="text-2xl font-bold text-black">¥ 0</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-500 flex items-center">
+                                    <i class="ri-arrow-down-line text-red-500 mr-1"></i>
+                                    <span>较昨日下降 100%</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="flex items-center">
+                                    <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                        <i class="ri-bar-chart-box-line text-green-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">当月累计回款</p>
+                                        <p class="text-2xl font-bold text-black">¥ 235</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-500 flex items-center">
+                                    <i class="ri-arrow-up-line text-green-500 mr-1"></i>
+                                    <span>较上月增长 18%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-gray-600 font-medium">月度目标进度</p>
+                                <p class="text-black font-bold">¥ 235 / ¥ 5,000</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 4.7%"></div>
+                            </div>
+                            <div class="mt-1 text-right text-xs text-gray-500">完成率 4.7%</div>
+                        </div>
+                    </div>
+
+                    <!-- 客户统计卡片 -->
+                    <div class="bg-white p-5 card">
+                        <div class="flex items-center justify-between mb-5">
+                            <h2 class="text-xl font-bold text-black flex items-center">
+                                <i class="ri-group-line mr-2 text-blue-500"></i>
+                                客户统计
+                            </h2>
+                            <button class="text-gray-400 hover:text-blue-500">
+                                <i class="ri-more-2-line"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-blue-50 rounded-lg py-4">
+                                <p class="text-2xl font-bold text-black">12</p>
+                                <p class="text-xs text-gray-500 mt-1">总客户数</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg py-4">
+                                <p class="text-2xl font-bold text-black">3</p>
+                                <p class="text-xs text-gray-500 mt-1">本月新增</p>
+                            </div>
+                            <div class="bg-amber-50 rounded-lg py-4">
+                                <p class="text-2xl font-bold text-black">5</p>
+                                <p class="text-xs text-gray-500 mt-1">重点客户</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-gray-600 font-medium">客户类型分布</p>
+                                <p class="text-xs text-gray-500">总计 12 个</p>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                                    <p class="text-sm text-gray-600 flex-1">公立机构</p>
+                                    <p class="text-black font-medium">4</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                                    <p class="text-sm text-gray-600 flex-1">代理商</p>
+                                    <p class="text-black font-medium">5</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
+                                    <p class="text-sm text-gray-600 flex-1">企业客户</p>
+                                    <p class="text-black font-medium">3</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧客户拜访记录 -->
+                <div class="w-full md:w-2/3">
+                    <div class="bg-white p-5 card">
+                        <div class="flex items-center justify-between mb-5">
+                            <h2 class="text-xl font-bold text-black flex items-center">
+                                <i class="ri-calendar-check-line mr-2 text-blue-500"></i>
+                                客户拜访记录
+                            </h2>
+                            <div class="flex items-center space-x-2">
+                                <button class="text-gray-400 hover:text-blue-500">
+                                    <i class="ri-filter-line"></i>
+                                </button>
+                                <button class="text-gray-400 hover:text-blue-500">
+                                    <i class="ri-more-2-line"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 时间轴容器 -->
+                        <div class="relative pl-8 border-l-2 border-gray-100 ml-3">
+                            <!-- 时间轴标记 -->
+                            <div class="absolute left-0 top-0 bottom-0 w-2 bg-gray-100 rounded-full ml-[-1px]"></div>
+
+                            <!-- 拜访记录1 -->
+                            <div class="visit-card bg-white p-5 mb-6 relative">
+                                <div class="timeline-dot"></div>
+
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-black">拜访：公立客户1</h3>
+                                        <p class="text-gray-500 flex items-center mt-1">
+                                            <i class="ri-map-pin-line mr-2"></i>
+                                            景点
+                                        </p>
+                                    </div>
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                                        已完成
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">主要人员</p>
+                                        <p class="text-black font-medium">贺艺峰</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">拜访时间</p>
+                                        <p class="text-black font-medium">
+                                            2025-05-19 16:00 ~ 05-20 10:00
+                                            <span class="text-gray-500 text-sm ml-2">(18小时)</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <p class="text-sm text-gray-500 mb-2">拜访情况总结</p>
+                                    <p class="text-black">
+                                        情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="flex items-center text-blue-500 cursor-pointer expand-button">
+                                        <i class="ri-arrow-down-s-line mr-1"></i>
+                                        <span class="text-sm">查看其他事项和问题反馈</span>
+                                    </div>
+
+                                    <div class="expand-content mt-3 hidden">
+                                        <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-list-check text-gray-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-gray-700">其他事项</p>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-3">
+                                                <div>
+                                                    <p class="text-xs text-gray-500">事项</p>
+                                                    <p class="text-sm text-black">其他事项1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">地点</p>
+                                                    <p class="text-sm text-black">地点1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">时间</p>
+                                                    <p class="text-sm text-black">05-01 16:00 ~ 05-02 16:00</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <p class="text-xs text-gray-500">情况说明</p>
+                                                <p class="text-sm text-black">情况情况情况情况情况情况情况情况情况情况情况情况</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-red-50 rounded-lg p-4">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-alert-line text-red-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-red-700">问题反馈</p>
+                                            </div>
+                                            <p class="text-sm text-black">反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 拜访记录2 -->
+                            <div class="visit-card bg-white p-5 mb-6 relative">
+                                <div class="timeline-dot"></div>
+
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-black">拜访：公立客户1</h3>
+                                        <p class="text-gray-500 flex items-center mt-1">
+                                            <i class="ri-map-pin-line mr-2"></i>
+                                            景点
+                                        </p>
+                                    </div>
+                                    <span
+                                        class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                                        进行中
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">主要人员</p>
+                                        <p class="text-black font-medium">贺艺峰</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">拜访时间</p>
+                                        <p class="text-black font-medium">
+                                            2025-05-04 09:38 ~ 06-04 16:00
+                                            <span class="text-gray-500 text-sm ml-2">(32天)</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <p class="text-sm text-gray-500 mb-2">拜访情况总结</p>
+                                    <p class="text-black">
+                                        情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结情况总结</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="flex items-center text-blue-500 cursor-pointer expand-button">
+                                        <i class="ri-arrow-down-s-line mr-1"></i>
+                                        <span class="text-sm">查看其他事项和问题反馈</span>
+                                    </div>
+
+                                    <div class="expand-content mt-3 hidden">
+                                        <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-list-check text-gray-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-gray-700">其他事项</p>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-3">
+                                                <div>
+                                                    <p class="text-xs text-gray-500">事项</p>
+                                                    <p class="text-sm text-black">其他事项1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">地点</p>
+                                                    <p class="text-sm text-black">地点1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">时间</p>
+                                                    <p class="text-sm text-black">05-01 16:00 ~ 06-04 16:00</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <p class="text-xs text-gray-500">情况说明</p>
+                                                <p class="text-sm text-black">情况情况情况情况情况情况情况情况情况情况情况情况</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-red-50 rounded-lg p-4">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-alert-line text-red-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-red-700">问题反馈</p>
+                                            </div>
+                                            <p class="text-sm text-black">反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 拜访记录3 -->
+                            <div class="visit-card bg-white p-5 relative">
+                                <div class="timeline-dot"></div>
+
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-black">拜访：代理商1</h3>
+                                        <p class="text-gray-500 flex items-center mt-1">
+                                            <i class="ri-map-pin-line mr-2"></i>
+                                            订单中心
+                                        </p>
+                                    </div>
+                                    <span
+                                        class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                                        计划中
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">主要人员</p>
+                                        <p class="text-black font-medium">贺</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">拜访时间</p>
+                                        <p class="text-black font-medium">
+                                            2025-06-04 16:00 ~ 06-05 12:00
+                                            <span class="text-gray-500 text-sm ml-2">(20小时)</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <p class="text-sm text-gray-500 mb-2">拜访情况总结</p>
+                                    <p class="text-black">拜访情况总结拜访情况总结拜访情况总结拜访情况总结拜访情况总结拜访情况总结拜访情况总结</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="flex items-center text-blue-500 cursor-pointer expand-button">
+                                        <i class="ri-arrow-down-s-line mr-1"></i>
+                                        <span class="text-sm">查看其他事项和问题反馈</span>
+                                    </div>
+
+                                    <div class="expand-content mt-3 hidden">
+                                        <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-list-check text-gray-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-gray-700">其他事项</p>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-3">
+                                                <div>
+                                                    <p class="text-xs text-gray-500">事项</p>
+                                                    <p class="text-sm text-black">其他事项1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">地点</p>
+                                                    <p class="text-sm text-black">订单中心</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs text-gray-500">时间</p>
+                                                    <p class="text-sm text-black">05-01 16:00 ~ 06-04 16:00</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <p class="text-xs text-gray-500">情况说明</p>
+                                                <p class="text-sm text-black">情况情况情况情况情况情况情况情况情况情况情况情况</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-red-50 rounded-lg p-4">
+                                            <div class="flex items-center mb-2">
+                                                <i class="ri-alert-line text-red-500 mr-2"></i>
+                                                <p class="text-sm font-medium text-red-700">问题反馈</p>
+                                            </div>
+                                            <p class="text-sm text-black">反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <div
+            class="h-10 bg-gray-50 border-t border-gray-200 flex items-center justify-between px-4 text-gray-500 text-sm">
+            <div>销售工作台 v1.2</div>
+            <div>© 2025 企业CRM解决方案</div>
+            <div class="flex items-center">
+                <i class="ri-user-line mr-1"></i>
+                <span>销售1</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 展开/收起功能
+        document.querySelectorAll('.expand-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.classList.remove('ri-arrow-down-s-line');
+                    icon.classList.add('ri-arrow-up-s-line');
+                } else {
+                    content.classList.add('hidden');
+                    icon.classList.remove('ri-arrow-up-s-line');
+                    icon.classList.add('ri-arrow-down-s-line');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
