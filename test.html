@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口腔门诊市场调查表</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #409eff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        h2 {
+            color: #409eff;
+            border-left: 4px solid #409eff;
+            padding-left: 10px;
+            margin: 25px 0 15px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .required:after {
+            content: " *";
+            color: red;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 80px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            margin: 8px 0;
+        }
+
+        .radio-group label,
+        .checkbox-group label {
+            display: inline-block;
+            font-weight: normal;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .btn {
+            background-color: #409eff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #3a7ca5;
+        }
+
+        .btn-reset {
+            background-color: #999;
+            margin-left: 15px;
+        }
+
+        .btn-reset:hover {
+            background-color: #777;
+        }
+
+        .section-note {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>口腔门诊市场调查表</h1>
+
+        <form id="marketSurveyForm">
+            <!-- 基础信息 -->
+            <h2>基础信息</h2>
+            <div class="form-group">
+                <label for="surveyType">调查门诊</label>
+                 
+                <input type="text" disabled id="surveyDate" name="surveyDate" value="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="surveyDate"  >调查日期</label>
+                <input type="text" disabled id="surveyDate" name="surveyDate"  value="2025年5月15日" required>
+            </div> 
+            <!-- 客户信息（根据调查类型动态显示） -->
+            <div id="customerInfoSection">
+                <h2>客户信息</h2>
+                <div class="form-group">
+                    <label for="customerName" class="required">客户姓名</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerType">客户类型</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="customerType" value="individual"> 个人客户</label>
+                        <label><input type="radio" name="customerType" value="family"> 家庭客户</label>
+                        <label><input type="radio" name="customerType" value="enterprise"> 企业客户</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactPhone" class="required">联系电话</label>
+                    <input type="tel" id="contactPhone" name="contactPhone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">居住/办公地址</label>
+                    <input type="text" id="address" name="address">
+                </div>
+
+                <div class="form-group">
+                    <label for="ageGroup">年龄段</label>
+                    <select id="ageGroup" name="ageGroup">
+                        <option value="">-- 请选择 --</option>
+                        <option value="child">儿童(0-12岁)</option>
+                        <option value="teen">青少年(13-18岁)</option>
+                        <option value="young">青年(19-35岁)</option>
+                        <option value="middle">中年(36-55岁)</option>
+                        <option value="elder">老年(56岁及以上)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 口腔健康调查 -->
+            <h2>口腔健康情况</h2>
+            <div class="form-group">
+                <label>主要口腔问题（可多选）</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="oralProblems" value="caries"> 龋齿</label>
+                    <label><input type="checkbox" name="oralProblems" value="periodontitis"> 牙周炎</label>
+                    <label><input type="checkbox" name="oralProblems" value="toothLoss"> 牙齿缺失</label><br>
+                    <label><input type="checkbox" name="oralProblems" value="malocclusion"> 牙齿不齐</label>
+                    <label><input type="checkbox" name="oralProblems" value="whitening"> 牙齿美白需求</label>
+                    <label><input type="checkbox" name="oralProblems" value="other"> 其他</label>
+                    <input type="text" name="otherOralProblem" placeholder="请注明"
+                        style="width: 150px; margin-left: 5px;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>最近一次看牙时间</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="lastDentalVisit" value="within3m"> 3个月内</label>
+                    <label><input type="radio" name="lastDentalVisit" value="3-6m"> 3-6个月</label>
+                    <label><input type="radio" name="lastDentalVisit" value="6-12m"> 6-12个月</label>
+                    <label><input type="radio" name="lastDentalVisit" value="over1y"> 1年以上</label>
+                    <label><input type="radio" name="lastDentalVisit" value="never"> 从未看过</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="dentalHabits">日常口腔护理习惯</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="dentalHabits" value="brushTwice"> 每日刷牙2次</label>
+                    <label><input type="checkbox" name="dentalHabits" value="floss"> 使用牙线</label>
+                    <label><input type="checkbox" name="dentalHabits" value="mouthwash"> 使用漱口水</label><br>
+                    <label><input type="checkbox" name="dentalHabits" value="regularCheck"> 定期口腔检查</label>
+                    <label><input type="checkbox" name="dentalHabits" value="none"> 无特别护理</label>
+                </div>
+            </div>
+
+            <!-- 服务需求调查 -->
+            <h2>服务需求调查</h2>
+            <div class="form-group">
+                <label>最关注的口腔服务（最多选3项）</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="serviceNeeds" value="cleaning"> 洁牙</label>
+                    <label><input type="checkbox" name="serviceNeeds" value="filling"> 补牙</label>
+                    <label><input type="checkbox" name="serviceNeeds" value="implant"> 种植牙</label><br>
+                    <label><input type="checkbox" name="serviceNeeds" value="orthodontics"> 正畸</label>
+                    <label><input type="checkbox" name="serviceNeeds" value="whitening"> 牙齿美白</label>
+                    <label><input type="checkbox" name="serviceNeeds" value="child"> 儿童齿科</label><br>
+                    <label><input type="checkbox" name="serviceNeeds" value="denture"> 义齿修复</label>
+                    <label><input type="checkbox" name="serviceNeeds" value="other"> 其他</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>选择口腔机构的主要考虑因素</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="decisionFactors" value="price"> 价格</label>
+                    <label><input type="checkbox" name="decisionFactors" value="location"> 地理位置</label>
+                    <label><input type="checkbox" name="decisionFactors" value="equipment"> 医疗设备</label><br>
+                    <label><input type="checkbox" name="decisionFactors" value="doctor"> 医生水平</label>
+                    <label><input type="checkbox" name="decisionFactors" value="service"> 服务质量</label>
+                    <label><input type="checkbox" name="decisionFactors" value="brand"> 品牌知名度</label><br>
+                    <label><input type="checkbox" name="decisionFactors" value="recommend"> 亲友推荐</label>
+                    <label><input type="checkbox" name="decisionFactors" value="other"> 其他</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="budget">单次治疗心理预算</label>
+                <select id="budget" name="budget">
+                    <option value="">-- 请选择 --</option>
+                    <option value="0-500">500元以下</option>
+                    <option value="500-1000">500-1000元</option>
+                    <option value="1000-3000">1000-3000元</option>
+                    <option value="3000-5000">3000-5000元</option>
+                    <option value="5000+">5000元以上</option>
+                </select>
+            </div>
+
+            <!-- 回访专项（动态显示） -->
+            <div id="returnVisitSection" class="">
+                <h2>回访专项问题</h2>
+                <div class="form-group">
+                    <label for="lastService">上次接受的服务项目</label>
+                    <input type="text" id="lastService" name="lastService">
+                </div>
+
+                <div class="form-group">
+                    <label>对上次服务的满意度</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="satisfaction" value="5"> 非常满意</label>
+                        <label><input type="radio" name="satisfaction" value="4"> 满意</label>
+                        <label><input type="radio" name="satisfaction" value="3"> 一般</label>
+                        <label><input type="radio" name="satisfaction" value="2"> 不满意</label>
+                        <label><input type="radio" name="satisfaction" value="1"> 非常不满意</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="improvementSuggestions">改进建议</label>
+                    <textarea id="improvementSuggestions" name="improvementSuggestions"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>是否愿意推荐给亲友</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="recommend" value="yes"> 愿意</label>
+                        <label><input type="radio" name="recommend" value="no"> 不愿意</label>
+                        <label><input type="radio" name="recommend" value="maybe"> 看情况</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 走访专项（动态显示） -->
+            <div id="newVisitSection" class="">
+                <h2>新客户走访专项</h2>
+                <div class="form-group">
+                    <label>是否了解本门诊</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="knowClinic" value="yes"> 了解</label>
+                        <label><input type="radio" name="knowClinic" value="no"> 不了解</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="knowChannel">了解渠道（可多选）</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="knowChannel" value="friend"> 亲友推荐</label>
+                        <label><input type="checkbox" name="knowChannel" value="online"> 网络平台</label>
+                        <label><input type="checkbox" name="knowChannel" value="poster"> 宣传单/海报</label><br>
+                        <label><input type="checkbox" name="knowChannel" value="community"> 社区活动</label>
+                        <label><input type="checkbox" name="knowChannel" value="other"> 其他</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>近期是否有看牙计划</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="planVisit" value="within1m"> 1个月内</label>
+                        <label><input type="radio" name="planVisit" value="1-3m"> 1-3个月</label>
+                        <label><input type="radio" name="planVisit" value="3-6m"> 3-6个月</label>
+                        <label><input type="radio" name="planVisit" value="noPlan"> 暂无计划</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 总体评价 -->
+            <h2>总体评价</h2>
+            <div class="form-group">
+                <label for="overallComment">调查员综合评价</label>
+                <textarea id="overallComment" name="overallComment"></textarea>
+                <p class="section-note">请记录客户的特殊需求、潜在价值等信息</p>
+            </div>
+
+            <div class="form-group">
+                <label>客户意向等级评估</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="potentialLevel" value="A"> A级（以到店）</label>
+                    <label><input type="radio" name="potentialLevel" value="B"> B级（高意向）</label>
+                    <label><input type="radio" name="potentialLevel" value="C"> C级（中意向）</label>
+                    <label><input type="radio" name="potentialLevel" value="D"> D级（低意向）</label>
+                    <label><input type="radio" name="potentialLevel" value="D"> E级（无意向）</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">提交调查表</button>
+            <button type="reset" class="btn btn-reset">重置表单</button>
+        </form>
+    </div>
+
+    <script>
+        // 根据调查类型显示不同板块
+        document.getElementById('surveyType').addEventListener('change', function () {
+            const surveyType = this.value;
+            document.getElementById('returnVisitSection').classList.add('hidden');
+            document.getElementById('newVisitSection').classList.add('hidden');
+
+            if (surveyType === 'returnVisit') {
+                document.getElementById('returnVisitSection').classList.remove('hidden');
+            } else if (surveyType === 'newVisit') {
+                document.getElementById('newVisitSection').classList.remove('hidden');
+            }
+        });
+
+        // 限制"最关注的口腔服务"最多选3项
+        const serviceNeeds = document.querySelectorAll('input[name="serviceNeeds"]');
+        serviceNeeds.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const checked = document.querySelectorAll('input[name="serviceNeeds"]:checked');
+                if (checked.length > 3) {
+                    this.checked = false;
+                    alert('最多只能选择3项服务需求');
+                }
+            });
+        });
+
+        // 表单提交
+        document.getElementById('marketSurveyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('调查表提交成功！感谢您的配合。');
+            // 这里可以添加实际的表单提交逻辑
+        });
+    </script>
+</body>
+
+</html>
