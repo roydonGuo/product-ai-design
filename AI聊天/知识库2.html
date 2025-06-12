@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI知识库管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .browser-frame {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out forwards;
+        }
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="p-4 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <!-- 浏览器模拟框架 -->
+        <div class="browser-frame bg-white rounded-xl min-h-[95vh] overflow-hidden">
+            <!-- 顶部导航 -->
+            <div class="border-b border-gray-200 py-4 px-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="ri-ai-generate text-2xl text-primary-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">AI知识库管理系统</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="flex items-center text-sm font-medium text-gray-700 hover:text-primary-600">
+                        <i class="ri-user-line mr-1"></i>
+                        <span>管理员</span>
+                    </button>
+                    <button class="flex items-center text-sm font-medium text-gray-700 hover:text-primary-600">
+                        <i class="ri-settings-3-line mr-1"></i>
+                        <span>设置</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="p-6">
+                <!-- 头部操作区 -->
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">知识库管理</h2>
+                        <p class="text-gray-600 mt-1">管理您的AI知识库和文档</p>
+                    </div>
+                    <button id="add-kb-btn" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg flex items-center transition duration-200">
+                        <i class="ri-add-line mr-2"></i> 新建知识库
+                    </button>
+                </div>
+
+                <!-- 知识库列表 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 知识库卡片 1 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover cursor-pointer" onclick="openKnowledgeBase('1')">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center">
+                                <i class="ri-book-2-line text-2xl text-primary-600 bg-primary-50 p-2 rounded-lg"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold text-gray-900 text-lg">产品文档库</h3>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-indicator bg-green-500"></span>
+                                        <span class="text-sm text-gray-600">在线</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-gray-500 hover:text-primary-600 p-1 rounded-full">
+                                    <i class="ri-more-2-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-between text-sm">
+                            <div>
+                                <p class="text-gray-500">向量模型</p>
+                                <p class="text-gray-900 font-medium">text-embedding-ada-002</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">文档数量</p>
+                                <p class="text-gray-900 font-medium">24</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">更新时间</p>
+                                <p class="text-gray-900 font-medium">2023-10-15</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <i class="ri-database-2-line mr-1"></i> 已向量化
+                            </span>
+                            <span class="text-gray-500 text-sm">点击查看详情</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 知识库卡片 2 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover cursor-pointer" onclick="openKnowledgeBase('2')">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center">
+                                <i class="ri-file-text-line text-2xl text-primary-600 bg-primary-50 p-2 rounded-lg"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold text-gray-900 text-lg">技术手册库</h3>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-indicator bg-green-500"></span>
+                                        <span class="text-sm text-gray-600">在线</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-gray-500 hover:text-primary-600 p-1 rounded-full">
+                                    <i class="ri-more-2-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-between text-sm">
+                            <div>
+                                <p class="text-gray-500">向量模型</p>
+                                <p class="text-gray-900 font-medium">text-embedding-ada-002</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">文档数量</p>
+                                <p class="text-gray-900 font-medium">18</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">更新时间</p>
+                                <p class="text-gray-900 font-medium">2023-10-10</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="ri-refresh-line mr-1"></i> 更新中
+                            </span>
+                            <span class="text-gray-500 text-sm">点击查看详情</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 知识库卡片 3 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover cursor-pointer" onclick="openKnowledgeBase('3')">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center">
+                                <i class="ri-customer-service-line text-2xl text-primary-600 bg-primary-50 p-2 rounded-lg"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold text-gray-900 text-lg">客服知识库</h3>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-indicator bg-yellow-500"></span>
+                                        <span class="text-sm text-gray-600">待配置</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-gray-500 hover:text-primary-600 p-1 rounded-full">
+                                    <i class="ri-more-2-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-between text-sm">
+                            <div>
+                                <p class="text-gray-500">向量模型</p>
+                                <p class="text-gray-900 font-medium">未选择</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">文档数量</p>
+                                <p class="text-gray-900 font-medium">0</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">创建时间</p>
+                                <p class="text-gray-900 font-medium">2023-10-05</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="ri-alert-line mr-1"></i> 未完成
+                            </span>
+                            <span class="text-gray-500 text-sm">点击查看详情</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 知识库详情模态框 -->
+    <div id="knowledge-base-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col modal-enter">
+            <!-- 模态框头部 -->
+            <div class="border-b border-gray-200 py-4 px-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="ri-book-2-line text-xl text-primary-600 mr-3"></i>
+                    <h2 class="text-xl font-bold text-gray-900">产品文档库</h2>
+                    <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <i class="ri-database-2-line mr-1"></i> 已向量化
+                    </span>
+                </div>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- 模态框内容 -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左侧知识库信息 -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-gray-50 rounded-lg p-5">
+                            <h3 class="font-bold text-gray-900 mb-4">知识库信息</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">知识库名称</label>
+                                    <p class="text-gray-900">产品文档库</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">描述</label>
+                                    <p class="text-gray-900">包含所有产品使用手册和技术文档</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">向量模型</label>
+                                    <p class="text-gray-900">text-embedding-ada-002</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">创建时间</label>
+                                    <p class="text-gray-900">2023-08-12 14:30</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">最后更新</label>
+                                    <p class="text-gray-900">2023-10-15 09:45</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 flex space-x-3">
+                                <button class="flex-1 bg-primary-50 text-primary-700 hover:bg-primary-100 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                                    <i class="ri-edit-line mr-2"></i> 编辑
+                                </button>
+                                <button class="flex-1 bg-red-50 text-red-700 hover:bg-red-100 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                                    <i class="ri-delete-bin-line mr-2"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧文档列表 -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-900">文档列表</h3>
+                            <button class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium py-1.5 px-3 rounded-lg flex items-center transition duration-200">
+                                <i class="ri-add-line mr-1"></i> 添加文档
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                            <!-- 表格头部 -->
+                            <div class="grid grid-cols-12 gap-4 bg-gray-50 px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <div class="col-span-5">文档名称</div>
+                                <div class="col-span-3">状态</div>
+                                <div class="col-span-2">切片数量</div>
+                                <div class="col-span-2 text-right">操作</div>
+                            </div>
+                            
+                            <!-- 文档行 1 -->
+                            <div class="grid grid-cols-12 gap-4 px-4 py-3 border-b border-gray-100 hover:bg-gray-50">
+                                <div class="col-span-5 flex items-center">
+                                    <i class="ri-file-text-line text-primary-600 mr-3"></i>
+                                    <span class="text-gray-900 font-medium">产品使用手册.pdf</span>
+                                </div>
+                                <div class="col-span-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="ri-checkbox-circle-line mr-1"></i> 已向量化
+                                    </span>
+                                </div>
+                                <div class="col-span-2 text-gray-700">24</div>
+                                <div class="col-span-2 flex justify-end space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="ri-eye-line"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900">
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 文档行 2 -->
+                            <div class="grid grid-cols-12 gap-4 px-4 py-3 border-b border-gray-100 hover:bg-gray-50">
+                                <div class="col-span-5 flex items-center">
+                                    <i class="ri-file-text-line text-primary-600 mr-3"></i>
+                                    <span class="text-gray-900 font-medium">API参考文档.docx</span>
+                                </div>
+                                <div class="col-span-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="ri-checkbox-circle-line mr-1"></i> 已向量化
+                                    </span>
+                                </div>
+                                <div class="col-span-2 text-gray-700">18</div>
+                                <div class="col-span-2 flex justify-end space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="ri-eye-line"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900">
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 文档行 3（切片展开示例） -->
+                            <div class="border-b border-gray-100">
+                                <div class="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer" onclick="toggleSlices(this)">
+                                    <div class="col-span-5 flex items-center">
+                                        <i class="ri-file-text-line text-primary-600 mr-3"></i>
+                                        <span class="text-gray-900 font-medium">技术白皮书.md</span>
+                                    </div>
+                                    <div class="col-span-3">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="ri-time-line mr-1"></i> 处理中
+                                        </span>
+                                    </div>
+                                    <div class="col-span-2 text-gray-700">32</div>
+                                    <div class="col-span-2 flex justify-end space-x-2">
+                                        <button class="text-blue-600 hover:text-blue-800">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button class="text-gray-600 hover:text-gray-900">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- 切片列表 -->
+                                <div class="px-4 py-3 bg-gray-50 hidden" id="slices-container">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="font-medium text-gray-900">文档切片</h4>
+                                        <button class="text-sm bg-primary-600 hover:bg-primary-700 text-white font-medium py-1 px-2 rounded flex items-center">
+                                            <i class="ri-add-line mr-1"></i> 添加切片
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <!-- 切片 1 -->
+                                        <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                            <div class="flex justify-between">
+                                                <span class="text-sm font-medium text-gray-900">切片 #1</span>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-gray-600 hover:text-gray-900 text-sm">
+                                                        <i class="ri-edit-line"></i>
+                                                    </button>
+                                                    <button class="text-red-600 hover:text-red-800 text-sm">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                                                本产品采用先进的AI技术，提供智能解决方案。主要功能包括自然语言处理、图像识别和数据分析等模块...
+                                            </p>
+                                        </div>
+                                        
+                                        <!-- 切片 2 -->
+                                        <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                            <div class="flex justify-between">
+                                                <span class="text-sm font-medium text-gray-900">切片 #2</span>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-gray-600 hover:text-gray-900 text-sm">
+                                                        <i class="ri-edit-line"></i>
+                                                    </button>
+                                                    <button class="text-red-600 hover:text-red-800 text-sm">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                                                系统架构设计采用微服务模式，各个模块独立部署，通过API网关进行通信。这种设计提高了系统的可扩展性和稳定性...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开知识库详情模态框
+        function openKnowledgeBase(id) {
+            document.getElementById('knowledge-base-modal').classList.remove('hidden');
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('knowledge-base-modal').classList.add('hidden');
+            // 确保关闭时隐藏所有切片容器
+            document.querySelectorAll('#slices-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+        }
+        
+        // 切换切片显示
+        function toggleSlices(element) {
+            const container = element.nextElementSibling;
+            container.classList.toggle('hidden');
+        }
+        
+        // 添加知识库按钮事件
+        document.getElementById('add-kb-btn').addEventListener('click', function() {
+            alert('打开添加知识库表单');
+            // 实际项目中这里会打开一个表单模态框
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('knowledge-base-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
