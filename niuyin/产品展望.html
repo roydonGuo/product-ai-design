@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芝士学爆 - 智能视频与AI融合平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --niuyin-text-color: #1a202c;
+            --niuyin-border-color: #e2e8f0;
+            --niuyin-primary-color: #3b82f6;
+            --niuyin-icon-bg: rgba(59, 130, 246, 0.1);
+            --niuyin-bg-color: #ffffff;
+            --niuyin-card-bg: #ffffff;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --niuyin-text-color: #f7fafc;
+                --niuyin-border-color: #2d3748;
+                --niuyin-primary-color: #60a5fa;
+                --niuyin-icon-bg: rgba(96, 165, 250, 0.1);
+                --niuyin-bg-color: #1a202c;
+                --niuyin-card-bg: #1e293b;
+            }
+        }
+        
+        body {
+            background-color: var(--niuyin-bg-color);
+            color: var(--niuyin-text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .browser-frame {
+            margin: 1rem;
+            border: 1px solid var(--niuyin-border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            min-height: calc(100vh - 2rem);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(96, 165, 250, 0.08));
+        }
+        
+        .future-gradient {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1));
+        }
+        
+        .card {
+            background-color: var(--niuyin-card-bg);
+            border: 1px solid var(--niuyin-border-color);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--niuyin-primary-color);
+        }
+        
+        .icon-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background-color: var(--niuyin-icon-bg);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-icon {
+            color: var(--niuyin-primary-color);
+            font-size: 24px;
+        }
+        
+        .btn-primary {
+            background-color: var(--niuyin-primary-color);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link {
+            position: relative;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--niuyin-icon-bg);
+            color: var(--niuyin-primary-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 40px;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--niuyin-border-color);
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--niuyin-primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .mcp-highlight {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        
+        .mcp-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(124, 58, 237, 0.1));
+            z-index: -1;
+            border-radius: inherit;
+        }
+        
+        .mcp-highlight::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: conic-gradient(
+                transparent, 
+                rgba(59, 130, 246, 0.4), 
+                transparent 30%
+            );
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .feature-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-frame flex flex-col">
+        <!-- 导航栏 -->
+        <nav class="flex items-center justify-between p-6 border-b border-[var(--niuyin-border-color)]">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-play-circle text-3xl text-[var(--niuyin-primary-color)]"></i>
+                <span class="text-2xl font-bold">芝士学爆</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-2">
+                <a href="#" class="nav-link active">产品介绍</a>
+                <a href="#" class="nav-link">核心功能</a>
+                <a href="#" class="nav-link">AI实验室</a>
+                <a href="#" class="nav-link">未来展望</a>
+                <a href="#" class="nav-link">关于我们</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="btn-primary">
+                    <i class="fas fa-rocket mr-2"></i>立即体验
+                </button>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="flex-grow">
+            <!-- Hero区域 -->
+            <section class="hero-gradient py-20 px-6">
+                <div class="max-w-6xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">重新定义<span class="text-[var(--niuyin-primary-color)]">视频+AI</span>体验</h1>
+                    <p class="text-xl md:text-2xl text-[var(--niuyin-text-color)] opacity-80 mb-10 max-w-3xl mx-auto">
+                        芝士学爆是下一代智能视频平台，融合先进的AI技术，为用户提供前所未有的创作、学习和娱乐体验
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button class="btn-primary">免费开始使用</button>
+                        <button class="px-6 py-3 border border-[var(--niuyin-primary-color)] text-[var(--niuyin-primary-color)] rounded-xl font-medium">
+                            观看演示视频
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 核心价值 -->
+            <section class="py-16 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold mb-4">为什么选择芝士学爆</h2>
+                        <p class="text-lg text-[var(--niuyin-text-color)] opacity-75 max-w-2xl mx-auto">
+                            融合视频与AI技术的创新平台，开启智能交互新时代
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card p-8 text-center">
+                            <div class="icon-container mx-auto mb-6">
+                                <i class="feature-icon fas fa-video"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">沉浸式视频体验</h3>
+                            <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                智能推荐算法带来无限沉浸的视频浏览体验，基于用户行为的个性化内容推送
+                            </p>
+                        </div>
+                        
+                        <div class="card p-8 text-center">
+                            <div class="icon-container mx-auto mb-6">
+                                <i class="feature-icon fas fa-brain"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">强大AI能力</h3>
+                            <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                集成全球领先AI模型，提供对话、创作、绘画等多模态智能交互
+                            </p>
+                        </div>
+                        
+                        <div class="card p-8 text-center">
+                            <div class="icon-container mx-auto mb-6">
+                                <i class="feature-icon fas fa-cogs"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">智能产品融合</h3>
+                            <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                革命性的MCP技术将AI深度融入产品功能，创造真正智能化的用户体验
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 当前功能展示 -->
+            <section class="py-16 px-6 bg-[var(--niuyin-icon-bg)]">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold mb-4">核心产品功能</h2>
+                        <p class="text-lg text-[var(--niuyin-text-color)] opacity-75 max-w-2xl mx-auto">
+                            已实现的强大功能，为用户提供全方位视频与AI体验
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        <!-- 视频功能 -->
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fas fa-play-circle text-[var(--niuyin-primary-color)] mr-3"></i> 
+                                视频功能
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">视频上传与发布</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            支持多种格式视频上传，智能转码优化，一键发布到平台
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-sync-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">无限滑动观看</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            沉浸式视频流体验，基于用户行为的智能推荐算法
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-fire"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">热门与热搜</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            实时热门视频榜单，热点话题追踪，发现平台最受欢迎内容
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-heart"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">互动功能</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            点赞、收藏、评论、转发完整生态，构建活跃社区
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-user-friends"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">关注系统</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            个性化关注列表，实时获取创作者更新，构建专属内容流
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI功能 -->
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fas fa-robot text-[var(--niuyin-primary-color)] mr-3"></i> 
+                                AI智能功能
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-comments"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">多模型AI对话</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            集成OpenAI、Anthropic、Google等全球顶尖AI模型，自由切换
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-paint-brush"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">AI绘画创作</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            文字生成图像，多种艺术风格选择，支持高清下载与分享
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-microchip"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">AI智能体</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            创建自定义AI助手，设置专业领域和对话风格，满足个性化需求
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-book"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">AI知识库</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            上传文档构建专属知识库，让AI基于您的资料提供精准回答
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-6 flex">
+                                    <div class="icon-container mr-5 flex-shrink-0">
+                                        <i class="feature-icon fas fa-video"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-semibold mb-2">视频AI辅助</h4>
+                                        <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                            自动生成字幕，智能剪辑建议，内容分析等视频创作辅助工具
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 未来展望 -->
+            <section class="future-gradient py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold mb-4">未来展望</h2>
+                        <p class="text-lg text-[var(--niuyin-text-color)] opacity-75 max-w-2xl mx-auto">
+                            我们正在构建的未来，将重新定义AI与产品的融合
+                        </p>
+                    </div>
+                    
+                    <!-- MCP重点介绍 -->
+                    <div class="mcp-highlight card p-8 mb-16">
+                        <div class="flex flex-col md:flex-row items-center">
+                            <div class="md:w-2/5 mb-6 md:mb-0 md:pr-8 flex justify-center">
+                                <div class="relative">
+                                    <div class="w-48 h-48 rounded-full bg-[var(--niuyin-primary-color)] bg-opacity-10 flex items-center justify-center feature-pulse">
+                                        <i class="fas fa-infinity text-6xl text-[var(--niuyin-primary-color)]"></i>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                        MCP
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:w-3/5">
+                                <h3 class="text-2xl font-bold mb-4">产品智能融合平台 (MCP)</h3>
+                                <p class="text-[var(--niuyin-text-color)] opacity-80 mb-4">
+                                    MCP (Product Intelligence Convergence Platform) 是我们革命性的下一代产品框架，将AI深度融入产品核心功能，实现真正的产品智能化。
+                                </p>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check-circle text-[var(--niuyin-primary-color)] mt-1 mr-2"></i>
+                                        <span>AI与产品功能的深度耦合，而非表面集成</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check-circle text-[var(--niuyin-primary-color)] mt-1 mr-2"></i>
+                                        <span>自适应产品界面，根据用户需求实时重构UI</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check-circle text-[var(--niuyin-primary-color)] mt-1 mr-2"></i>
+                                        <span>智能工作流自动化，预测并执行复杂任务序列</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check-circle text-[var(--niuyin-primary-color)] mt-1 mr-2"></i>
+                                        <span>跨功能场景的无缝AI辅助，消除应用切换障碍</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 发展路线图 -->
+                    <div class="mb-16">
+                        <h3 class="text-2xl font-bold mb-8 text-center">技术发展路线图</h3>
+                        
+                        <div class="max-w-3xl mx-auto">
+                            <div class="timeline-item">
+                                <div class="timeline-dot">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="card p-6">
+                                    <h4 class="text-xl font-semibold mb-2">2023 Q4 - 基础平台构建</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80 mb-3">
+                                        完成视频核心功能开发，实现AI对话基础框架
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">视频上传</span>
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">推荐算法</span>
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">多模型AI</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="card p-6">
+                                    <h4 class="text-xl font-semibold mb-2">2024 Q1 - AI功能扩展</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80 mb-3">
+                                        推出AI绘画、智能体创建和知识库管理功能
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">AI绘画</span>
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">智能体</span>
+                                        <span class="px-3 py-1 bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] rounded-full text-sm">知识库</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot">
+                                    <i class="fas fa-cog fa-spin"></i>
+                                </div>
+                                <div class="card p-6">
+                                    <h4 class="text-xl font-semibold mb-2">2024 Q3 - MCP Alpha</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80 mb-3">
+                                        发布MCP框架Alpha版本，实现基础产品-AI融合功能
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">智能工作流</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">自适应UI</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">场景融合</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="card p-6">
+                                    <h4 class="text-xl font-semibold mb-2">2025 Q1 - MCP正式版</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80 mb-3">
+                                        全面推出MCP平台，实现AI与产品的深度智能融合
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">预测式交互</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">跨功能AI</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">智能产品核心</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="card p-6">
+                                    <h4 class="text-xl font-semibold mb-2">2025+ - 智能产品生态</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80 mb-3">
+                                        构建基于MCP的智能产品矩阵，打造AI原生应用生态系统
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">开放平台</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">开发者生态</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">智能产品市场</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 未来功能展望 -->
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-center">未来功能展望</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="flex">
+                                <div class="icon-container mr-4 flex-shrink-0">
+                                    <i class="feature-icon fas fa-vr-cardboard"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-2">沉浸式3D视频体验</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                        结合VR/AR技术，提供沉浸式3D视频观看体验，AI实时生成互动场景
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex">
+                                <div class="icon-container mr-4 flex-shrink-0">
+                                    <i class="feature-icon fas fa-sync-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-2">实时AI视频协作</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                        多用户实时AI视频协作，智能生成内容建议，同步编辑与创作
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex">
+                                <div class="icon-container mr-4 flex-shrink-0">
+                                    <i class="feature-icon fas fa-user-astronaut"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-2">数字人创作者</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                        用户定制AI数字人，自动生成个性化视频内容，24小时不间断创作
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex">
+                                <div class="icon-container mr-4 flex-shrink-0">
+                                    <i class="feature-icon fas fa-project-diagram"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-2">跨平台智能融合</h4>
+                                    <p class="text-[var(--niuyin-text-color)] opacity-80">
+                                        MCP框架扩展到多平台，实现跨设备无缝智能体验，保持上下文连续性
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- CTA区域 -->
+            <section class="py-16 px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-6">加入我们的智能未来</h2>
+                    <p class="text-xl text-[var(--niuyin-text-color)] opacity-80 mb-10 max-w-2xl mx-auto">
+                        现在体验芝士学爆，提前感受AI与视频融合的革命性体验
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button class="btn-primary px-8 py-4 text-lg">
+                            立即免费注册
+                        </button>
+                        <button class="px-8 py-4 border border-[var(--niuyin-primary-color)] text-[var(--niuyin-primary-color)] rounded-xl font-medium text-lg">
+                            了解更多
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="border-t border-[var(--niuyin-border-color)] py-12 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i class="fas fa-play-circle text-2xl text-[var(--niuyin-primary-color)]"></i>
+                            <span class="text-xl font-bold">芝士学爆</span>
+                        </div>
+                        <p class="text-[var(--niuyin-text-color)] opacity-80 mb-4">
+                            下一代智能视频与AI融合平台，重新定义创作与娱乐体验
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-[var(--niuyin-text-color)] hover:text-[var(--niuyin-primary-color)] transition">
+                                <i class="fab fa-weibo"></i>
+                            </a>
+                            <a href="#" class="text-[var(--niuyin-text-color)] hover:text-[var(--niuyin-primary-color)] transition">
+                                <i class="fab fa-weixin"></i>
+                            </a>
+                            <a href="#" class="text-[var(--niuyin-text-color)] hover:text-[var(--niuyin-primary-color)] transition">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">产品</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">视频中心</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">AI对话</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">AI绘画</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">智能体</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">MCP平台</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">资源</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">帮助中心</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">开发者文档</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">API接口</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">社区论坛</a></li>
+                            <li><a href="#" class="text-[var(--niuyin-text-color)] opacity-80 hover:text-[var(--niuyin-primary-color)] transition">学习资源</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">联系我们</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-envelope mt-1 mr-2 text-[var(--niuyin-primary-color)]"></i>
+                                <span class="text-[var(--niuyin-text-color)] opacity-80">contact@zhishixuebao.com</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-phone-alt mt-1 mr-2 text-[var(--niuyin-primary-color)]"></i>
+                                <span class="text-[var(--niuyin-text-color)] opacity-80">400-888-8888</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-2 text-[var(--niuyin-primary-color)]"></i>
+                                <span class="text-[var(--niuyin-text-color)] opacity-80">北京市海淀区人工智能科技园</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-[var(--niuyin-border-color)] mt-8 pt-8 text-center text-sm text-[var(--niuyin-text-color)] opacity-70">
+                    © 2025 芝士学爆智能科技有限公司 版权所有 | 京ICP备88888888号
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 深色模式切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.createElement('button');
+            darkModeToggle.className = 'fixed bottom-4 right-4 bg-[var(--niuyin-primary-color)] text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center';
+            darkModeToggle.innerHTML = '<i class="fas fa-moon mr-2"></i> 切换主题';
+            document.body.appendChild(darkModeToggle);
+            
+            darkModeToggle.addEventListener('click', function() {
+                const isDark = document.documentElement.style.getPropertyValue('--niuyin-bg-color') === '#1a202c';
+                
+                if (isDark) {
+                    // 切换到浅色模式
+                    document.documentElement.style.setProperty('--niuyin-bg-color', '#ffffff');
+                    document.documentElement.style.setProperty('--niuyin-text-color', '#1a202c');
+                    document.documentElement.style.setProperty('--niuyin-border-color', '#e2e8f0');
+                    document.documentElement.style.setProperty('--niuyin-primary-color', '#3b82f6');
+                    document.documentElement.style.setProperty('--niuyin-icon-bg', 'rgba(59, 130, 246, 0.1)');
+                    document.documentElement.style.setProperty('--niuyin-card-bg', '#ffffff');
+                    this.innerHTML = '<i class="fas fa-moon mr-2"></i> 切换主题';
+                } else {
+                    // 切换到深色模式
+                    document.documentElement.style.setProperty('--niuyin-bg-color', '#1a202c');
+                    document.documentElement.style.setProperty('--niuyin-text-color', '#f7fafc');
+                    document.documentElement.style.setProperty('--niuyin-border-color', '#2d3748');
+                    document.documentElement.style.setProperty('--niuyin-primary-color', '#60a5fa');
+                    document.documentElement.style.setProperty('--niuyin-icon-bg', 'rgba(96, 165, 250, 0.1)');
+                    document.documentElement.style.setProperty('--niuyin-card-bg', '#1e293b');
+                    this.innerHTML = '<i class="fas fa-sun mr-2"></i> 切换主题';
+                }
+            });
+            
+            // 导航滚动效果
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
