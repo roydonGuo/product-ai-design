@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>口腔疾病检测统计系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+    }
+
+    .card {
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .ring-chart {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .ring-chart svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring-chart circle {
+      fill: none;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .ring-bg {
+      stroke: #e2e8f0;
+    }
+
+    .ring-progress {
+      stroke: #3b82f6;
+    }
+  </style>
+</head>
+
+<body class="h-screen ">
+  <div class="mx-auto h-full flex flex-col bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+    <!-- 顶部标题栏 -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-blue-100">基于AI识别的口腔疾病数据分析平台</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-blue-100">最后更新时间: 2023-06-15 14:30</span>
+          <button class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition">
+            <i class="fas fa-sync-alt mr-2"></i>刷新数据
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-1 overflow-y-auto">
+      <!-- 左侧筛选面板 -->
+      <div class="w-80 bg-white border-r border-gray-200 p-6 overflow-y-auto">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <i class="fas fa-sliders-h text-blue-500 mr-2"></i>筛选条件
+        </h2>
+
+        <!-- 活动选择 -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">选择活动</label>
+          <div class="relative">
+            <select
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none">
+              <option>2023年全国口腔健康普查</option>
+              <option>2023年Q2社区义诊</option>
+              <option>校园口腔健康计划</option>
+              <option>老年人口腔关爱行动</option>
+              <option>全部活动</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+
+        <!-- 疾病类型 -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium text-gray-700">疾病类型</label>
+            <button class="text-xs text-blue-600 hover:text-blue-800">全选/取消</button>
+          </div>
+          <div class="space-y-2">
+            <label class="flex items-center space-x-3">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300" checked>
+              <span class="text-gray-700">牙结石</span>
+            </label>
+            <label class="flex items-center space-x-3">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300" checked>
+              <span class="text-gray-700">牙龈炎</span>
+            </label>
+            <label class="flex items-center space-x-3">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300">
+              <span class="text-gray-700">牙垢</span>
+            </label>
+            <label class="flex items-center space-x-3">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300">
+              <span class="text-gray-700">牙列缺损</span>
+            </label>
+            <label class="flex items-center space-x-3">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300">
+              <span class="text-gray-700">龋齿</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 性别 -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">性别</label>
+          <div class="flex space-x-4">
+            <label class="inline-flex items-center">
+              <input type="radio" name="gender" class="form-radio h-5 w-5 text-blue-600" checked>
+              <span class="ml-2 text-gray-700">全部</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="gender" class="form-radio h-5 w-5 text-blue-600">
+              <span class="ml-2 text-gray-700">男</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="gender" class="form-radio h-5 w-5 text-blue-600">
+              <span class="ml-2 text-gray-700">女</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 年龄段 -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">年龄段</label>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">0-18岁</button>
+            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">19-29岁</button>
+            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">30-39岁</button>
+            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">40-59岁</button>
+            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">60岁以上</button>
+            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">全部</button>
+          </div>
+          <div class="flex space-x-2">
+            <input type="number" placeholder="最小年龄" class="flex-1 w-[50%] px-3 py-2 border border-gray-300 rounded-lg">
+            <span class="flex items-center">-</span>
+            <input type="number" placeholder="最大年龄" class="flex-1 w-[50%] px-3 py-2 border border-gray-300 rounded-lg">
+          </div>
+        </div>
+
+        <!-- 地址搜索 -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">地区筛选</label>
+          <div class="relative">
+            <input type="text" placeholder="输入省/市/区"
+              class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+
+        <!-- 统计按钮 -->
+        <button
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg shadow-md transition flex items-center justify-center">
+          <i class="fas fa-chart-bar mr-2"></i>生成统计报告
+        </button>
+      </div>
+
+      <!-- 右侧内容区 -->
+      <div class="flex-1 p-8 overflow-y-auto">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <i class="fas fa-sliders-h text-blue-500 mr-2"></i>统计报告
+        </h2>
+        <!-- 摘要统计 -->
+        <div class="grid grid-cols-2 gap-6 mb-8">
+          <div class="card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">活动受检人数</p>
+                <h3 class="text-3xl font-bold mt-1">8,742</h3>
+              </div>
+              <div class="bg-green-100 p-3 rounded-full text-green-600">
+                <i class="fas fa-users text-xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">整体检出率</p>
+                <h3 class="text-3xl font-bold mt-1">36.8%</h3>
+              </div>
+              <div class="bg-purple-100 p-3 rounded-full text-purple-600">
+                <i class="fas fa-percentage text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 疾病检出率 -->
+        <div class="card bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-teeth-open text-blue-500 mr-2"></i>疾病检出率
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-5 gap-6">
+            <!-- 牙结石 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="188.4"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">40%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙结石</h4>
+              <p class="text-sm text-gray-500">3,497例</p>
+            </div>
+
+            <!-- 牙龈炎 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="251.2"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">20%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙龈炎</h4>
+              <p class="text-sm text-gray-500">1,748例</p>
+            </div>
+
+            <!-- 牙垢 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="282.6"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">10%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙垢</h4>
+              <p class="text-sm text-gray-500">874例</p>
+            </div>
+
+            <!-- 牙列缺损 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="298.3"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">5%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙列缺损</h4>
+              <p class="text-sm text-gray-500">437例</p>
+            </div>
+            <!-- 牙列缺损 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="298.3"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">5%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙列缺损</h4>
+              <p class="text-sm text-gray-500">437例</p>
+            </div>
+            <!-- 牙列缺损 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="298.3"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">5%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙列缺损</h4>
+              <p class="text-sm text-gray-500">437例</p>
+            </div>
+            <!-- 牙列缺损 -->
+            <div class="flex flex-col items-center">
+              <div class="ring-chart mb-3">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" stroke-width="8"></circle>
+                  <circle class="ring-progress" cx="60" cy="60" r="50" stroke-width="8" stroke-dasharray="314"
+                    stroke-dashoffset="298.3"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold">5%</span>
+                </div>
+              </div>
+              <h4 class="font-medium text-gray-800">牙列缺损</h4>
+              <p class="text-sm text-gray-500">437例</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 性别分布 -->
+        <div class="card bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-venus-mars text-blue-500 mr-2"></i>性别分布（按疾病）
+            </h2>
+          </div>
+
+          <div class="h-64">
+            <canvas id="genderByDiseaseChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 年龄段分布 -->
+        <div class="card bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-user-clock text-blue-500 mr-2"></i>年龄段疾病分布
+            </h2>
+          </div>
+
+          <div class="h-96"> <!-- 增加高度以适应更多数据 -->
+            <canvas id="ageDiseaseChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="bg-gray-50 p-4 border-t border-gray-200 text-center text-sm text-gray-500">
+      © 2025 aiyakankan口腔健康大数据中心 - 数据仅供参考，不作为医疗诊断依据
+    </div>
+  </div>
+
+  <script>
+    // 按疾病分类的性别分布柱状图
+    const genderByDiseaseCtx = document.getElementById('genderByDiseaseChart').getContext('2d');
+    const genderByDiseaseChart = new Chart(genderByDiseaseCtx, {
+      type: 'bar',
+      data: {
+        labels: ['牙结石', '牙龈炎', '牙垢', '牙列缺损'],
+        datasets: [
+          {
+            label: '男性',
+            data: [1850, 920, 460, 230],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          },
+          {
+            label: '女性',
+            data: [1647, 828, 414, 907],
+            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: '人数'
+            },
+            grid: {
+              drawBorder: false
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              afterLabel: function (context) {
+                const datasetIndex = context.datasetIndex;
+                const dataIndex = context.dataIndex;
+                const maleData = [1850, 920, 460, 230];
+                const femaleData = [1647, 828, 414, 207];
+                const total = maleData[dataIndex] + femaleData[dataIndex];
+                const percentage = Math.round((context.raw / total) * 100);
+                return `占比: ${percentage}%`;
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 20
+            }
+          }
+        },
+        // 双列柱状图配置
+        datasets: {
+          bar: {
+            barPercentage: 0.6,
+            categoryPercentage: 0.8
+          }
+        }
+      }
+    });
+    // 年龄段疾病分布柱状图
+    const ageDiseaseCtx = document.getElementById('ageDiseaseChart').getContext('2d');
+    const ageDiseaseChart = new Chart(ageDiseaseCtx, {
+      type: 'bar',
+      data: {
+        labels: ['0-18岁', '19-29岁', '30-39岁', '40-59岁', '60岁以上'],
+        datasets: [
+          {
+            label: '牙结石',
+            data: [320, 850, 920, 980, 200],
+            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          },
+          {
+            label: '牙龈炎',
+            data: [180, 520, 650, 720, 150],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          },
+          {
+            label: '牙垢',
+            data: [90, 260, 325, 360, 75],
+            backgroundColor: 'rgba(255, 206, 86, 0.7)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 1
+          },
+          {
+            label: '牙列缺损',
+            data: [45, 130, 163, 180, 120],
+            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: '检出量（人）'
+            },
+            stacked: false, // 不堆叠，便于比较
+            grid: {
+              drawBorder: false
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            stacked: false // 不堆叠
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              afterLabel: function (context) {
+                const ageGroups = {
+                  '0-18岁': 1250,
+                  '19-29岁': 2350,
+                  '30-39岁': 1980,
+                  '40-59岁': 2560,
+                  '60岁以上': 602
+                };
+                const ageGroup = context.label;
+                const value = context.raw;
+                const percentage = Math.round((value / ageGroups[ageGroup]) * 100);
+                return `检出率: ${percentage}%`;
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              usePointStyle: true
+            }
+          }
+        },
+        datasets: {
+          bar: {
+            barPercentage: 0.8,
+            categoryPercentage: 0.9
+          }
+        }
+      }
+    }); 
+  </script>
+</body>
+
+</html>
