@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芝士学爆 - UI设计方案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            border-radius: 40px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                0 0 0 12px #f0f0f0,
+                0 0 0 15px #d1d1d1;
+            overflow: hidden;
+            position: relative;
+            background: #ffffff;
+        }
+        
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ios-status-bar {
+            height: 44px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .search-bar {
+            background: #f5f7fa;
+            border-radius: 20px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            margin: 0 20px 16px;
+        }
+        
+        .waterfall-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .content-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .card-text {
+            padding: 12px;
+            font-size: 14px;
+            color: #000;
+            line-height: 1.4;
+        }
+        
+        .card-footer {
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-type {
+            font-size: 12px;
+            font-weight: 500;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        
+        .bottom-nav {
+            height: 80px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #ffffff;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #9ca3af;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item.active {
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        .ai-center {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-15px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .detail-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            gap: 12px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 16px;
+        }
+        
+        .detail-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+        }
+        
+        .detail-text {
+            color: #000;
+            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-image {
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .video-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .video-thumb {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.6);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .carousel {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            height: 200px;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .dot.active {
+            background: white;
+        }
+        
+        .action-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            margin: 0 16px;
+        }
+        
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #000;
+        }
+        
+        .action-icon {
+            font-size: 20px;
+        }
+        
+        .action-text {
+            font-size: 12px;
+        }
+        
+        .comments-section {
+            padding: 16px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 12px;
+        }
+        
+        .comment {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+        
+        .comment-text {
+            color: #000;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .design-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .design-subtitle {
+            text-align: center;
+            color: #4b5563;
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .phone-label {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        /* Hide scrollbar */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="design-title">芝士学爆 - 短视频知识学习平台</div>
+    <div class="design-subtitle">
+        优雅的极简主义美学与功能的完美平衡 · 清新柔和的渐变配色 · 恰到好处的留白设计 · 轻盈通透的沉浸式体验
+    </div>
+    
+    <div class="container">
+        <!-- 首页 -->
+        <div>
+            <div class="phone-label">首页 - 双列瀑布流</div>
+            <div class="phone-frame">
+                <div class="screen-content">
+                    <!-- iOS状态栏 -->
+                    <div class="ios-status-bar">
+                        <div>9:41</div>
+                        <div class="flex items-center gap-1">
+                            <i class="ri-signal-wifi-fill"></i>
+                            <i class="ri-battery-2-fill"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 应用头部 -->
+                    <div class="header">
+                        <div class="app-title">芝士学爆</div>
+                        <i class="ri-notification-3-line text-xl text-black"></i>
+                    </div>
+                    
+                    <!-- 搜索栏 -->
+                    <div class="search-bar">
+                        <i class="ri-search-line text-gray-500 mr-2"></i>
+                        <input type="text" placeholder="搜索知识、课程、创作者" class="bg-transparent w-full text-sm text-black placeholder-gray-500 focus:outline-none">
+                    </div>
+                    
+                    <!-- 瀑布流内容 -->
+                    <div class="waterfall-grid hide-scrollbar">
+                        <!-- 文本卡片 -->
+                        <div class="content-card">
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-2">时间管理四象限法则</h3>
+                                <p>重要且紧急的任务优先处理，重要不紧急的任务制定计划...</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">李老师</span>
+                                </div>
+                                <div class="content-type">文本</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图文轮播卡片 -->
+                        <div class="content-card">
+                            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" class="card-image">
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-1">高效沟通技巧</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">张教授</span>
+                                </div>
+                                <div class="content-type">图文</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 视频卡片 -->
+                        <div class="content-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" class="card-image">
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
+                                    <i class="ri-play-mini-fill text-white"></i>
+                                </div>
+                            </div>
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-1">Python入门教程</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">王工程师</span>
+                                </div>
+                                <div class="content-type">视频</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 文本卡片 -->
+                        <div class="content-card">
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-2">经济学十大原理</h3>
+                                <p>人们如何做出决策？人们如何相互交易？整体经济如何运行？...</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">赵博士</span>
+                                </div>
+                                <div class="content-type">文本</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 视频卡片 -->
+                        <div class="content-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" class="card-image">
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
+                                    <i class="ri-play-mini-fill text-white"></i>
+                                </div>
+                            </div>
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-1">设计思维工作坊</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">设计师小米</span>
+                                </div>
+                                <div class="content-type">视频</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图文轮播卡片 -->
+                        <div class="content-card">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" class="card-image">
+                            <div class="card-text">
+                                <h3 class="font-semibold mb-1">数据可视化指南</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs text-black">数据分析师</span>
+                                </div>
+                                <div class="content-type">图文</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 底部导航 -->
+                    <div class="bottom-nav">
+                        <div class="nav-item active">
+                            <i class="ri-home-5-fill nav-icon"></i>
+                            <span>首页</span>
+                        </div>
+                        <div class="nav-item">
+                            <i class="ri-compass-3-line nav-icon"></i>
+                            <span>动态</span>
+                        </div>
+                        <div class="ai-center">
+                            <i class="ri-robot-line text-2xl"></i>
+                        </div>
+                        <div class="nav-item">
+                            <i class="ri-message-3-line nav-icon"></i>
+                            <span>消息</span>
+                        </div>
+                        <div class="nav-item">
+                            <i class="ri-user-3-line nav-icon"></i>
+                            <span>我的</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 文本详情页 -->
+        <div>
+            <div class="phone-label">文本详情页</div>
+            <div class="phone-frame">
+                <div class="screen-content">
+                    <!-- iOS状态栏 -->
+                    <div class="ios-status-bar">
+                        <div>9:41</div>
+                        <div class="flex items-center gap-1">
+                            <i class="ri-signal-wifi-fill"></i>
+                            <i class="ri-battery-2-fill"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 详情页头部 -->
+                    <div class="detail-header">
+                        <div class="back-btn">
+                            <i class="ri-arrow-left-line text-black"></i>
+                        </div>
+                        <div class="font-semibold text-black">时间管理四象限法则</div>
+                    </div>
+                    
+                    <!-- 详情内容 -->
+                    <div class="detail-content hide-scrollbar">
+                        <div class="flex items-center gap-3 mb-6">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-10 h-10 rounded-full">
+                            <div>
+                                <div class="font-semibold text-black">李老师</div>
+                                <div class="text-xs text-gray-500">管理学教授 · 2小时前</div>
+                            </div>
+                        </div>
+                        
+                        <h1 class="detail-title">时间管理四象限法则：高效工作的核心方法</h1>
+                        
+                        <div class="detail-text">
+                            <p class="mb-4">史蒂芬·柯维提出的时间管理四象限法则，是高效能人士的必备工具。它将任务分为四个象限：</p>
+                            
+                            <div class="bg-blue-50 p-4 rounded-xl mb-4">
+                                <h3 class="font-semibold text-black mb-2">第一象限：重要且紧急</h3>
+                                <p>如危机处理、紧急会议、最后期限的项目。这些任务需要立即处理，但长期处于此象限会导致压力过大。</p>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-xl mb-4">
+                                <h3 class="font-semibold text-black mb-2">第二象限：重要但不紧急</h3>
+                                <p>如长期规划、技能提升、关系建立。这个象限是高效能人士关注的重点，投入时间在此能减少紧急任务。</p>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-xl mb-4">
+                                <h3 class="font-semibold text-black mb-2">第三象限：紧急但不重要</h3>
+                                <p>如某些电话、会议、邮件。这些任务会干扰重要工作，应尽量减少或委托他人处理。</p>
+                            </div>
+                            
+                            <div class="bg-red-50 p-4 rounded-xl mb-4">
+                                <h3 class="font-semibold text-black mb-2">第四象限：不紧急也不重要</h3>
+                                <p>如刷社交媒体、无目的浏览。这些活动纯粹是时间浪费，应尽量避免。</p>
+                            </div>
+                            
+                            <p>高效时间管理的关键是：优先处理第二象限任务，规划好第一象限任务，尽量减少第三象限任务，避免第四象限活动。</p>
+                        </div>
+                        
+                        <!-- 操作栏 -->
+                        <div class="action-bar">
+                            <div class="action-item">
+                                <i class="ri-heart-line action-icon"></i>
+                                <span class="action-text">点赞</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-chat-3-line action-icon"></i>
+                                <span class="action-text">评论</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-bookmark-line action-icon"></i>
+                                <span class="action-text">收藏</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-share-forward-line action-icon"></i>
+                                <span class="action-text">分享</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 评论部分 -->
+                        <div class="comments-section">
+                            <div class="section-title">评论 (128)</div>
+                            
+                            <div class="comment">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="comment-avatar">
+                                <div class="comment-content">
+                                    <div class="comment-author">张明</div>
+                                    <div class="comment-text">这个方法真的改变了我的工作方式，现在每天能完成更多重要的事情！</div>
+                                </div>
+                            </div>
+                            
+                            <div class="comment">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="comment-avatar">
+                                <div class="comment-content">
+                                    <div class="comment-author">王丽</div>
+                                    <div class="comment-text">第四象限的识别太关键了，我发现自己浪费了好多时间在无意义的事情上。</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 图文详情页 -->
+        <div>
+            <div class="phone-label">图文详情页</div>
+            <div class="phone-frame">
+                <div class="screen-content">
+                    <!-- iOS状态栏 -->
+                    <div class="ios-status-bar">
+                        <div>9:41</div>
+                        <div class="flex items-center gap-1">
+                            <i class="ri-signal-wifi-fill"></i>
+                            <i class="ri-battery-2-fill"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 详情页头部 -->
+                    <div class="detail-header">
+                        <div class="back-btn">
+                            <i class="ri-arrow-left-line text-black"></i>
+                        </div>
+                        <div class="font-semibold text-black">高效沟通技巧</div>
+                    </div>
+                    
+                    <!-- 详情内容 -->
+                    <div class="detail-content hide-scrollbar">
+                        <div class="flex items-center gap-3 mb-6">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-10 h-10 rounded-full">
+                            <div>
+                                <div class="font-semibold text-black">张教授</div>
+                                <div class="text-xs text-gray-500">心理学专家 · 5小时前</div>
+                            </div>
+                        </div>
+                        
+                        <h1 class="detail-title">高效沟通的七个关键技巧</h1>
+                        
+                        <!-- 轮播图 -->
+                        <div class="carousel">
+                            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" class="carousel-image">
+                            <div class="carousel-dots">
+                                <div class="dot active"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-text">
+                            <p class="mb-4">沟通是人际关系的核心。掌握这些技巧，你将成为沟通高手：</p>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">1. 积极倾听</h3>
+                                <p>真正的倾听不只是听，而是理解对方的意思和情感。使用肢体语言表示你在专注聆听。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">2. 清晰表达</h3>
+                                <p>使用简洁明了的语言，避免专业术语。结构化你的想法：背景-观点-建议。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">3. 提问技巧</h3>
+                                <p>开放式问题促进深入讨论，封闭式问题用于确认信息。恰当使用两种问题类型。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">4. 非语言沟通</h3>
+                                <p>肢体语言、面部表情和语调传递的信息比言语更多。保持眼神接触和开放姿态。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">5. 同理心表达</h3>
+                                <p>尝试理解对方的立场和感受。"我理解你的感受"这样的表达能建立信任。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">6. 建设性反馈</h3>
+                                <p>使用"三明治"技巧：正面反馈-建设性意见-鼓励。专注于行为而非人格。</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">7. 冲突管理</h3>
+                                <p>将冲突视为解决问题的机会。使用"我"陈述而非指责，寻求双赢解决方案。</p>
+                            </div>
+                            
+                            <p>掌握这些技巧需要实践，但回报是巨大的人际关系改善和工作效率提升。</p>
+                        </div>
+                        
+                        <!-- 操作栏 -->
+                        <div class="action-bar">
+                            <div class="action-item">
+                                <i class="ri-heart-line action-icon"></i>
+                                <span class="action-text">点赞</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-chat-3-line action-icon"></i>
+                                <span class="action-text">评论</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-bookmark-line action-icon"></i>
+                                <span class="action-text">收藏</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-share-forward-line action-icon"></i>
+                                <span class="action-text">分享</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 视频详情页 -->
+        <div>
+            <div class="phone-label">视频详情页</div>
+            <div class="phone-frame">
+                <div class="screen-content">
+                    <!-- iOS状态栏 -->
+                    <div class="ios-status-bar">
+                        <div>9:41</div>
+                        <div class="flex items-center gap-1">
+                            <i class="ri-signal-wifi-fill"></i>
+                            <i class="ri-battery-2-fill"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 详情页头部 -->
+                    <div class="detail-header">
+                        <div class="back-btn">
+                            <i class="ri-arrow-left-line text-black"></i>
+                        </div>
+                        <div class="font-semibold text-black">Python入门教程</div>
+                    </div>
+                    
+                    <!-- 详情内容 -->
+                    <div class="detail-content hide-scrollbar">
+                        <div class="flex items-center gap-3 mb-6">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" class="w-10 h-10 rounded-full">
+                            <div>
+                                <div class="font-semibold text-black">王工程师</div>
+                                <div class="text-xs text-gray-500">高级开发工程师 · 8小时前</div>
+                            </div>
+                        </div>
+                        
+                        <h1 class="detail-title">Python编程入门：从零基础到第一个项目</h1>
+                        
+                        <!-- 视频播放器 -->
+                        <div class="video-container">
+                            <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" class="video-thumb">
+                            <div class="play-btn">
+                                <i class="ri-play-fill"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-text">
+                            <p class="mb-4">Python是当今最受欢迎的编程语言之一，本教程将带你从零开始学习Python编程。</p>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">你将学到：</h3>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li>Python环境搭建与开发工具配置</li>
+                                    <li>基础语法：变量、数据类型、运算符</li>
+                                    <li>控制流：条件语句和循环结构</li>
+                                    <li>函数定义与使用</li>
+                                    <li>常用数据结构：列表、元组、字典</li>
+                                    <li>文件操作基础</li>
+                                    <li>错误处理与异常捕获</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-black mb-2">实战项目：</h3>
+                                <p>课程最后，你将完成一个天气查询应用，能够从API获取数据并展示给用户。</p>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-xl mb-4">
+                                <h3 class="font-semibold text-black mb-2">学习建议：</h3>
+                                <p>• 每天坚持编码练习<br>• 尝试修改示例代码<br>• 加入Python社区参与讨论<br>• 遇到问题时善用搜索引擎</p>
+                            </div>
+                            
+                            <p>Python是进入编程世界的最佳选择，也是数据科学、人工智能和Web开发的基础。开始你的编程之旅吧！</p>
+                        </div>
+                        
+                        <!-- 操作栏 -->
+                        <div class="action-bar">
+                            <div class="action-item">
+                                <i class="ri-heart-line action-icon"></i>
+                                <span class="action-text">点赞</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-chat-3-line action-icon"></i>
+                                <span class="action-text">评论</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-bookmark-line action-icon"></i>
+                                <span class="action-text">收藏</span>
+                            </div>
+                            <div class="action-item">
+                                <i class="ri-share-forward-line action-icon"></i>
+                                <span class="action-text">分享</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 评论部分 -->
+                        <div class="comments-section">
+                            <div class="section-title">评论 (342)</div>
+                            
+                            <div class="comment">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="comment-avatar">
+                                <div class="comment-content">
+                                    <div class="comment-author">陈同学</div>
+                                    <div class="comment-text">讲解非常清晰，完全零基础也能跟上，感谢老师！</div>
+                                </div>
+                            </div>
+                            
+                            <div class="comment">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="comment-avatar">
+                                <div class="comment-content">
+                                    <div class="comment-author">吴小姐</div>
+                                    <div class="comment-text">终于找到一个适合初学者的Python教程，期待后续课程！</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 微交互效果
+        document.querySelectorAll('.content-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+        
+        document.querySelectorAll('.action-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
