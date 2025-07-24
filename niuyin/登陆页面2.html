@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>芝士学爆 - 让学习像刷视频一样简单</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --niuyin-text-color: #1a1a1a;
+      --niuyin-border-color: #e5e7eb;
+      --niuyin-primary-color: #3b82f6;
+      --niuyin-icon-bg: #f3f4f6;
+      --niuyin-bg-color: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --niuyin-text-color: #f3f4f6;
+        --niuyin-border-color: #374151;
+        --niuyin-primary-color: #60a5fa;
+        --niuyin-icon-bg: #1f2937;
+        --niuyin-bg-color: #111827;
+      }
+    }
+
+    body {
+      background-color: var(--niuyin-bg-color);
+      transition: all 0.3s ease;
+    }
+
+    .login-container {
+      box-shadow: 0 0 0 1rem var(--niuyin-border-color);
+    }
+
+    .login-tab {
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .login-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 3px;
+      background: var(--niuyin-primary-color);
+      border-radius: 2px;
+    }
+
+    .input-field:focus {
+      box-shadow: 0 0 0 2px var(--niuyin-primary-color);
+    }
+
+    .ai-feature-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="login-container w-full max-w-4xl rounded-2xl overflow-hidden bg-[var(--niuyin-bg-color)]">
+    <div class="flex flex-col md:flex-row h-full">
+      <!-- 左半部分 - 品牌展示 -->
+      <div
+        class="md:w-1/2 p-8 flex flex-col justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
+        <div class="mb-8">
+          <div class="flex items-center mb-6">
+            <i class="fas fa-brain text-4xl mr-3 text-[var(--niuyin-primary-color)]"></i>
+            <h1 class="text-3xl font-bold text-[var(--niuyin-text-color)]">芝士学爆</h1>
+          </div>
+          <p class="text-lg text-[var(--niuyin-text-color)] mb-6">
+            让学习像刷视频一样简单<br>
+            AI智能助教24小时伴学
+          </p>
+
+          <div class="flex space-x-2">
+            <div
+              class="bg-[var(--niuyin-primary-color)] bg-opacity-10 text-[var(--niuyin-primary-color)] px-3 py-1 rounded-full text-sm">
+              #短视频学习</div>
+            <div
+              class="bg-[var(--niuyin-primary-color)] bg-opacity-10 text-[var(--niuyin-primary-color)] px-3 py-1 rounded-full text-sm">
+              #AI生图</div>
+            <div
+              class="bg-[var(--niuyin-primary-color)] bg-opacity-10 text-[var(--niuyin-primary-color)] px-3 py-1 rounded-full text-sm">
+              #智能问答</div>
+          </div>
+        </div>
+
+        <div class="mt-auto">
+          <img
+            src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+            alt="AI学习场景" class="rounded-xl object-cover h-48 w-full shadow-md">
+        </div>
+      </div>
+
+      <!-- 右半部分 - 登录表单 -->
+      <div class="md:w-1/2 p-8 flex flex-col justify-center">
+        <h2 class="text-2xl font-bold text-[var(--niuyin-text-color)] mb-8">欢迎回来</h2>
+
+        <!-- 登录方式Tabs -->
+        <div class="flex mb-6 border-b border-[var(--niuyin-border-color)]">
+          <button onclick="switchLoginMethod('account')"
+            class="login-tab active flex-1 py-2 font-medium text-[var(--niuyin-text-color)] text-center"
+            id="account-tab">
+            账号密码登录
+          </button>
+          <button onclick="switchLoginMethod('sms')"
+            class="login-tab flex-1 py-2 font-medium text-[var(--niuyin-text-color)] text-center" id="sms-tab">
+            短信验证码登录
+          </button>
+        </div>
+
+        <!-- 账号密码登录表单 -->
+        <div id="account-login" class="space-y-4">
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">手机号/邮箱</label>
+            <div class="relative">
+              <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text"
+                class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入手机号或邮箱">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">密码</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="password"
+                class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入密码">
+              <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <i class="fas fa-eye-slash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 短信登录表单 (默认隐藏) -->
+        <div id="sms-login" class="space-y-4 hidden">
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">手机号</label>
+            <div class="relative">
+              <i class="fas fa-mobile-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="tel"
+                class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入手机号">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">验证码</label>
+            <div class="relative">
+              <i class="fas fa-sms absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text"
+                class="input-field w-full pl-10 pr-28 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入验证码">
+              <button
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-[var(--niuyin-primary-color)] hover:underline">获取验证码</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between my-4">
+          <div class="flex items-center">
+            <input type="checkbox" id="remember"
+              class="rounded border-[var(--niuyin-border-color)] text-[var(--niuyin-primary-color)] focus:ring-[var(--niuyin-primary-color)]">
+            <label for="remember" class="ml-2 block text-sm text-[var(--niuyin-text-color)]">自动登录</label>
+          </div>
+          <a href="#" class="text-sm text-[var(--niuyin-primary-color)] hover:underline">忘记密码?</a>
+        </div>
+
+        <button
+          class="w-full py-3 px-4 rounded-lg bg-[var(--niuyin-primary-color)] text-white font-medium hover:bg-opacity-90 transition mb-4">
+          登录
+        </button>
+
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-[var(--niuyin-border-color)]"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)]">其他登录方式</span>
+          </div>
+        </div>
+
+        <div class="flex justify-center space-x-4 mb-6">
+          <button class="p-3 rounded-full bg-[var(--niuyin-icon-bg)] hover:bg-opacity-80 transition">
+            <i class="fab fa-weixin text-green-500 text-xl"></i>
+          </button>
+          <button class="p-3 rounded-full bg-[var(--niuyin-icon-bg)] hover:bg-opacity-80 transition">
+            <i class="fab fa-qq text-blue-400 text-xl"></i>
+          </button>
+          <button class="p-3 rounded-full bg-[var(--niuyin-icon-bg)] hover:bg-opacity-80 transition">
+            <i class="fab fa-weibo text-red-500 text-xl"></i>
+          </button>
+        </div>
+
+        <div class="text-center text-sm text-[var(--niuyin-text-color)]">
+          还没有账号？<button onclick="showRegisterForm()"
+            class="text-[var(--niuyin-primary-color)] hover:underline font-medium">立即注册</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 注册表单 (弹窗形式) -->
+    <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="bg-[var(--niuyin-bg-color)] rounded-2xl max-w-md w-full mx-4 p-6 relative">
+        <button onclick="hideRegisterForm()"
+          class="absolute top-4 right-4 text-gray-500 hover:text-[var(--niuyin-text-color)]">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <h2 class="text-2xl font-bold text-[var(--niuyin-text-color)] mb-6">加入芝士学爆</h2>
+
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">手机号</label>
+            <div class="relative">
+              <i class="fas fa-mobile-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="tel"
+                class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入手机号">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">验证码</label>
+            <div class="relative">
+              <i class="fas fa-sms absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text"
+                class="input-field w-full pl-10 pr-28 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请输入验证码">
+              <button
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-[var(--niuyin-primary-color)] hover:underline">获取验证码</button>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">密码</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="password"
+                class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+                placeholder="请设置6-20位密码">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-[var(--niuyin-text-color)]">邀请码(选填)</label>
+            <input type="text"
+              class="input-field w-full pl-3 pr-4 py-3 rounded-lg border border-[var(--niuyin-border-color)] bg-[var(--niuyin-bg-color)] text-[var(--niuyin-text-color)] focus:outline-none"
+              placeholder="请输入邀请码">
+          </div>
+
+          <div class="flex items-start">
+            <input type="checkbox" id="register-agreement"
+              class="mt-1 rounded border-[var(--niuyin-border-color)] text-[var(--niuyin-primary-color)] focus:ring-[var(--niuyin-primary-color)]">
+            <label for="register-agreement" class="ml-2 block text-sm text-[var(--niuyin-text-color)]">
+              我已阅读并同意<span class="text-[var(--niuyin-primary-color)] hover:underline cursor-pointer">《用户协议》</span>和<span
+                class="text-[var(--niuyin-primary-color)] hover:underline cursor-pointer">《隐私政策》</span>
+            </label>
+          </div>
+
+          <button
+            class="w-full py-3 px-4 rounded-lg bg-[var(--niuyin-primary-color)] text-white font-medium hover:bg-opacity-90 transition mt-4">
+            注册
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 切换登录方式
+    function switchLoginMethod(method) {
+      const accountTab = document.getElementById('account-tab');
+      const smsTab = document.getElementById('sms-tab');
+      const accountLogin = document.getElementById('account-login');
+      const smsLogin = document.getElementById('sms-login');
+
+      if (method === 'account') {
+        accountTab.classList.add('active');
+        smsTab.classList.remove('active');
+        accountLogin.classList.remove('hidden');
+        smsLogin.classList.add('hidden');
+      } else {
+        accountTab.classList.remove('active');
+        smsTab.classList.add('active');
+        accountLogin.classList.add('hidden');
+        smsLogin.classList.remove('hidden');
+      }
+    }
+
+    // 显示注册表单
+    function showRegisterForm() {
+      document.getElementById('register-modal').classList.remove('hidden');
+    }
+
+    // 隐藏注册表单
+    function hideRegisterForm() {
+      document.getElementById('register-modal').classList.add('hidden');
+    }
+  </script>
+</body>
+
+</html>
