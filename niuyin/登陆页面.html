@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芝士学爆 - 让学习像刷视频一样简单</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--niuyin-primary-color)',
+                        text: 'var(--niuyin-text-color)',
+                        border: 'var(--niuyin-border-color)',
+                        iconbg: 'var(--niuyin-icon-bg)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --niuyin-text-color: #333;
+            --niuyin-border-color: #e0e0e0;
+            --niuyin-primary-color: #3b82f6;
+            --niuyin-icon-bg: rgba(59, 130, 246, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --niuyin-text-color: #f0f0f0;
+                --niuyin-border-color: #444;
+                --niuyin-primary-color: #2563eb;
+                --niuyin-icon-bg: rgba(37, 99, 235, 0.2);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #0c1a29, #111827);
+        }
+
+        .card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-active {
+            position: relative;
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--niuyin-primary-color);
+            border-radius: 3px;
+        }
+
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary {
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .social-btn {
+            transition: all 0.2s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .ai-feature {
+            transition: all 0.3s ease;
+        }
+
+        .ai-feature:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-[var(--niuyin-text-color)]">
+    <div class="w-full max-w-6xl mx-auto">
+        <!-- 模拟浏览器窗口 -->
+        <div class="rounded-xl border border-[var(--niuyin-border-color)] overflow-hidden shadow-2xl" style="margin: 1rem;">
+            <!-- 浏览器顶部栏 -->
+            <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 border-b border-[var(--niuyin-border-color)]">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div class="flex-1 mx-4">
+                    <div class="bg-gray-200 dark:bg-gray-700 rounded-lg py-1 px-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                        zhishixuebao.com
+                    </div>
+                </div>
+                <div class="w-8"></div>
+            </div>
+            
+            <!-- 主内容区 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 bg-white dark:bg-gray-900">
+                <!-- 左侧品牌展示区 -->
+                <div class="p-10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center mb-8">
+                            <div class="w-10 h-10 rounded-lg bg-[var(--niuyin-primary-color)] flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-white text-xl"></i>
+                            </div>
+                            <h1 class="text-2xl font-bold ml-3">芝士学爆</h1>
+                        </div>
+                        
+                        <h2 class="text-3xl font-bold mb-4">让学习像刷视频一样简单</h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-8">
+                            芝士学爆是专为年轻人打造的视频学习平台，结合AI智能助手，让知识获取更高效、更有趣
+                        </p>
+                        
+                        <!-- AI功能展示 -->
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div class="ai-feature bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-[var(--niuyin-border-color)]">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--niuyin-icon-bg)] flex items-center justify-center mb-3">
+                                    <i class="fas fa-comment text-[var(--niuyin-primary-color)]"></i>
+                                </div>
+                                <h3 class="font-semibold">AI对话</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">随时解答学习问题</p>
+                            </div>
+                            <div class="ai-feature bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-[var(--niuyin-border-color)]">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--niuyin-icon-bg)] flex items-center justify-center mb-3">
+                                    <i class="fas fa-image text-[var(--niuyin-primary-color)]"></i>
+                                </div>
+                                <h3 class="font-semibold">AI生图</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">可视化知识概念</p>
+                            </div>
+                            <div class="ai-feature bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-[var(--niuyin-border-color)]">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--niuyin-icon-bg)] flex items-center justify-center mb-3">
+                                    <i class="fas fa-video text-[var(--niuyin-primary-color)]"></i>
+                                </div>
+                                <h3 class="font-semibold">AI生视频</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">动态学习内容生成</p>
+                            </div>
+                            <div class="ai-feature bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-[var(--niuyin-border-color)]">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--niuyin-icon-bg)] flex items-center justify-center mb-3">
+                                    <i class="fas fa-brain text-[var(--niuyin-primary-color)]"></i>
+                                </div>
+                                <h3 class="font-semibold">智能推荐</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">个性化学习路径</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户评价 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-[var(--niuyin-border-color)]">
+                        <div class="flex items-center mb-3">
+                            <div class="flex -space-x-2">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="User" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="User" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="User" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800">
+                            </div>
+                            <div class="ml-3">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <p class="text-sm mt-1">已有超过 500,000+ 学员加入</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 italic">"芝士学爆让我的学习效率提升了3倍，AI助教解答问题太方便了！"</p>
+                    </div>
+                </div>
+                
+                <!-- 右侧登录/注册区 -->
+                <div class="p-10">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold">欢迎来到芝士学爆</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mt-2">开启你的高效学习之旅</p>
+                    </div>
+                    
+                    <!-- 登录/注册切换 -->
+                    <div class="flex border-b border-[var(--niuyin-border-color)] mb-8">
+                        <button id="login-tab" class="flex-1 py-3 font-medium tab-active">登录</button>
+                        <button id="register-tab" class="flex-1 py-3 font-medium text-gray-500 dark:text-gray-400">注册</button>
+                    </div>
+                    
+                    <!-- 登录表单 -->
+                    <div id="login-form">
+                        <!-- 登录方式切换 -->
+                        <div class="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 mb-6">
+                            <button id="pwd-login" class="flex-1 py-2 rounded-lg bg-white dark:bg-gray-700 font-medium shadow-sm">密码登录</button>
+                            <button id="sms-login" class="flex-1 py-2 rounded-lg font-medium text-gray-500 dark:text-gray-400">短信登录</button>
+                        </div>
+                        
+                        <!-- 密码登录表单 -->
+                        <div id="password-form">
+                            <div class="mb-5">
+                                <label class="block text-sm font-medium mb-2">手机号/邮箱</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                        <i class="far fa-user"></i>
+                                    </div>
+                                    <input type="text" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="请输入手机号或邮箱">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-5">
+                                <label class="block text-sm font-medium mb-2">密码</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <input type="password" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="请输入密码">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <i class="far fa-eye-slash text-gray-500 cursor-pointer"></i>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end mt-2">
+                                    <a href="#" class="text-sm text-[var(--niuyin-primary-color)] hover:underline">忘记密码?</a>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full py-3 rounded-lg bg-[var(--niuyin-primary-color)] text-white font-medium btn-primary">
+                                登录
+                            </button>
+                        </div>
+                        
+                        <!-- 短信登录表单 (默认隐藏) -->
+                        <div id="sms-form" class="hidden">
+                            <div class="mb-5">
+                                <label class="block text-sm font-medium mb-2">手机号</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <input type="text" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="请输入手机号">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-5">
+                                <label class="block text-sm font-medium mb-2">验证码</label>
+                                <div class="flex gap-3">
+                                    <div class="relative flex-1">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                            <i class="fas fa-sms"></i>
+                                        </div>
+                                        <input type="text" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="请输入验证码">
+                                    </div>
+                                    <button class="px-4 py-3 rounded-lg bg-[var(--niuyin-icon-bg)] text-[var(--niuyin-primary-color)] font-medium whitespace-nowrap">
+                                        获取验证码
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full py-3 rounded-lg bg-[var(--niuyin-primary-color)] text-white font-medium btn-primary">
+                                登录
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 注册表单 (默认隐藏) -->
+                    <div id="register-form" class="hidden">
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium mb-2">用户名</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                    <i class="far fa-user"></i>
+                                </div>
+                                <input type="text" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="设置你的用户名">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium mb-2">手机号</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <input type="text" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="请输入手机号">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium mb-2">设置密码</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="设置登录密码">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">确认密码</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" class="w-full pl-10 pr-3 py-3 rounded-lg border border-[var(--niuyin-border-color)] input-field focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="再次输入密码">
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" class="w-4 h-4 rounded border-[var(--niuyin-border-color)] focus:ring-blue-500">
+                            </div>
+                            <label class="ml-2 text-sm">
+                                我已阅读并同意 <a href="#" class="text-[var(--niuyin-primary-color)] hover:underline">《用户协议》</a> 和 <a href="#" class="text-[var(--niuyin-primary-color)] hover:underline">《隐私政策》</a>
+                            </label>
+                        </div>
+                        
+                        <button class="w-full py-3 rounded-lg bg-[var(--niuyin-primary-color)] text-white font-medium btn-primary">
+                            注册
+                        </button>
+                    </div>
+                    
+                    <!-- 其他登录方式 -->
+                    <div class="relative my-8">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-[var(--niuyin-border-color)]"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white dark:bg-gray-900 text-gray-500">其他登录方式</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center gap-4">
+                        <button class="social-btn w-12 h-12 rounded-full bg-[var(--niuyin-icon-bg)] flex items-center justify-center">
+                            <i class="fab fa-weixin text-green-500 text-xl"></i>
+                        </button>
+                        <button class="social-btn w-12 h-12 rounded-full bg-[var(--niuyin-icon-bg)] flex items-center justify-center">
+                            <i class="fab fa-qq text-blue-500 text-xl"></i>
+                        </button>
+                        <button class="social-btn w-12 h-12 rounded-full bg-[var(--niuyin-icon-bg)] flex items-center justify-center">
+                            <i class="fab fa-weibo text-red-500 text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 登录/注册切换
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('register-form').classList.add('hidden');
+            this.classList.add('tab-active');
+            document.getElementById('register-tab').classList.remove('tab-active');
+        });
+
+        document.getElementById('register-tab').addEventListener('click', function() {
+            document.getElementById('register-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            this.classList.add('tab-active');
+            document.getElementById('login-tab').classList.remove('tab-active');
+        });
+
+        // 登录方式切换
+        document.getElementById('pwd-login').addEventListener('click', function() {
+            document.getElementById('password-form').classList.remove('hidden');
+            document.getElementById('sms-form').classList.add('hidden');
+            this.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm');
+            document.getElementById('sms-login').classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm');
+        });
+
+        document.getElementById('sms-login').addEventListener('click', function() {
+            document.getElementById('sms-form').classList.remove('hidden');
+            document.getElementById('password-form').classList.add('hidden');
+            this.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm');
+            document.getElementById('pwd-login').classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm');
+        });
+    </script>
+</body>
+</html>

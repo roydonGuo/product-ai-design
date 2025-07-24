@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Chat - 优雅的即时通讯应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: #1a1a1a;
+        }
+        
+        .app-container {
+            width: 1920px;
+            height: 1080px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            position: relative;
+        }
+        
+        .sidebar {
+            width: 380px;
+            background: white;
+            border-right: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+        }
+        
+        .info-panel {
+            width: 380px;
+            background: white;
+            border-left: 1px solid #f1f5f9;
+        }
+        
+        .avatar {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 14px 18px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .message-sent {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+        
+        .message-received {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+        
+        .contact-item:hover {
+            background-color: #f8fafc;
+            transform: translateY(-2px);
+        }
+        
+        .input-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .input-box:focus-within {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .active-contact {
+            background-color: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .unread-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.5s infinite;
+        }
+        
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <!-- 用户信息 -->
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=80&h=80&q=80" 
+                             class="avatar w-14 h-14">
+                        <span class="online-indicator"></span>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-lg font-semibold">张明</h2>
+                        <p class="text-slate-500 text-sm">在线</p>
+                    </div>
+                    <div class="ml-auto flex space-x-3">
+                        <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                            <i class="ri-notification-3-line text-xl"></i>
+                        </button>
+                        <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                            <i class="ri-settings-3-line text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="px-5 py-4">
+                <div class="relative">
+                    <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="搜索联系人" 
+                           class="w-full py-2 pl-10 pr-4 bg-slate-50 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <!-- 联系人列表 -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-3 py-2">
+                    <h3 class="text-sm font-medium text-slate-500 px-2 py-1">最近聊天</h3>
+                    
+                    <!-- 联系人项 -->
+                    <div class="contact-item active-contact rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                            <span class="online-indicator"></span>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between">
+                                <h4 class="font-semibold truncate">李明轩</h4>
+                                <span class="text-xs text-slate-500">10:45</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class="text-slate-500 text-sm truncate">会议安排在明天下午2点</p>
+                                <span class="unread-badge w-5 h-5 flex items-center justify-center rounded-full text-xs text-white">3</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between">
+                                <h4 class="font-semibold truncate">设计团队</h4>
+                                <span class="text-xs text-slate-500">09:22</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class="text-slate-500 text-sm truncate">王思思: 新设计稿已上传</p>
+                                <span class="unread-badge w-5 h-5 flex items-center justify-center rounded-full text-xs text-white">12</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0e1607d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between">
+                                <h4 class="font-semibold truncate">赵晓雯</h4>
+                                <span class="text-xs text-slate-500">昨天</span>
+                            </div>
+                            <p class="text-slate-500 text-sm truncate">好的，我会尽快完成</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                            <span class="online-indicator"></span>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between">
+                                <h4 class="font-semibold truncate">陈伟</h4>
+                                <span class="text-xs text-slate-500">昨天</span>
+                            </div>
+                            <p class="text-slate-500 text-sm truncate">项目进展顺利</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-sm font-medium text-slate-500 px-2 py-3 mt-4">所有联系人</h3>
+                    
+                    <div class="contact-item rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <h4 class="font-semibold truncate">技术部</h4>
+                            <p class="text-slate-500 text-sm truncate">12名成员</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item rounded-lg p-3 flex items-center cursor-pointer transition mb-1">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                                 class="avatar w-12 h-12">
+                            <span class="online-indicator"></span>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <h4 class="font-semibold truncate">林雨欣</h4>
+                            <p class="text-slate-500 text-sm truncate">产品经理</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中央聊天区域 -->
+        <div class="chat-area">
+            <!-- 聊天对象信息 -->
+            <div class="border-b border-slate-100 bg-white py-4 px-6 flex items-center">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&h=64&q=80" 
+                         class="avatar w-12 h-12">
+                    <span class="online-indicator"></span>
+                </div>
+                <div class="ml-4">
+                    <h2 class="font-semibold">李明轩</h2>
+                    <div class="typing-indicator">
+                        <span>在线</span>
+                        <div class="ml-2 flex">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto flex space-x-3">
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-phone-line text-xl"></i>
+                    </button>
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-vidicon-line text-xl"></i>
+                    </button>
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-information-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 聊天消息区域 -->
+            <div class="flex-1 overflow-y-auto p-6 flex flex-col">
+                <!-- 日期分隔 -->
+                <div class="text-center text-sm text-slate-500 my-4">今天</div>
+                
+                <!-- 接收的消息 -->
+                <div class="message-bubble message-received">
+                    <p>你好，项目进展如何？</p>
+                    <div class="message-time mt-1 text-right">10:30</div>
+                </div>
+                
+                <!-- 发送的消息 -->
+                <div class="message-bubble message-sent">
+                    <p>一切顺利，我已经完成了前端界面的设计</p>
+                    <div class="message-time mt-1 text-right">10:32</div>
+                </div>
+                
+                <div class="message-bubble message-received">
+                    <p>太好了！你能发一些截图给我看看吗？</p>
+                    <div class="message-time mt-1 text-right">10:33</div>
+                </div>
+                
+                <div class="message-bubble message-sent">
+                    <p>当然，稍等</p>
+                    <div class="message-time mt-1 text-right">10:33</div>
+                </div>
+                
+                <!-- 图片消息 -->
+                <div class="message-bubble message-sent">
+                    <div class="flex space-x-2 mb-2">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                    </div>
+                    <p>这是部分设计截图</p>
+                    <div class="message-time mt-1 text-right">10:35</div>
+                </div>
+                
+                <div class="message-bubble message-received">
+                    <p>看起来很棒！特别是聊天界面的设计，非常现代</p>
+                    <div class="message-time mt-1 text-right">10:40</div>
+                </div>
+                
+                <div class="message-bubble message-sent">
+                    <p>谢谢！我使用了柔和的渐变和精心设计的留白，确保用户体验优雅而高效</p>
+                    <div class="message-time mt-1 text-right">10:42</div>
+                </div>
+                
+                <div class="message-bubble message-received">
+                    <p>我们明天下午2点有个会议讨论最终方案，你能参加吗？</p>
+                    <div class="message-time mt-1 text-right">10:45</div>
+                </div>
+                
+                <!-- 用户正在输入 -->
+                <div class="typing-indicator mt-4 ml-2">
+                    <span>李明轩正在输入</span>
+                    <div class="ml-2 flex">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 消息输入区域 -->
+            <div class="border-t border-slate-100 bg-white p-4">
+                <div class="input-box flex items-center px-4 py-2">
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-emotion-happy-line text-xl"></i>
+                    </button>
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-attachment-2 text-xl"></i>
+                    </button>
+                    <input type="text" placeholder="输入消息..." 
+                           class="flex-1 px-3 py-2 focus:outline-none">
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                        <i class="ri-mic-line text-xl"></i>
+                    </button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 transition">
+                        <i class="ri-send-plane-fill text-xl text-white"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧信息面板 -->
+        <div class="info-panel">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex flex-col items-center">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=96&h=96&q=80" 
+                         class="avatar w-24 h-24 mb-4">
+                    <h2 class="font-semibold text-xl">李明轩</h2>
+                    <p class="text-slate-500">UI/UX设计师</p>
+                    <div class="mt-4 flex space-x-3">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100 transition">
+                            <i class="ri-phone-line text-blue-500"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100 transition">
+                            <i class="ri-vidicon-line text-blue-500"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100 transition">
+                            <i class="ri-mail-line text-blue-500"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="font-medium text-slate-700 mb-3">详细信息</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs text-slate-500">邮箱</p>
+                        <p class="text-sm">limingxuan@example.com</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">电话</p>
+                        <p class="text-sm">+86 138 8888 6666</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">位置</p>
+                        <p class="text-sm">上海市浦东新区</p>
+                    </div>
+                </div>
+                
+                <h3 class="font-medium text-slate-700 mt-6 mb-3">共享文件</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="ri-file-pdf-line text-blue-500 text-lg"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium truncate">设计方案.pdf</p>
+                            <p class="text-xs text-slate-500">2.4 MB • 昨天</p>
+                        </div>
+                        <button class="ml-auto w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                            <i class="ri-download-line"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="ri-image-line text-blue-500 text-lg"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium truncate">界面截图.png</p>
+                            <p class="text-xs text-slate-500">1.2 MB • 今天</p>
+                        </div>
+                        <button class="ml-auto w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                            <i class="ri-download-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
