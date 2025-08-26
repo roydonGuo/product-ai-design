@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>珠海长安口腔</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Remix Icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#60A5FA',
+            light: '#BFDBFE',
+            dark: '#1E40AF'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 导入字体 */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+    /* 配色方案 
+     * 主背景色: #f8fafc (浅灰蓝色背景，低饱和度)
+     * 主文字色: #334155 (深灰蓝色文字，易读性强)
+     * 点缀色: #7c3aed (柔和的紫色，活力但不刺眼)
+     * 次要文字色: #64748b (中灰色，用于次要信息)
+     */
+
+    body {
+      font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      min-height: 100vh;
+      color: #334155;
+    }
+
+    /* 状态栏样式 */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      font-size: 12px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #334155;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    }
+
+    /* 玻璃拟态效果 */
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-gradient {
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    }
+
+    .input-focus:focus {
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+      border-color: #7c3aed;
+    }
+
+    .btn-primary {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #6d28d9, #7c3aed);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-secondary {
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(226, 232, 240, 0.7);
+      color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-active {
+      border-bottom: 3px solid #3B82F6;
+      color: #3B82F6;
+      font-weight: 600;
+    }
+
+    .message-bubble {
+      border-radius: 18px;
+      max-width: 80%;
+    }
+
+    .user-message {
+      background: linear-gradient(135deg, #3B82F6, #60A5FA);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .admin-message {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    div::-webkit-scrollbar {
+      z-index: 10;
+      cursor: pointer;
+      overflow: hidden;
+      width: 6px;
+      height: 1px;
+    }
+
+    div::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    div::-webkit-scrollbar-thumb {
+      background: gray;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    div::-webkit-scrollbar-corner {
+      display: none;
+    }
+
+    div::-webkit-resizer {
+      display: none;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 30px -10px rgba(124, 58, 237, 0.1);
+      transform: translateY(-5px);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+      margin: 8px 0;
+    }
+
+    .icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      margin-right: 16px;
+      color: #3b82f6;
+      font-size: 20px;
+    }
+
+    .bounce {
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+
+    /* 新增导航栏样式 - 玻璃拟态效果 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(255, 255, 255, 0.85);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.03);
+      padding: 0 10px;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 20%;
+      height: 100%;
+      color: #64748b;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .nav-item.active {
+      color: #7c3aed;
+      transform: translateY(-5px);
+    }
+
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 12px;
+      width: 6px;
+      height: 6px;
+      background-color: #7c3aed;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+      transition: all 0.3s ease;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover .nav-icon {
+      transform: scale(1.1);
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .content-container {
+      /* 减去状态栏和导航栏高度 */
+      overflow-y: auto;
+      padding-bottom: 70px;
+      /* 为导航栏留出空间 */
+      padding-top: 10px;
+      scroll-behavior: smooth;
+    }
+
+    /* 滚动条美化 */
+    .content-container::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .content-container::-webkit-scrollbar-track {
+      background: rgba(241, 245, 249, 0.5);
+    }
+    
+    .content-container::-webkit-scrollbar-thumb {
+      background-color: rgba(124, 58, 237, 0.2);
+      border-radius: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      border-radius: 16px;
+      padding: 4px;
+      background: rgba(241, 245, 249, 0.5);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      margin: 0 16px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      color: #64748b;
+    }
+    
+    .tab.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: #7c3aed;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
+    }
+
+    .tab.active {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+      border-bottom: 3px solid #3B82F6;
+      color: #3B82F6;
+      font-weight: 600;
+    }
+
+    .qr-code {
+      width: 120px;
+      height: 120px;
+      background: #f8fafc;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: block;
+      width: 100%;
+      border: none;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    .btn:active::after {
+      animation: ripple 0.6s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 15px -3px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 20px -4px rgba(124, 58, 237, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: none;
+      background: rgba(241, 245, 249, 0.5);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+      color: #334155;
+    }
+
+    .form-control:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.01);
+      transform: translateY(-1px);
+    }
+    
+    .form-control::placeholder {
+      color: #94a3b8;
+      font-weight: 300;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .status-pending {
+      background: rgba(124, 58, 237, 0.1);
+      color: #7c3aed;
+      border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .status-used {
+      background: rgba(100, 116, 139, 0.1);
+      color: #64748b;
+      border: 1px solid rgba(100, 116, 139, 0.2);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(226, 232, 240, 0.7), transparent);
+      margin: 20px 0;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+        filter: blur(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    
+    .scale-in {
+      animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .coupon-bg {
+      background: linear-gradient(135deg, #dbeafe 0%, #d1e0ff 100%);
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coupon-bg:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+    }
+
+    .coupon-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #3b82f6;
+      margin: 8px 0;
+    }
+
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      margin-right: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 手机设备模拟框 -->
+  <div class="phone-frame">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div>9:41</div>
+      <div class="flex items-center space-x-1">
+        <i class="ri-signal-wifi-line"></i>
+        <i class="ri-signal-tower-line"></i>
+        <i class="ri-battery-line"></i>
+      </div>
+    </div>
+
+    <div class="content-container">
+
+      <!-- 报告页面 -->
+      <div class="page-content" id="report-page">
+        <!-- <div class="header-gradient text-white p-4 rounded-b-2xl shadow-md">
+          <h1 class="text-xl font-bold mb-2">检查报告</h1>
+          <p class="opacity-80 text-sm">查看您的检查报告</p>
+        </div> -->
+        <div>
+          <!-- 报告页面内容 -->
+          <img src="./report-query.png" class="w-full">
+        </div>
+      </div>
+
+      <!-- 咨询页面 -->
+      <div class="page-content hidden" id="consult-page">
+        <!-- <div class="header-gradient text-white p-4 rounded-b-2xl shadow-md">
+          <h1 class="text-xl font-bold mb-2">在线咨询</h1>
+          <p class="opacity-80 text-sm">专业医师在线解答您的问题</p>
+        </div> -->
+        <div>
+          <!-- 内容区域 -->
+          <!-- 标签切换 -->
+          <div class="flex border-b border-gray-200">
+            <button id="consult-tab" class="flex-1 py-3 text-center font-medium tab-active">发起咨询</button>
+            <button id="query-tab" class="flex-1 py-3 text-center font-medium text-gray-500">查询记录</button>
+          </div>
+
+          <!-- 咨询表单 -->
+          <div id="consult-form">
+            <div class="card glass-effect rounded-xl p-4 mb-4">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                  <div class="relative">
+                    <i class="ri-user-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" class="form-control w-full pl-10 pr-4 py-3 rounded-lg"
+                      placeholder="请输入您的姓名">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">联系方式</label>
+                  <div class="relative">
+                    <i class="ri-phone-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="tel" class="form-control w-full pl-10 pr-4 py-3 rounded-lg"
+                      placeholder="手机号或邮箱">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">咨询标题</label>
+                  <div class="relative">
+                    <i class="ri-question-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" class="form-control w-full pl-10 pr-4 py-3 rounded-lg"
+                      placeholder="简要描述您的问题">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">详细内容</label>
+                  <div class="relative">
+                    <i class="ri-file-text-line absolute left-3 top-4 text-gray-400"></i>
+                    <textarea class="form-control w-full pl-10 pr-4 py-3 rounded-lg h-32"
+                      placeholder="请详细描述您的问题..."></textarea>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">上传图片</label>
+                  <div
+                    class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-purple-300 transition-all glass-effect backdrop-blur-sm hover:transform hover:scale-[1.01]">
+                    <i class="ri-image-add-line text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-500">点击或拖拽图片到此处</p>
+                    <p class="text-sm text-gray-400 mt-1">支持 JPG, PNG 格式，大小不超过 5MB</p>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary w-full py-3 rounded-xl text-white font-medium mt-6 shadow-md">提交咨询</button>
+            </div>
+
+            <div class="card glass-effect rounded-xl p-6">
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">常见问题</h2>
+
+              <div class="space-y-3">
+                <div class="flex items-start">
+                  <div class="bg-blue-50 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                    <i class="ri-question-line text-blue-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-medium text-gray-900">如何查看咨询进度？</h3>
+                    <p class="text-gray-600 text-sm mt-1">提交咨询后，您可通过联系方式查询回复情况</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="bg-blue-50 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                    <i class="ri-question-line text-blue-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-medium text-gray-900">一般多久能得到回复？</h3>
+                    <p class="text-gray-600 text-sm mt-1">工作日24小时内回复，节假日顺延至下一个工作日</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="bg-blue-50 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                    <i class="ri-question-line text-blue-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-medium text-gray-900">可以上传哪些附件？</h3>
+                    <p class="text-gray-600 text-sm mt-1">支持图片，单个文件不超过5MB</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 查询记录 -->
+          <div id="query-records" class="hidden">
+            <div class="card bg-white rounded-xl p-4 mb-4">
+
+              <div class="space-y-4 mb-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">联系方式</label>
+                  <div class="relative">
+                    <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus"
+                      placeholder="请输入您的手机号">
+                  </div>
+                </div>
+                <div>
+                  <!-- 验证码 -->
+                  <label class="block text-sm font-medium text-gray-700 mb-1">手机验证码</label>
+                  <div class="relative">
+                    <i class="ri-lock-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus"
+                      placeholder="请输入验证码">
+                    <button
+                      class="absolute right-0 top-0 bottom-0 px-4 bg-gray-100 text-gray-500 rounded-r-lg">获取验证码</button>
+                  </div>
+                </div>
+              </div>
+              <button class="btn-primary w-full py-3 rounded-xl text-white font-medium shadow-md">查询记录</button>
+            </div>
+
+            <div class="space-y-6">
+              <!-- 咨询记录卡片 -->
+              <div class="card bg-white rounded-xl p-5 fade-in">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-gray-900">订单支付问题咨询</h3>
+                    <p class="text-gray-500 text-sm mt-1">2023-11-15 14:23</p>
+                  </div>
+                  <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">已回复</span>
+                </div>
+
+                <div class="mt-4 text-gray-700">
+                  <p>您好，我在昨天下午3点支付的订单，支付成功后页面没有跳转，但银行卡已经扣款了，请问这是什么情况？</p>
+                </div>
+
+                <div class="flex mt-4">
+                  <img src="https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=150"
+                    class="w-20 h-20 rounded-lg object-cover mr-2">
+                </div>
+
+                <!-- 回复内容 -->
+                <div class="mt-5 pt-4 border-t border-gray-100">
+                  <div class="flex items-center mb-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                      <i class="ri-customer-service-2-line text-blue-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-900">客服回复</span>
+                  </div>
+
+                  <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-gray-700">您好，经查询您的订单支付成功，系统由于网络延迟未及时更新状态。我们已为您手动处理，订单已确认，商品将在24小时内发货。给您带来不便深表歉意！
+                    </p>
+                    <p class="text-gray-500 text-sm mt-3">2023-11-15 16:45</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card bg-white rounded-xl p-5 fade-in">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-gray-900">产品功能咨询</h3>
+                    <p class="text-gray-500 text-sm mt-1">2023-11-10 09:12</p>
+                  </div>
+                  <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">已回复</span>
+                </div>
+
+                <div class="mt-4 text-gray-700">
+                  <p>请问专业版和企业版在API调用次数上有什么区别？另外企业版是否支持自定义域名？</p>
+                </div>
+
+                <!-- 回复内容 -->
+                <div class="mt-5 pt-4 border-t border-gray-100">
+                  <div class="flex items-center mb-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                      <i class="ri-customer-service-2-line text-blue-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-900">客服回复</span>
+                  </div>
+
+                  <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-gray-700">
+                      您好，专业版每月包含50万次API调用，企业版为500万次。企业版支持完全自定义域名，并可配置SSL证书。如有更多需求，我们的客户经理可以为您提供详细方案。</p>
+                    <p class="text-gray-500 text-sm mt-3">2023-11-10 11:30</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card bg-white rounded-xl p-5 fade-in">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-gray-900">发票申请问题</h3>
+                    <p class="text-gray-500 text-sm mt-1">2023-11-05 16:45</p>
+                  </div>
+                  <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">处理中</span>
+                </div>
+
+                <div class="mt-4 text-gray-700">
+                  <p>我在11月1日提交了发票申请，目前还未收到电子发票，请问大概需要多长时间？</p>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-gray-100">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                      <i class="ri-time-line text-gray-600"></i>
+                    </div>
+                    <span class="text-gray-600">您的咨询正在处理中，请耐心等待...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 预约页面 -->
+      <div class="page-content hidden" id="appointment-page">
+        <!-- <div class="header-gradient text-white p-4 rounded-b-2xl shadow-md">
+          <h1 class="text-xl font-bold mb-2">在线预约</h1>
+          <p class="opacity-80 text-sm">便捷预约，省去排队烦恼</p>
+        </div> -->
+        <div>
+          <!-- 预约页面内容 -->
+          <!-- 预约卡片容器 -->
+          <!-- 医生卡片 - 可预约 -->
+          <div class="card p-4 shadow-sm mb-4 border">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-xl text-gray-800">张明华 医生</h3>
+                <div class="flex items-center mt-2">
+                  <i class="ri-hospital-line text-blue-500 mr-2"></i>
+                  <span class="text-gray-600">心血管内科</span>
+                </div>
+              </div>
+              <span class="bg-blue-50 text-primary text-xs font-medium px-3 py-1 rounded-full">可预约</span>
+            </div>
+
+            <div class="mt-2 flex items-center text-gray-700">
+              <i class="ri-time-line text-blue-500 mr-2"></i>
+              <span class="text-sm font-medium">10:00 - 12:00</span>
+            </div>
+
+            <div class="mt-2">
+              <div class="flex justify-between text-sm text-gray-700">
+                <span>可预约: <span class="font-medium text-gray-900">8</span>/12</span>
+              </div>
+              <div class="slot-progress bg-gray-100 mt-2">
+                <div class="progress-bar" style="width: 66%"></div>
+              </div>
+            </div>
+
+            <button
+              class="ripple mt-4 w-full bg-gradient-to-r from-primary to-secondary hover:from-blue-500 hover:to-blue-400 text-white py-3 rounded-xl text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg">
+              立即预约
+            </button>
+          </div>
+
+          <!-- 医生卡片 - 可预约 -->
+          <div class="card p-5 shadow-sm mb-5 fade-in">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-xl text-gray-800">李静 医生</h3>
+                <div class="flex items-center mt-2">
+                  <i class="ri-hospital-line text-blue-500 mr-2"></i>
+                  <span class="text-gray-600">神经内科</span>
+                </div>
+              </div>
+              <span class="bg-blue-50 text-primary text-xs font-medium px-3 py-1 rounded-full">可预约</span>
+            </div>
+
+            <div class="mt-2 flex items-center text-gray-700">
+              <i class="ri-time-line text-blue-500 mr-2"></i>
+              <span class="text-sm font-medium">14:30 - 16:30</span>
+            </div>
+
+            <div class="mt-2">
+              <div class="flex justify-between text-sm text-gray-700">
+                <span>可预约: <span class="font-medium text-gray-900">3</span>/10</span>
+              </div>
+              <div class="slot-progress bg-gray-100 mt-2">
+                <div class="progress-bar" style="width: 30%"></div>
+              </div>
+            </div>
+
+            <button
+              class="ripple mt-4 w-full bg-gradient-to-r from-primary to-secondary hover:from-blue-500 hover:to-blue-400 text-white py-3.5 rounded-xl text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg">
+              立即预约
+            </button>
+          </div>
+
+          <!-- 医生卡片 - 不可预约 -->
+          <div class="card p-5 shadow-sm mb-5 opacity-70 fade-in">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-xl text-gray-400">王建国 医生</h3>
+                <div class="flex items-center mt-2">
+                  <i class="ri-hospital-line text-gray-400 mr-2"></i>
+                  <span class="text-gray-400">骨科</span>
+                </div>
+              </div>
+              <span class="bg-gray-100 text-gray-400 text-xs font-medium px-3 py-1 rounded-full">已结束</span>
+            </div>
+
+            <div class="mt-2 flex items-center text-gray-400">
+              <i class="ri-time-line text-gray-400 mr-2"></i>
+              <span class="text-sm font-medium">09:00 - 11:00</span>
+            </div>
+
+            <div class="mt-2">
+              <div class="flex justify-between text-sm text-gray-400">
+                <span>可预约: <span class="font-medium">0</span>/8</span>
+              </div>
+              <div class="slot-progress bg-gray-200 mt-2">
+                <div class="progress-bar bg-gray-400" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <button
+              class="mt-4 w-full bg-gray-200 text-gray-400 py-3.5 rounded-xl text-base font-medium cursor-not-allowed">
+              已结束
+            </button>
+          </div>
+
+          <!-- 医生卡片 - 可预约 -->
+          <div class="card p-5 shadow-sm mb-5 fade-in">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-xl text-gray-800">陈晓琳 医生</h3>
+                <div class="flex items-center mt-2">
+                  <i class="ri-hospital-line text-blue-500 mr-2"></i>
+                  <span class="text-gray-600">儿科</span>
+                </div>
+              </div>
+              <span class="bg-blue-50 text-primary text-xs font-medium px-3 py-1 rounded-full">可预约</span>
+            </div>
+
+            <div class="mt-2 flex items-center text-gray-700">
+              <i class="ri-time-line text-blue-500 mr-2"></i>
+              <span class="text-sm font-medium">15:00 - 17:00</span>
+            </div>
+
+            <div class="mt-2">
+              <div class="flex justify-between text-sm text-gray-700">
+                <span>可预约: <span class="font-medium text-gray-900">5</span>/8</span>
+              </div>
+              <div class="slot-progress bg-gray-100 mt-2">
+                <div class="progress-bar" style="width: 62%"></div>
+              </div>
+            </div>
+
+            <button
+              class="ripple mt-4 w-full bg-gradient-to-r from-primary to-secondary hover:from-blue-500 hover:to-blue-400 text-white py-3.5 rounded-xl text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg">
+              立即预约
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 积分页面 -->
+      <div class="page-content hidden" id="points-page">
+        <!-- <div class="header-gradient text-white p-4 rounded-b-2xl shadow-md">
+          <h1 class="text-xl font-bold mb-2">我的积分</h1>
+          <p class="opacity-80 text-sm">查看和使用您的积分</p>
+        </div> -->
+        <!-- 主要内容 -->
+        <div>
+          <!-- 查询表单 -->
+          <div class="card bg-white rounded-2xl shadow-card mb-4 fade-in ">
+            <div class="mb-4">
+              <label class="block text-black font-medium mb-2">手机号码</label>
+              <div class="relative">
+                <input type="tel" placeholder="请输入手机号码"
+                  class="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                  value="13800138000">
+                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-500">
+                  <i class="ri-delete-back-line"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-black font-medium mb-2">验证码</label>
+              <div class="relative">
+                <i class="ri-lock-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus"
+                  placeholder="请输入验证码">
+                <button
+                  class="absolute right-0 top-0 bottom-0 px-4 bg-gray-100 text-gray-500 rounded-r-lg">获取验证码</button>
+              </div>
+            </div>
+
+            <button class="btn-primary w-full py-3 rounded-xl text-white font-medium mt-6 shadow-md">查询积分</button>
+          </div>
+
+          <!-- 总积分卡片 -->
+          <div class="point-card rounded-2xl p-4 shadow-card mb-4 fade-in border bg-white m-4">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-black font-bold text-xl">当前总积分</h2>
+              <i class="ri-refresh-line text-gray-500"></i>
+            </div>
+
+            <div class="flex items-end justify-center mb-4">
+              <span class="text-4xl font-bold text-black">8,240</span>
+              <span class="text-gray-500 ml-2">积分</span>
+            </div>
+          </div>
+
+          <!-- 积分明细 -->
+          <div class="mb-4 card">
+            <h3 class="text-black font-bold text-lg mb-4">积分明细</h3>
+
+            <!-- 明细卡片 -->
+            <div class="space-y-4">
+              <!-- 增加记录 -->
+              <div class="point-card rounded-2xl p-4 fade-in border">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center mb-2">
+
+                      <div>
+                        <h4 class="text-black font-medium">每日签到奖励</h4>
+                        <p class="text-gray-500 text-sm">2023-08-18 08:12</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-green-600 font-bold">+10</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 增加记录 -->
+              <div class="point-card rounded-2xl p-4 fade-in border">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center mb-2">
+
+                      <div>
+                        <h4 class="text-black font-medium">购物消费返积分</h4>
+                        <p class="text-gray-500 text-sm">2023-08-17 19:30</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-green-600 font-bold">+200</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 减少记录 -->
+              <div class="point-card rounded-2xl p-4 fade-in border">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center mb-2">
+
+                      <div>
+                        <h4 class="text-black font-medium">积分兑换优惠券</h4>
+                        <p class="text-gray-500 text-sm">2023-08-16 14:22</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-rose-600 font-bold">-30</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 增加记录 -->
+              <div class="point-card rounded-2xl p-4 fade-in border">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center mb-2">
+
+                      <div>
+                        <h4 class="text-black font-medium">客服评价奖励</h4>
+                        <p class="text-gray-500 text-sm">2023-08-15 10:05</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-green-600 font-bold">+50</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡券页面 -->
+      <div class="page-content hidden" id="coupon-page">
+        <!-- <div class="header-gradient text-white p-4 rounded-b-2xl shadow-md">
+          <h1 class="text-xl font-bold mb-2">我的卡券</h1>
+          <p class="opacity-80 text-sm">管理您的优惠券和会员卡</p>
+        </div> -->
+        <div>
+          <!-- 卡券页面内容 -->
+          <!-- 顶部导航 -->
+          <div class="header">
+            <div class="tabs">
+              <div class="tab active" data-tab="buy">购买卡券</div>
+              <div class="tab" data-tab="my">我的卡券</div>
+            </div>
+          </div>
+
+          <!-- 购买卡券页面 -->
+          <div id="buy-tab" class="tab-content">
+            <div class="card fade-in">
+              <div class="card-header">
+                <div class="flex items-center">
+                  <div class="icon-circle">
+                    <i class="ri-coupon-2-line ri-lg"></i>
+                  </div>
+                  <div>
+                    <h2 class="font-semibold text-lg">洁牙护理券</h2>
+                    <p class="text-slate-500 text-sm mt-1">专业口腔护理服务</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="coupon-bg">
+                  <div class="coupon-value">¥ 120</div>
+                  <p class="text-slate-500 text-sm">售价: <span class="text-slate-800 font-medium">¥ 99</span></p>
+                </div>
+
+                <div class="mt-4">
+                  <span class="text-sm text-gray-500">可购买时间：2025-05-28 00:00:00 至 2031-06-27 00:00:00</span>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用期限</span>
+                    <span class="font-medium">不限</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用时段</span>
+                    <span class="font-medium">临时(3天后生效)</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-600">有效天数</span>
+                    <span class="font-medium">30天</span>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary mt-6">
+                  立即购买 <i class="ri-arrow-right-line ml-2"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card fade-in">
+              <div class="card-header">
+                <div class="flex items-center">
+                  <div class="icon-circle">
+                    <i class="ri-shopping-bag-line ri-lg"></i>
+                  </div>
+                  <div>
+                    <h2 class="font-semibold text-lg">通用优惠券</h2>
+                    <p class="text-slate-500 text-sm mt-1">全场商品通用</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="coupon-bg">
+                  <div class="coupon-value">¥ 50</div>
+                  <p class="text-slate-500 text-sm">售价: <span class="text-slate-800 font-medium">¥ 39</span></p>
+                </div>
+
+                <div class="mt-4">
+                  <span class="text-sm text-gray-500">可购买时间：2025-05-28 00:00:00 至 2031-06-27 00:00:00 </span>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用期限</span>
+                    <span class="font-medium">固定时间</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">生效日期</span>
+                    <span class="font-medium">2023-10-01</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-600">失效日期</span>
+                    <span class="font-medium">2023-12-31</span>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary mt-6">
+                  立即购买 <i class="ri-arrow-right-line ml-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 我的卡券页面 -->
+          <div id="my-tab" class="tab-content hidden">
+            <div class="card">
+              <div class="card-body">
+                <h3 class="font-semibold text-lg mb-4">查询我的卡券</h3>
+                <div class="form-group">
+                  <input type="tel" class="form-control" placeholder="请输入手机号码">
+                </div>
+                <div class="form-group">
+                  <div class="flex">
+                    <input type="text" class="form-control rounded-r-none" placeholder="请输入验证码">
+                    <button
+                      class="bg-blue-50 text-blue-500 font-medium px-4 rounded-r-lg border border-l-0 border-slate-200">获取验证码</button>
+                  </div>
+                </div>
+                <button class="btn btn-primary">查询卡券</button>
+              </div>
+            </div>
+
+            <div class="card fade-in">
+              <div class="card-header">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center">
+                    <div class="icon-circle">
+                      <i class="ri-coupon-2-line ri-lg"></i>
+                    </div>
+                    <div>
+                      <h2 class="font-semibold text-lg">洁牙护理券</h2>
+                      <p class="text-slate-500 text-sm mt-1">领取时间: 2023-09-15</p>
+                    </div>
+                  </div>
+                  <div class="status-badge status-pending">待使用</div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="coupon-bg">
+                  <div class="coupon-value">¥ 120</div>
+                </div>
+
+                <div class="mt-4">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用期限</span>
+                    <span class="font-medium">2023-10-01 至 2023-12-31</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用时段</span>
+                    <span class="font-medium">每天 10:00-20:00</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="card fade-in">
+              <div class="card-header">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center">
+                    <div class="icon-circle">
+                      <i class="ri-shopping-bag-line ri-lg"></i>
+                    </div>
+                    <div>
+                      <h2 class="font-semibold text-lg">通用优惠券</h2>
+                      <p class="text-slate-500 text-sm mt-1">领取时间: 2023-08-20</p>
+                    </div>
+                  </div>
+                  <div class="status-badge status-used">已使用</div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="coupon-bg">
+                  <div class="coupon-value">¥ 50</div>
+                </div>
+
+                <div class="mt-4">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用期限</span>
+                    <span class="font-medium">2023-08-25 至 2023-09-25</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-600">使用时间</span>
+                    <span class="font-medium">2023-09-10 14:30</span>
+                  </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="text-center py-4">
+                  <i class="ri-checkbox-circle-fill text-4xl text-green-400"></i>
+                  <p class="font-medium mt-2">已使用</p>
+                  <p class="text-slate-500 text-sm mt-1">2023-09-10 14:30</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav" id="bottom-nav">
+      <!-- 导航栏内容将通过JavaScript动态生成 -->
+    </div>
+
+    <!-- 预约模态框 -->
+    <div id="bookingModal"
+      class="modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-40 hidden z-50">
+      <div class="bg-white rounded-2xl w-full max-w-md p-6 transform transition-all scale-95 opacity-0">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">填写预约信息</h3>
+          <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="mb-6 p-4 bg-blue-50 rounded-xl">
+          <div class="flex items-center">
+            <i class="ri-user-3-line text-blue-500 text-xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-gray-800">张明华 医生</h4>
+              <div class="flex items-center text-sm text-gray-600 mt-1">
+                <i class="ri-hospital-line mr-2"></i>
+                <span>心血管内科</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center text-gray-700">
+            <i class="ri-time-line text-blue-500 mr-2"></i>
+            <span class="text-sm font-medium">10月25日 10:00 - 12:00</span>
+          </div>
+        </div>
+
+        <form id="bookingForm">
+          <div class="mb-5">
+            <label class="block text-gray-700 text-sm font-medium mb-2" for="name">姓名</label>
+            <div class="relative">
+              <i class="ri-user-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="name"
+                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary text-gray-800"
+                placeholder="请输入您的姓名">
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-medium mb-2" for="phone">手机号</label>
+            <div class="relative">
+              <i class="ri-smartphone-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="tel" id="phone"
+                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary text-gray-800"
+                placeholder="请输入您的手机号">
+            </div>
+          </div>
+
+          <div class="flex space-x-3">
+            <button type="button" id="cancelBtn"
+              class="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">
+              取消
+            </button>
+            <button type="submit"
+              class="ripple flex-1 bg-gradient-to-r from-primary to-secondary hover:from-blue-500 hover:to-blue-400 text-white py-3 rounded-xl font-medium shadow-md transition">
+              确认预约
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="successToast"
+      class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-5 py-3 rounded-full shadow-lg z-50 opacity-0 transition-opacity hidden">
+      <div class="flex items-center">
+        <i class="ri-check-line mr-2"></i>
+        <span>预约成功！</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 导航栏数据
+    const navItems = [
+      { id: 'report', icon: 'ri-file-chart-line', label: '报告', pageId: 'report-page' },
+      { id: 'consult', icon: 'ri-customer-service-line', label: '咨询', pageId: 'consult-page' },
+      { id: 'appointment', icon: 'ri-calendar-check-line', label: '预约', pageId: 'appointment-page' },
+      { id: 'points', icon: 'ri-coin-line', label: '积分', pageId: 'points-page' },
+      { id: 'coupon', icon: 'ri-coupon-line', label: '卡券', pageId: 'coupon-page' }
+    ];
+
+    // 生成导航栏
+    function generateNavBar() {
+      const navContainer = document.getElementById('bottom-nav');
+      navItems.forEach((item, index) => {
+        const navItem = document.createElement('div');
+        navItem.className = 'nav-item' + (index === 0 ? ' active' : '');
+        navItem.dataset.pageId = item.pageId;
+        navItem.dataset.navId = item.id;
+
+        const icon = document.createElement('i');
+        icon.className = item.icon + ' nav-icon';
+
+        const label = document.createElement('span');
+        label.className = 'nav-label';
+        label.textContent = item.label;
+
+        navItem.appendChild(icon);
+        navItem.appendChild(label);
+
+        navItem.addEventListener('click', () => switchPage(item.id, item.pageId));
+        navContainer.appendChild(navItem);
+      });
+    }
+
+    // 切换页面
+    function switchPage(navId, pageId) {
+      // 更新导航栏状态
+      document.querySelectorAll('.nav-item').forEach(item => {
+        if (item.dataset.navId === navId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // 更新页面显示
+      document.querySelectorAll('.page-content').forEach(page => {
+        if (page.id === pageId) {
+          page.classList.remove('hidden');
+        } else {
+          page.classList.add('hidden');
+        }
+      });
+    }
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+      // 生成导航栏
+      generateNavBar();
+
+      // 标签切换功能
+      const consultTab = document.getElementById('consult-tab');
+      const queryTab = document.getElementById('query-tab');
+      const consultForm = document.getElementById('consult-form');
+      const queryRecords = document.getElementById('query-records');
+
+      if (consultTab && queryTab && consultForm && queryRecords) {
+        consultTab.addEventListener('click', () => {
+          consultTab.classList.add('tab-active');
+          queryTab.classList.remove('tab-active');
+          consultForm.classList.remove('hidden');
+          queryRecords.classList.add('hidden');
+        });
+
+        queryTab.addEventListener('click', () => {
+          queryTab.classList.add('tab-active');
+          consultTab.classList.remove('tab-active');
+          queryRecords.classList.remove('hidden');
+          consultForm.classList.add('hidden');
+        });
+      }
+
+      // 模拟按钮点击效果
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.addEventListener('mousedown', () => {
+          button.style.transform = 'translateY(1px)';
+        });
+        button.addEventListener('mouseup', () => {
+          button.style.transform = 'translateY(0)';
+        });
+        button.addEventListener('mouseleave', () => {
+          button.style.transform = 'translateY(0)';
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // 预约模态框控制
+    const bookingModal = document.getElementById('bookingModal');
+    const modalContent = bookingModal.querySelector('div > div');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const bookingForm = document.getElementById('bookingForm');
+    const successToast = document.getElementById('successToast');
+
+    // 显示模态框
+    function showModal() {
+      bookingModal.classList.remove('hidden');
+      setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    // 隐藏模态框
+    function hideModal() {
+      modalContent.classList.remove('scale-100', 'opacity-100');
+      modalContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        bookingModal.classList.add('hidden');
+      }, 300);
+    }
+
+    // 显示预约按钮点击事件
+    document.querySelectorAll('.card button:not(.cursor-not-allowed)').forEach(button => {
+      button.addEventListener('click', showModal);
+    });
+
+    // 关闭模态框事件
+    closeModal.addEventListener('click', hideModal);
+    cancelBtn.addEventListener('click', hideModal);
+
+    // 点击模态框外部关闭
+    bookingModal.addEventListener('click', (e) => {
+      if (e.target === bookingModal) {
+        hideModal();
+      }
+    });
+
+    // 表单提交
+    bookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+
+      // 简单验证
+      if (!name || !phone) {
+        alert('请填写完整的预约信息');
+        return;
+      }
+
+      // 显示成功提示
+      successToast.classList.remove('hidden');
+      successToast.classList.add('opacity-100');
+
+      // 隐藏模态框
+      hideModal();
+
+      // 重置表单
+      bookingForm.reset();
+
+      // 隐藏提示
+      setTimeout(() => {
+        successToast.classList.remove('opacity-100');
+        setTimeout(() => {
+          successToast.classList.add('hidden');
+        }, 300);
+      }, 2000);
+    });
+
+    // 添加动画延迟效果
+    document.querySelectorAll('.fade-in').forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
+  </script>
+
+  <script>
+    // 标签切换功能
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // 更新标签状态
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 显示对应内容
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.add('hidden');
+        });
+
+        const tabId = `${tab.dataset.tab}-tab`;
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // 添加淡入动画
+        const cards = document.querySelectorAll(`#${tabId} .card`);
+        cards.forEach(card => {
+          card.classList.remove('fade-in');
+          setTimeout(() => {
+            card.classList.add('fade-in');
+          }, 50);
+        });
+      });
+    });
+
+    // 模拟卡片悬停效果
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-4px)';
+        card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.05)';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.03)';
+      });
+    });
+  </script>
+</body>
+
+</html>

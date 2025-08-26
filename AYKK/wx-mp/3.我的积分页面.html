@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>积分查询</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#16A9ECFF',
+              600: '#1295D6FF',
+              700: '#3B82F6',
+            }
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0,0,0,0.05)',
+            'input': '0 0 0 3px rgba(14, 165, 233, 0.2)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 12px solid #1e293b;
+      overflow: hidden;
+      position: relative;
+      background: white;
+    }
+
+    .header-gradient {
+      background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+    }
+
+    .point-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      transition: transform 0.3s ease;
+    }
+
+    .point-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #3B82F6, #60A5FA);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2563EB, #3B82F6);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+      transform: translateY(-2px);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    div::-webkit-scrollbar {
+      z-index: 10;
+      cursor: pointer;
+      overflow: hidden;
+      width: 6px;
+      height: 1px;
+    }
+
+    div::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    div::-webkit-scrollbar-thumb {
+      background: gray;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    div::-webkit-scrollbar-corner {
+      display: none;
+    }
+
+    div::-webkit-resizer {
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+  <!-- 手机设备模拟框 -->
+  <div class="phone-frame w-[375px] h-[812px] bg-white relative ">
+    <!-- 状态栏 -->
+    <div class="h-12 px-6 flex items-center justify-between">
+      <div class="text-black font-medium">9:41</div>
+      <div class="flex space-x-1">
+        <i class="ri-bar-chart-horizontal-line"></i>
+        <i class="ri-wifi-line"></i>
+        <i class="ri-battery-2-charge-line"></i>
+      </div>
+    </div>
+    <div class="overflow-y-auto">
+      <!-- 头部 -->
+      <div class="header-gradient px-4 py-4">
+        <h1 class="text-2xl font-bold text-white">积分查询</h1>
+        <p class="text-white/90 mt-2">查询您的积分余额与明细</p>
+      </div>
+
+      <!-- 主要内容 -->
+      <div class="px-4 py-4 " style="height: calc(812px - 160px);">
+        <!-- 查询表单 -->
+        <div class="bg-white rounded-2xl shadow-card mb-8 fade-in">
+          <div class="mb-4">
+            <label class="block text-black font-medium mb-2">手机号码</label>
+            <div class="relative">
+              <input type="tel" placeholder="请输入手机号码"
+                class="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                value="13800138000">
+              <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-500">
+                <i class="ri-delete-back-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-black font-medium mb-2">验证码</label>
+            <div class="relative">
+              <i class="ri-lock-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus"
+                placeholder="请输入验证码">
+              <button class="absolute right-0 top-0 bottom-0 px-4 bg-gray-100 text-gray-500 rounded-r-lg">获取验证码</button>
+            </div>
+          </div>
+
+          <button class="btn-primary w-full py-3 rounded-xl text-white font-medium mt-6 shadow-md">查询积分</button>
+        </div>
+
+        <!-- 总积分卡片 -->
+        <div class="point-card rounded-2xl p-4 shadow-card mb-4 fade-in border">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-black font-bold text-xl">当前总积分</h2>
+            <i class="ri-refresh-line text-gray-500"></i>
+          </div>
+
+          <div class="flex items-end justify-center mb-4">
+            <span class="text-4xl font-bold text-black">8,240</span>
+            <span class="text-gray-500 ml-2">积分</span>
+          </div>
+        </div>
+
+        <!-- 积分明细 -->
+        <div class="mb-4">
+          <h3 class="text-black font-bold text-lg mb-4">积分明细</h3>
+
+          <!-- 明细卡片 -->
+          <div class="space-y-4">
+            <!-- 增加记录 -->
+            <div class="point-card rounded-2xl p-4 fade-in border">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center mb-2">
+
+                    <div>
+                      <h4 class="text-black font-medium">每日签到奖励</h4>
+                      <p class="text-gray-500 text-sm">2023-08-18 08:12</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-green-600 font-bold">+10</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 增加记录 -->
+            <div class="point-card rounded-2xl p-4 fade-in border">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center mb-2">
+
+                    <div>
+                      <h4 class="text-black font-medium">购物消费返积分</h4>
+                      <p class="text-gray-500 text-sm">2023-08-17 19:30</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-green-600 font-bold">+200</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 减少记录 -->
+            <div class="point-card rounded-2xl p-4 fade-in border">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center mb-2">
+
+                    <div>
+                      <h4 class="text-black font-medium">积分兑换优惠券</h4>
+                      <p class="text-gray-500 text-sm">2023-08-16 14:22</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-rose-600 font-bold">-30</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 增加记录 -->
+            <div class="point-card rounded-2xl p-4 fade-in border">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center mb-2">
+
+                    <div>
+                      <h4 class="text-black font-medium">客服评价奖励</h4>
+                      <p class="text-gray-500 text-sm">2023-08-15 10:05</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-green-600 font-bold">+50</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

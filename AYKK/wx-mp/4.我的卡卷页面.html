@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卡券中心</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: white;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1),
+        0 0 0 12px #e2e8f0,
+        0 0 0 14px #cbd5e1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      color: white;
+      padding: 16px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .tabs {
+      display: flex;
+      border-radius: 12px;
+      padding: 4px;
+      margin-top: 12px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      border: 1px solid #f1f5f9;
+    }
+
+    .header-gradient {
+      background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .qr-code {
+      width: 120px;
+      height: 120px;
+      background: #f8fafc;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 12px -1px rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: white;
+      font-size: 16px;
+      transition: border 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #93c5fd;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .status-used {
+      background: rgba(107, 114, 128, 0.1);
+      color: #4b5563;
+    }
+
+    .divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 16px 0;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .coupon-bg {
+      background: linear-gradient(135deg, #dbeafe 0%, #d1e0ff 100%);
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coupon-bg:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+    }
+
+    .coupon-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #3b82f6;
+      margin: 8px 0;
+    }
+
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      margin-right: 12px;
+    }
+
+    div::-webkit-scrollbar {
+      z-index: 10;
+      cursor: pointer;
+      overflow: hidden;
+      width: 6px;
+      height: 1px;
+    }
+
+    div::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    div::-webkit-scrollbar-thumb {
+      background: gray;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    div::-webkit-scrollbar-corner {
+      display: none;
+    }
+
+    div::-webkit-resizer {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="phone-frame">
+    <!-- 顶部状态栏 -->
+    <div class="h-12 flex items-center justify-between px-6">
+      <div class="text-black font-medium">9:41</div>
+      <div class="flex space-x-1">
+        <i class="ri-signal-wifi-fill text-black"></i>
+        <i class="ri-bar-chart-fill text-black"></i>
+        <i class="ri-battery-fill text-black"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部导航 -->
+      <div class="header">
+        <div class="tabs">
+          <div class="tab active" data-tab="buy">购买卡券</div>
+          <div class="tab" data-tab="my">我的卡券</div>
+        </div>
+      </div>
+
+      <!-- 购买卡券页面 -->
+      <div id="buy-tab" class="tab-content">
+        <div class="card fade-in">
+          <div class="card-header">
+            <div class="flex items-center">
+              <div class="icon-circle">
+                <i class="ri-coupon-2-line ri-lg"></i>
+              </div>
+              <div>
+                <h2 class="font-semibold text-lg">洁牙护理券</h2>
+                <p class="text-slate-500 text-sm mt-1">专业口腔护理服务</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="coupon-bg">
+              <div class="coupon-value">¥ 120</div>
+              <p class="text-slate-500 text-sm">售价: <span class="text-slate-800 font-medium">¥ 99</span></p>
+            </div>
+
+            <div class="mt-4">
+              <span class="text-sm text-gray-500">可购买时间：2025-05-28 00:00:00 至 2031-06-27 00:00:00</span>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用期限</span>
+                <span class="font-medium">不限</span>
+              </div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用时段</span>
+                <span class="font-medium">临时(3天后生效)</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">有效天数</span>
+                <span class="font-medium">30天</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary mt-6">
+              立即购买 <i class="ri-arrow-right-line ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-header">
+            <div class="flex items-center">
+              <div class="icon-circle">
+                <i class="ri-shopping-bag-line ri-lg"></i>
+              </div>
+              <div>
+                <h2 class="font-semibold text-lg">通用优惠券</h2>
+                <p class="text-slate-500 text-sm mt-1">全场商品通用</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="coupon-bg">
+              <div class="coupon-value">¥ 50</div>
+              <p class="text-slate-500 text-sm">售价: <span class="text-slate-800 font-medium">¥ 39</span></p>
+            </div>
+
+            <div class="mt-4">
+              <span class="text-sm text-gray-500">可购买时间：2025-05-28 00:00:00 至 2031-06-27 00:00:00 </span>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用期限</span>
+                <span class="font-medium">固定时间</span>
+              </div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">生效日期</span>
+                <span class="font-medium">2023-10-01</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">失效日期</span>
+                <span class="font-medium">2023-12-31</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary mt-6">
+              立即购买 <i class="ri-arrow-right-line ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的卡券页面 -->
+      <div id="my-tab" class="tab-content hidden">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold text-lg mb-4">查询我的卡券</h3>
+            <div class="form-group">
+              <input type="tel" class="form-control" placeholder="请输入手机号码">
+            </div>
+            <div class="form-group">
+              <div class="flex">
+                <input type="text" class="form-control rounded-r-none" placeholder="请输入验证码">
+                <button
+                  class="bg-blue-50 text-blue-500 font-medium px-4 rounded-r-lg border border-l-0 border-slate-200">获取验证码</button>
+              </div>
+            </div>
+            <button class="btn btn-primary">查询卡券</button>
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-header">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <div class="icon-circle">
+                  <i class="ri-coupon-2-line ri-lg"></i>
+                </div>
+                <div>
+                  <h2 class="font-semibold text-lg">洁牙护理券</h2>
+                  <p class="text-slate-500 text-sm mt-1">领取时间: 2023-09-15</p>
+                </div>
+              </div>
+              <div class="status-badge status-pending">待使用</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="coupon-bg">
+              <div class="coupon-value">¥ 120</div>
+            </div>
+
+            <div class="mt-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用期限</span>
+                <span class="font-medium">2023-10-01 至 2023-12-31</span>
+              </div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用时段</span>
+                <span class="font-medium">每天 10:00-20:00</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-header">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <div class="icon-circle">
+                  <i class="ri-shopping-bag-line ri-lg"></i>
+                </div>
+                <div>
+                  <h2 class="font-semibold text-lg">通用优惠券</h2>
+                  <p class="text-slate-500 text-sm mt-1">领取时间: 2023-08-20</p>
+                </div>
+              </div>
+              <div class="status-badge status-used">已使用</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="coupon-bg">
+              <div class="coupon-value">¥ 50</div>
+            </div>
+
+            <div class="mt-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用期限</span>
+                <span class="font-medium">2023-08-25 至 2023-09-25</span>
+              </div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-slate-600">使用时间</span>
+                <span class="font-medium">2023-09-10 14:30</span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="text-center py-4">
+              <i class="ri-checkbox-circle-fill text-4xl text-green-400"></i>
+              <p class="font-medium mt-2">已使用</p>
+              <p class="text-slate-500 text-sm mt-1">2023-09-10 14:30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 标签切换功能
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // 更新标签状态
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 显示对应内容
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.add('hidden');
+        });
+
+        const tabId = `${tab.dataset.tab}-tab`;
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // 添加淡入动画
+        const cards = document.querySelectorAll(`#${tabId} .card`);
+        cards.forEach(card => {
+          card.classList.remove('fade-in');
+          setTimeout(() => {
+            card.classList.add('fade-in');
+          }, 50);
+        });
+      });
+    });
+
+    // 模拟卡片悬停效果
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-4px)';
+        card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.05)';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.03)';
+      });
+    });
+  </script>
+</body>
+
+</html>
