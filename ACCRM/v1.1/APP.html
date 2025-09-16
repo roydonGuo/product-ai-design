@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM客户管理系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3b82f6; /* 蓝色主色调 */
+      --primary-light: #93c5fd;
+      --primary-dark: #1d4ed8;
+      --gradient-start: #dbeafe;
+      --gradient-end: #eff6ff;
+      --card-bg: #ffffff;
+      --text-primary: #000000;
+      --text-secondary: #6b7280;
+    }
+    
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: #f5f5f7;
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    
+    /* 设备容器样式 */
+    .device-container {
+      width: 375px;
+      height: 812px;
+      margin: 20px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 40px;
+      border: 1px solid #ddd;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      flex-direction: column;
+      background-color: white;
+    }
+    
+    /* 状态栏样式 */
+    .status-bar {
+      height: 44px;
+      width: 100%;
+      background-color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .status-bar-time {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .status-bar-icons {
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-bar-icons i {
+      margin-left: 5px;
+      font-size: 12px;
+    }
+    
+    /* 应用内容区域 */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+    }
+    
+    /* 隐藏滚动条 */
+    .app-content::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* 底部导航栏 */
+    .tab-bar {
+      height: 80px;
+      width: 100%;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #f0f0f0;
+      padding-bottom: 20px;
+    }
+    
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .tab-item.active {
+      color: var(--primary-color);
+    }
+    
+    .tab-item i {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    
+    .tab-item span {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* 页面容器 */
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    /* 卡片样式 */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* 进度条样式 */
+    .progress-bar {
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    /* 标签页样式 */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+    
+    .tab {
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .tab.active {
+      color: var(--primary-color);
+    }
+    
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      color: white;
+    }
+    
+    .btn-outline {
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      background: transparent;
+    }
+    
+    .btn i {
+      margin-right: 6px;
+    }
+    
+    /* 输入框样式 */
+    .input-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    
+    .input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background-color: #f9fafb;
+      border: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+    
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .input-with-icon {
+      padding-left: 40px;
+    }
+    
+    /* 加载动画 */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+    }
+    
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* 下拉刷新和上拉加载样式 */
+    .pull-indicator {
+      text-align: center;
+      padding: 10px 0;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+    
+    /* 模态框样式 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      width: 90%;
+      max-width: 340px;
+      background-color: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .modal-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .modal-close {
+      font-size: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+    
+    .slide-up {
+      animation: slideUp 0.3s ease forwards;
+    }
+    
+    /* 日期选择器样式 */
+    .date-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .date-selector-text {
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .date-selector i {
+      color: var(--primary-color);
+    }
+    
+    /* 客户卡片样式 */
+    .customer-card {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .customer-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .customer-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .customer-type {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background-color: #f3f4f6;
+    }
+    
+    .customer-info {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    
+    .customer-info-item {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-right: 12px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .customer-info-item i {
+      margin-right: 4px;
+      font-size: 10px;
+    }
+    
+    .customer-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    /* 用户信息样式 */
+    .user-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 0;
+    }
+    
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 3px solid white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .user-name {
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    
+    .user-role {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    
+    /* 销售数据卡片样式 */
+    .sales-card {
+      text-align: center;
+      padding: 20px 16px;
+    }
+    
+    .sales-amount {
+      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 4px;
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .sales-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .sales-percent {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .sales-percent.positive {
+      color: #10b981;
+    }
+    
+    .sales-percent.negative {
+      color: #ef4444;
+    }
+    
+    /* 销售人员列表样式 */
+    .salesperson-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .salesperson-item:last-child {
+      border-bottom: none;
+    }
+    
+    .salesperson-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+    
+    .salesperson-info {
+      flex: 1;
+    }
+    
+    .salesperson-name {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    
+    .salesperson-stats {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .salesperson-amount {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    /* 详情页标签页内容样式 */
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease forwards;
+    }
+    
+    /* 表单样式 */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    /* 空状态样式 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #e5e7eb;
+    }
+    
+    .empty-state-text {
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="flex justify-center items-start p-4 bg-gray-100">
+  <!-- 首页设备容器 -->
+  <div class="device-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div class="status-bar-time">9:41</div>
+      <div class="status-bar-icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+    
+    <!-- 应用内容区域 -->
+    <div class="app-content" id="app-content">
+      <!-- 首页 -->
+      <div class="page active" id="home-page">
+        <div class="flex justify-between items-center mb-4">
+          <h1 class="text-xl font-bold">销售看板</h1>
+          <div class="date-selector" id="date-selector">
+            <span class="date-selector-text">2023年7月</span>
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+        </div>
+        
+        <!-- 销售数据卡片 -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div class="card sales-card">
+            <div class="sales-amount" id="yearly-amount">¥1,245,600</div>
+            <div class="sales-label">年度总回款</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: 75%"></div>
+            </div>
+            <div class="sales-percent positive">75%</div>
+          </div>
+          
+          <div class="card sales-card">
+            <div class="sales-amount" id="monthly-amount">¥245,800</div>
+            <div class="sales-label">月度总回款</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: 68%"></div>
+            </div>
+            <div class="sales-percent positive">68%</div>
+          </div>
+          
+          <div class="card sales-card">
+            <div class="sales-amount" id="daily-amount">¥24,500</div>
+            <div class="sales-label">当日回款</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: 42%"></div>
+            </div>
+            <div class="sales-percent positive">42%</div>
+          </div>
+        </div>
+        
+        <!-- 销售人员列表 -->
+        <div class="card">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="font-semibold">销售人员明细</h2>
+            <span class="text-xs text-gray-500">共12人</span>
+          </div>
+          
+          <div class="salesperson-list" id="salesperson-list">
+            <!-- 销售人员项 -->
+            <div class="salesperson-item">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80" class="salesperson-avatar" alt="销售头像">
+              <div class="salesperson-info">
+                <div class="salesperson-name">张丽</div>
+                <div class="salesperson-stats">今日回款: <span class="salesperson-amount">¥8,500</span></div>
+              </div>
+            </div>
+            
+            <div class="salesperson-item">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80" class="salesperson-avatar" alt="销售头像">
+              <div class="salesperson-info">
+                <div class="salesperson-name">王强</div>
+                <div class="salesperson-stats">今日回款: <span class="salesperson-amount">¥6,200</span></div>
+              </div>
+            </div>
+            
+            <div class="salesperson-item">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80" class="salesperson-avatar" alt="销售头像">
+              <div class="salesperson-info">
+                <div class="salesperson-name">李梅</div>
+                <div class="salesperson-stats">今日回款: <span class="salesperson-amount">¥5,800</span></div>
+              </div>
+            </div>
+            
+            <div class="salesperson-item">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80" class="salesperson-avatar" alt="销售头像">
+              <div class="salesperson-info">
+                <div class="salesperson-name">赵伟</div>
+                <div class="salesperson-stats">今日回款: <span class="salesperson-amount">¥4,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 客户页 -->
+      <div class="page" id="customer-page">
+        <!-- 客户页标签 -->
+        <div class="tabs" id="customer-tabs">
+          <div class="tab active" data-tab="closed-customers">成交客户</div>
+          <div class="tab" data-tab="potential-customers">意向客户</div>
+        </div>
+        
+        <!-- 搜索框 -->
+        <div class="input-group mb-4">
+          <i class="fas fa-search input-icon"></i>
+          <input type="text" class="input input-with-icon" id="customer-search" placeholder="搜索客户名称">
+        </div>
+        
+        <!-- 成交客户列表 -->
+        <div class="tab-content active" id="closed-customers">
+          <div class="customer-list" id="closed-customer-list">
+            <!-- 客户卡片 -->
+            <div class="card customer-card" data-customer-id="1">
+              <div class="customer-card-header">
+                <div class="customer-name">北京协和医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>北京市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>陌拜</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>张医生</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card customer-card" data-customer-id="2">
+              <div class="customer-card-header">
+                <div class="customer-name">上海瑞金医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>上海市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>资源对接</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>李主任</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card customer-card" data-customer-id="3">
+              <div class="customer-card-header">
+                <div class="customer-name">广州医科大学附属医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>广州市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>联盟介绍</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>王院长</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pull-indicator" id="closed-load-more">上拉加载更多</div>
+          </div>
+        </div>
+        
+        <!-- 意向客户列表 -->
+        <div class="tab-content" id="potential-customers">
+          <div class="customer-list" id="potential-customer-list">
+            <!-- 客户卡片 -->
+            <div class="card customer-card" data-customer-id="4">
+              <div class="customer-card-header">
+                <div class="customer-name">成都华西医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>成都市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>陌拜</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>刘医生</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="4">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+            
+            <div class="card customer-card" data-customer-id="5">
+              <div class="customer-card-header">
+                <div class="customer-name">深圳市第二人民医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>深圳市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>资源对接</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>陈主任</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="5">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+            
+            <div class="card customer-card" data-customer-id="6">
+              <div class="customer-card-header">
+                <div class="customer-name">武汉同济医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>武汉市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>联盟介绍</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>赵教授</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="6">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+            
+            <div class="pull-indicator" id="potential-load-more">上拉加载更多</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 我的页面 -->
+      <div class="page" id="profile-page">
+        <div class="user-profile">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80" class="user-avatar" alt="用户头像">
+          <div class="user-name">陈明</div>
+          <div class="user-role">销售经理</div>
+          
+          <div class="grid grid-cols-3 gap-3 w-full mb-6">
+            <div class="text-center">
+              <div class="font-bold">¥1.2M</div>
+              <div class="text-xs text-gray-500">年度业绩</div>
+            </div>
+            <div class="text-center">
+              <div class="font-bold">42</div>
+              <div class="text-xs text-gray-500">客户数量</div>
+            </div>
+            <div class="text-center">
+              <div class="font-bold">98%</div>
+              <div class="text-xs text-gray-500">完成率</div>
+            </div>
+          </div>
+          
+          <button class="btn btn-outline w-full" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> 退出登录
+          </button>
+        </div>
+      </div>
+      
+      <!-- 客户详情页 -->
+      <div class="page" id="customer-detail-page">
+        <div class="flex items-center mb-4">
+          <button class="mr-3 back-btn" id="back-to-customer">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-xl font-bold" id="detail-customer-name">客户详情</h1>
+        </div>
+        
+        <!-- 客户详情标签页 -->
+        <div class="tabs" id="detail-tabs">
+          <div class="tab active" data-detail-tab="basic-info">基础信息</div>
+          <div class="tab" data-detail-tab="orders">订单记录</div>
+          <div class="tab" data-detail-tab="visits">拜访记录</div>
+          <div class="tab" data-detail-tab="background">背调记录</div>
+          <div class="tab" data-detail-tab="expenses">销售费用</div>
+        </div>
+        
+        <!-- 基础信息 -->
+        <div class="tab-content active" id="basic-info">
+          <div class="card">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户名称</div>
+                <div class="font-medium" id="detail-name">北京协和医院</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户类型</div>
+                <div class="font-medium" id="detail-type">公立</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">所在地区</div>
+                <div class="font-medium" id="detail-location">北京市</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户来源</div>
+                <div class="font-medium" id="detail-source">陌拜</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">联系人</div>
+                <div class="font-medium" id="detail-contact">张医生</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">联系电话</div>
+                <div class="font-medium" id="detail-phone">138****5678</div>
+              </div>
+            </div>
+            
+            <div class="form-group mt-2">
+              <div class="text-xs text-gray-500">备注</div>
+              <div class="text-sm mt-1" id="detail-remark">该医院是三甲医院，设备先进，有采购意向，需要持续跟进。</div>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+              <button class="btn btn-outline btn-sm mr-2" id="edit-customer-btn">
+                <i class="fas fa-edit"></i> 编辑
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 订单记录 -->
+        <div class="tab-content" id="orders">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-medium">订单列表</h3>
+            <button class="btn btn-primary btn-sm" id="add-order-btn">
+              <i class="fas fa-plus"></i> 新增
+            </button>
+          </div>
+          
+          <div class="order-list">
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">订单号: ORD20230701</div>
+                <div class="text-primary-color font-medium">¥125,000</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">创建时间: 2023-07-01 14:30</div>
+              <div class="flex justify-between items-center">
+                <div class="text-xs">产品: 医用超声仪 x1</div>
+                <div class="flex">
+                  <button class="text-xs text-primary-color mr-2">
+                    <i class="fas fa-eye"></i> 查看
+                  </button>
+                  <button class="text-xs text-primary-color">
+                    <i class="fas fa-edit"></i> 编辑
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">订单号: ORD20230615</div>
+                <div class="text-primary-color font-medium">¥78,500</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">创建时间: 2023-06-15 10:15</div>
+              <div class="flex justify-between items-center">
+                <div class="text-xs">产品: 医用耗材套装 x5</div>
+                <div class="flex">
+                  <button class="text-xs text-primary-color mr-2">
+                    <i class="fas fa-eye"></i> 查看
+                  </button>
+                  <button class="text-xs text-primary-color">
+                    <i class="fas fa-edit"></i> 编辑
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 拜访记录 -->
+        <div class="tab-content" id="visits">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-medium">拜访记录</h3>
+            <button class="btn btn-primary btn-sm" id="add-visit-btn">
+              <i class="fas fa-plus"></i> 新增
+            </button>
+          </div>
+          
+          <div class="visit-list">
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">2023-07-10</div>
+                <div class="text-xs bg-blue-100 text-primary-color px-2 py-1 rounded">线下拜访</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">拜访人: 陈明</div>
+              <div class="text-sm mb-2">与张医生讨论了新设备采购计划，对方表示有意向，需要进一步提供详细方案。</div>
+              <div class="flex justify-end">
+                <button class="text-xs text-primary-color mr-2">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="text-xs text-red-500">
+                  <i class="fas fa-trash"></i> 删除
+                </button>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">2023-06-25</div>
+                <div class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">电话沟通</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">拜访人: 陈明</div>
+              <div class="text-sm mb-2">电话跟进上次的设备使用情况，客户反馈良好，有追加采购意向。</div>
+              <div class="flex justify-end">
+                <button class="text-xs text-primary-color mr-2">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="text-xs text-red-500">
+                  <i class="fas fa-trash"></i> 删除
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 背调记录 -->
+        <div class="tab-content" id="background">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-medium">背调记录</h3>
+            <button class="btn btn-primary btn-sm" id="add-background-btn">
+              <i class="fas fa-plus"></i> 新增
+            </button>
+          </div>
+          
+          <div class="background-list">
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">2023-06-20</div>
+                <div class="text-xs text-gray-500">调查人: 王强</div>
+              </div>
+              <div class="text-sm mb-2">医院年采购预算约500万，主要设备供应商为GE和飞利浦，我司产品有较大竞争优势。</div>
+              <div class="flex justify-end">
+                <button class="text-xs text-primary-color mr-2">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="text-xs text-red-500">
+                  <i class="fas fa-trash"></i> 删除
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 销售费用 -->
+        <div class="tab-content" id="expenses">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-medium">销售费用</h3>
+            <button class="btn btn-primary btn-sm" id="add-expense-btn">
+              <i class="fas fa-plus"></i> 新增
+            </button>
+          </div>
+          
+          <div class="expense-list">
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">差旅费</div>
+                <div class="text-primary-color font-medium">¥2,500</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">2023-07-10</div>
+              <div class="text-sm mb-2">北京出差拜访客户的机票和住宿费用。</div>
+              <div class="flex justify-end">
+                <button class="text-xs text-primary-color mr-2">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="text-xs text-red-500">
+                  <i class="fas fa-trash"></i> 删除
+                </button>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="flex justify-between mb-2">
+                <div class="font-medium">业务招待费</div>
+                <div class="text-primary-color font-medium">¥1,800</div>
+              </div>
+              <div class="text-xs text-gray-500 mb-2">2023-07-10</div>
+              <div class="text-sm mb-2">与客户团队共进晚餐的餐饮费用。</div>
+              <div class="flex justify-end">
+                <button class="text-xs text-primary-color mr-2">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="text-xs text-red-500">
+                  <i class="fas fa-trash"></i> 删除
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item active" data-page="home-page">
+        <i class="fas fa-chart-line"></i>
+        <span>首页</span>
+      </div>
+      <div class="tab-item" data-page="customer-page">
+        <i class="fas fa-user-friends"></i>
+        <span>客户</span>
+      </div>
+      <div class="tab-item" data-page="profile-page">
+        <i class="fas fa-user"></i>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 客户详情页设备容器 -->
+  <div class="device-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div class="status-bar-time">9:41</div>
+      <div class="status-bar-icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+    
+    <!-- 应用内容区域 -->
+    <div class="app-content">
+      <!-- 客户详情页 -->
+      <div class="page active">
+        <div class="flex items-center mb-4">
+          <button class="mr-3 back-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-xl font-bold">北京协和医院</h1>
+        </div>
+        
+        <!-- 客户详情标签页 -->
+        <div class="tabs">
+          <div class="tab active">基础信息</div>
+          <div class="tab">订单记录</div>
+          <div class="tab">拜访记录</div>
+          <div class="tab">背调记录</div>
+          <div class="tab">销售费用</div>
+        </div>
+        
+        <!-- 基础信息 -->
+        <div class="tab-content active">
+          <div class="card">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户名称</div>
+                <div class="font-medium">北京协和医院</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户类型</div>
+                <div class="font-medium">公立</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">所在地区</div>
+                <div class="font-medium">北京市</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">客户来源</div>
+                <div class="font-medium">陌拜</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">联系人</div>
+                <div class="font-medium">张医生</div>
+              </div>
+              <div class="form-group">
+                <div class="text-xs text-gray-500">联系电话</div>
+                <div class="font-medium">138****5678</div>
+              </div>
+            </div>
+            
+            <div class="form-group mt-2">
+              <div class="text-xs text-gray-500">备注</div>
+              <div class="text-sm mt-1">该医院是三甲医院，设备先进，有采购意向，需要持续跟进。</div>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+              <button class="btn btn-outline btn-sm mr-2">
+                <i class="fas fa-edit"></i> 编辑
+              </button>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <h3 class="font-medium mb-3">客户统计</h3>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="text-center">
+                <div class="font-bold text-primary-color">¥203,500</div>
+                <div class="text-xs text-gray-500">累计订单金额</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold">2</div>
+                <div class="text-xs text-gray-500">订单数量</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold">5</div>
+                <div class="text-xs text-gray-500">拜访次数</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <h3 class="font-medium mb-3">最近动态</h3>
+            <div class="text-sm">
+              <div class="flex items-start mb-3">
+                <div class="w-2 h-2 rounded-full bg-primary-color mt-1.5 mr-2"></div>
+                <div>
+                  <div class="font-medium">新增订单</div>
+                  <div class="text-xs text-gray-500">2023-07-01 14:30</div>
+                  <div class="text-xs mt-1">新增订单金额: ¥125,000</div>
+                </div>
+              </div>
+              
+              <div class="flex items-start mb-3">
+                <div class="w-2 h-2 rounded-full bg-primary-color mt-1.5 mr-2"></div>
+                <div>
+                  <div class="font-medium">拜访记录</div>
+                  <div class="text-xs text-gray-500">2023-06-25 10:30</div>
+                  <div class="text-xs mt-1">电话跟进上次的设备使用情况</div>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-2 h-2 rounded-full bg-primary-color mt-1.5 mr-2"></div>
+                <div>
+                  <div class="font-medium">新增订单</div>
+                  <div class="text-xs text-gray-500">2023-06-15 10:15</div>
+                  <div class="text-xs mt-1">新增订单金额: ¥78,500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item" data-page="home-page">
+        <i class="fas fa-chart-line"></i>
+        <span>首页</span>
+      </div>
+      <div class="tab-item active" data-page="customer-page">
+        <i class="fas fa-user-friends"></i>
+        <span>客户</span>
+      </div>
+      <div class="tab-item" data-page="profile-page">
+        <i class="fas fa-user"></i>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 日期选择模态框 -->
+  <div class="modal" id="date-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">选择日期</div>
+        <div class="modal-close" id="close-date-modal">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="p-2">
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <button class="btn btn-outline date-option" data-date="2023年7月">2023年7月</button>
+          <button class="btn btn-outline date-option" data-date="2023年6月">2023年6月</button>
+          <button class="btn btn-outline date-option" data-date="2023年5月">2023年5月</button>
+          <button class="btn btn-outline date-option" data-date="2023年4月">2023年4月</button>
+          <button class="btn btn-outline date-option" data-date="2023年3月">2023年3月</button>
+          <button class="btn btn-outline date-option" data-date="2023年2月">2023年2月</button>
+        </div>
+        <button class="btn btn-primary w-full" id="confirm-date">确定</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 新增表单模态框 -->
+  <div class="modal" id="form-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="form-title">新增记录</div>
+        <div class="modal-close" id="close-form-modal">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="p-2" id="form-content">
+        <!-- 表单内容将动态生成 -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- 确认模态框 -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">确认操作</div>
+        <div class="modal-close" id="close-confirm-modal">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="p-4">
+        <p class="text-center mb-4" id="confirm-message">确定要执行此操作吗？</p>
+        <div class="flex justify-center gap-4">
+          <button class="btn btn-outline" id="cancel-confirm">取消</button>
+          <button class="btn btn-primary" id="confirm-action">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 页面切换逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+      // 底部导航切换
+      const tabItems = document.querySelectorAll('.tab-item');
+      const pages = document.querySelectorAll('.page');
+      
+      tabItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const pageId = this.getAttribute('data-page');
+          
+          // 更新底部导航激活状态
+          tabItems.forEach(tab => tab.classList.remove('active'));
+          this.classList.add('active');
+          
+          // 更新页面显示
+          const targetPage = document.getElementById(pageId);
+          if (targetPage) {
+            pages.forEach(page => page.classList.remove('active'));
+            targetPage.classList.add('active');
+          }
+        });
+      });
+      
+      // 客户页标签切换
+      const customerTabs = document.querySelectorAll('#customer-tabs .tab');
+      const customerContents = document.querySelectorAll('#customer-page .tab-content');
+      
+      customerTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // 更新标签激活状态
+          customerTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          // 更新内容显示
+          customerContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+      
+      // 客户详情页标签切换
+      const detailTabs = document.querySelectorAll('#detail-tabs .tab');
+      const detailContents = document.querySelectorAll('#detail-page .tab-content');
+      
+      detailTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // 更新标签激活状态
+          detailTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          // 更新内容显示
+          detailContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

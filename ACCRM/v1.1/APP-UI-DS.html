@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM客户管理系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: #f1f5f9;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+
+    .phone-mockup {
+      width: 375px;
+      height: 812px;
+      background: white;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 4px solid #1e293b;
+      margin: 0 20px 40px;
+    }
+
+    .ios-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: white;
+      height: 44px;
+    }
+
+    .ios-time {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .ios-icons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .ios-icons i {
+      font-size: 14px;
+    }
+
+    .content {
+      height: calc(100% - 44px - 70px);
+      overflow-y: auto;
+      padding: 20px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      font-size: 12px;
+      padding: 8px 0;
+    }
+
+    .nav-item.active {
+      color: #3b82f6;
+    }
+
+    .nav-icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      border-radius: 4px;
+    }
+
+    .tab-container {
+      display: flex;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 16px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .tab.active {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin-bottom: 16px;
+    }
+
+    .search-bar i {
+      color: #64748b;
+      margin-right: 8px;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .customer-card {
+      display: flex;
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .customer-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-right: 16px;
+    }
+
+    .customer-info {
+      flex: 1;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #e2e8f0;
+      color: #000;
+    }
+
+    .btn-danger {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+      color: white;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-tabs {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .detail-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .detail-tab {
+      flex: 0 0 auto;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: #f8fafc;
+      margin-right: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .detail-tab.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      position: absolute;
+      bottom: 70px;
+      left: 0;
+      right: 0;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .record-item {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 12px 0;
+    }
+
+    .record-item:last-child {
+      border-bottom: none;
+    }
+
+    .record-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .record-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .record-date {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .edit-icon {
+      background: #eef2ff;
+      color: #4f46e5;
+    }
+
+    .delete-icon {
+      background: #fef2f2;
+      color: #ef4444;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 340px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: #3b82f6;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #64748b;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #cbd5e1;
+    }
+
+    .fab-button {
+      position: absolute;
+      bottom: 90px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+      cursor: pointer;
+      z-index: 100;
+      transition: transform 0.2s ease;
+    }
+
+    .fab-button:active {
+      transform: scale(0.95);
+    }
+
+    .confirm-dialog {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 300px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .confirm-title {
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .confirm-message {
+      color: #4b5563;
+      margin-bottom: 20px;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .pull-to-refresh {
+      text-align: center;
+      padding: 10px 0;
+      color: #64748b;
+      font-size: 12px;
+    }
+
+    .pull-icon {
+      display: inline-block;
+      margin-right: 6px;
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-blue {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-yellow {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-purple {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    /* 新增弹窗样式 */
+    .modal-form {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .modal-form .form-group {
+      margin-bottom: 16px;
+    }
+
+    .modal-form .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .modal-form .form-input,
+    .modal-form .form-select,
+    .modal-form .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .modal-form .form-input:focus,
+    .modal-form .form-select:focus,
+    .modal-form .form-textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-form .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+
+    .modal-form .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .modal-header .close {
+      font-size: 24px;
+      font-weight: bold;
+      color: #6b7280;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+
+    .modal-header .close:hover {
+      color: #374151;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-cancel {
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+
+    .btn-cancel:hover {
+      background: #f3f4f6;
+    }
+
+    .btn-submit {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      color: white;
+      border: none;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(90deg, #2563eb, #3b82f6);
+    }
+
+    /* 复选框组样式 */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal !important;
+      font-size: 14px;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 6px;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* 表单行样式 */
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 480px) {
+      .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body> 
+  <!-- 客户详情页面 - 订单记录 -->
+  <div class="phone-mockup">
+    <div class="ios-status-bar">
+      <div class="ios-time">9:41</div>
+      <div class="ios-icons">
+        <i class="ri-signal-wifi-fill"></i>
+        <i class="ri-battery-2-charge-fill"></i>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="detail-tabs">
+        <div class="detail-tab active" data-tab="basic-info">基础信息</div>
+        <div class="detail-tab" data-tab="order-records">订单记录</div>
+        <div class="detail-tab" data-tab="visit-records">拜访记录</div>
+        <div class="detail-tab" data-tab="background-check">背调记录</div>
+        <div class="detail-tab" data-tab="sales-expenses">销售费用</div>
+      </div>
+
+      <!-- 基础信息内容 -->
+      <div id="basic-info" class="tab-content active">
+        <div class="card">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center">
+              <div class="ml-3">
+                <div class="font-bold text-lg">华东人民医院</div>
+              </div>
+            </div>
+            <div class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">公立</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <div class="text-gray-500">省份</div>
+              <div class="font-medium">浙江省</div>
+            </div>
+            <div>
+              <div class="text-gray-500">城市</div>
+              <div class="font-medium">杭州市</div>
+            </div>
+            <div>
+              <div class="text-gray-500">客户类型</div>
+              <div class="font-medium">公立医院</div>
+            </div>
+            <div>
+              <div class="text-gray-500">客户来源</div>
+              <div class="font-medium">陌拜</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="font-medium mb-3">基本信息</div>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <div class="text-gray-500">医院等级</div>
+              <div class="font-medium">三级甲等</div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-gray-500">床位数</div>
+              <div class="font-medium">1200</div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-gray-500">年采购额</div>
+              <div class="font-medium">¥8,600,000</div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-gray-500">关键联系人</div>
+              <div class="font-medium">李主任</div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-gray-500">联系电话</div>
+              <div class="font-medium">138****8888</div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-gray-500">地址</div>
+              <div class="font-medium text-right">杭州市西湖区文一路100号</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 订单记录内容 -->
+      <div id="order-records" class="tab-content">
+        <div class="card">
+
+          <div class="space-y-4">
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">订单 #ORD20250915</div>
+                <div class="record-actions">
+
+                  <!-- 回款 -->
+                  <div class="action-icon edit-icon" onclick="openReceiptModal('add')">
+                    <i class="ri-money-cny-circle-line"></i>
+                  </div>
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-15</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>订单金额</span>
+                <span class="font-medium">¥125,000</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>回款金额</span>
+                <span class="font-medium">¥125,000</span>
+              </div>
+              <div class="text-sm">
+                <div class="p-2 mb-2" style="background-color: #bfd6fc;border-radius: 8px;">AI自查仪，单价: ¥ 1000 数量：10 总价：¥
+                  10000
+                </div>
+                <div class="p-2" style="background-color: #3b82f6;border-radius: 8px;">AI检查，单价: ¥ 1000 数量：10 总价：¥ 10000
+                </div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">订单 #ORD20250812</div>
+                <div class="record-actions">
+                  <!-- 回款 -->
+                  <div class="action-icon edit-icon" onclick="openReceiptModal('add')">
+                    <i class="ri-money-cny-circle-line"></i>
+                  </div>
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-08-12</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>订单金额</span>
+                <span class="font-medium">¥86,500</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>回款金额</span>
+                <span class="font-medium">¥43,250</span>
+              </div>
+              <div class="flex justify-between text-sm">
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">订单 #ORD20250625</div>
+                <div class="record-actions">
+                  <!-- 回款 -->
+                  <div class="action-icon edit-icon" onclick="openReceiptModal('add')">
+                    <i class="ri-money-cny-circle-line"></i>
+                  </div>
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-06-25</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>订单金额</span>
+                <span class="font-medium">¥210,000</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>回款金额</span>
+                <span class="font-medium">¥210,000</span>
+              </div>
+              <div class="flex justify-between text-sm">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加订单按钮 -->
+        <div class="fab-button" onclick="showAddOrderModal()">
+          <i class="ri-add-line"></i>
+        </div>
+      </div>
+
+      <!-- 拜访记录内容 -->
+      <div id="visit-records" class="tab-content">
+        <div class="card">
+          <div class="space-y-4">
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">例行拜访</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-18 10:30</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>拜访人员</span>
+                <span class="font-medium">张明</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>联系人</span>
+                <span class="font-medium">李主任</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">拜访内容</div>
+                <div class="p-2" style="background-color: #f8fafc;border-radius: 8px;">讨论了新产品的使用情况和客户反馈，客户表示满意，并有意向增加采购量。</div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">产品演示</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-05 14:00</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>拜访人员</span>
+                <span class="font-medium">王芳</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>联系人</span>
+                <span class="font-medium">赵院长</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">拜访内容</div>
+                <div class="p-2" style="background-color: #f8fafc;border-radius: 8px;">为医院相关部门进行了新产品演示，获得了积极反馈，院方表示将在下次采购中考虑。</div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">售后回访</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-08-22 09:15</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>拜访人员</span>
+                <span class="font-medium">李华</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>联系人</span>
+                <span class="font-medium">王主任</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">拜访内容</div>
+                <div class="p-2" style="background-color: #f8fafc;border-radius: 8px;">针对上次采购的产品进行售后回访，解决了客户在使用过程中遇到的问题，提供了培训支持。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加拜访记录按钮 -->
+        <div class="fab-button" onclick="showAddVisitModal()">
+          <i class="ri-add-line"></i>
+        </div>
+      </div>
+
+      <!-- 背调记录内容 -->
+      <div id="background-check" class="tab-content">
+        <div class="card">
+          <div class="space-y-4">
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">信用评估</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-10</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>调查人员</span>
+                <span class="font-medium">王芳</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>评估结果</span>
+                <span class="badge badge-green">优秀</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">调查内容</div>
+                <div class="p-2" style="background-color: #dcfce7;border-radius: 8px;">对客户的信用状况进行了全面评估，包括财务状况、历史付款记录和市场声誉。客户信用良好，付款及时，无不良记录。</div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">市场调研</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-08-05</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>调查人员</span>
+                <span class="font-medium">李华</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>评估结果</span>
+                <span class="badge badge-blue">良好</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">调查内容</div>
+                <div class="p-2" style="background-color: #dbeafe;border-radius: 8px;">对客户所在市场进行了调研，分析了客户在行业中的地位、竞争优势和发展潜力。客户在当地医疗市场具有较高声誉和稳定的市场份额。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加背调记录按钮 -->
+        <div class="fab-button" onclick="showAddBackgroundCheckModal()">
+          <i class="ri-add-line"></i>
+        </div>
+      </div>
+
+      <!-- 销售费用内容 -->
+      <div id="sales-expenses" class="tab-content">
+        <div class="card">
+          <div class="space-y-4">
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">业务招待费</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-18</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>申请人</span>
+                <span class="font-medium">张明</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>金额</span>
+                <span class="font-medium">¥2,800</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>状态</span>
+                <span class="badge badge-green">已报销</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">费用说明</div>
+                <div class="p-2" style="background-color: #dcfce7;border-radius: 8px;">与客户代表进行业务洽谈的餐饮招待费用，包括5人餐饮和茶点。</div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">差旅费</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-09-05</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>申请人</span>
+                <span class="font-medium">王芳</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>金额</span>
+                <span class="font-medium">¥1,650</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>状态</span>
+                <span class="badge badge-yellow">审核中</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">费用说明</div>
+                <div class="p-2" style="background-color: #fef9c3;border-radius: 8px;">前往客户所在地进行产品演示的交通和住宿费用，包括高铁票和一晚酒店住宿。</div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-header">
+                <div class="record-title">样品费</div>
+                <div class="record-actions">
+                  <div class="action-icon edit-icon">
+                    <i class="ri-pencil-line"></i>
+                  </div>
+                  <div class="action-icon delete-icon">
+                    <i class="ri-delete-bin-line"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">2025-08-22</div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>申请人</span>
+                <span class="font-medium">李华</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>金额</span>
+                <span class="font-medium">¥5,200</span>
+              </div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>状态</span>
+                <span class="badge badge-green">已报销</span>
+              </div>
+              <div class="text-sm mb-1">
+                <div class="text-gray-500 mb-1">费用说明</div>
+                <div class="p-2" style="background-color: #dcfce7;border-radius: 8px;">提供给客户的产品样品费用，用于客户试用和评估，包括2套医疗设备耗材。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加销售费用按钮 -->
+        <div class="fab-button" onclick="showAddExpenseModal()">
+          <i class="ri-add-line"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <i class="ri-home-5-line nav-icon"></i>
+        <span>首页</span>
+      </div>
+      <div class="nav-item active">
+        <i class="ri-group-fill nav-icon"></i>
+        <span>客户</span>
+      </div>
+      <div class="nav-item">
+        <i class="ri-user-line nav-icon"></i>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 订单记录模态框 -->
+  <div id="order-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="order-modal-title">添加订单记录</div>
+        <div class="modal-close" onclick="closeModal('order-modal')">
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">订单编号</label>
+        <input type="text" class="form-input" id="order-number" placeholder="输入订单编号">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">订单日期</label>
+        <input type="date" class="form-input" id="order-date">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">订单金额</label>
+        <input type="number" class="form-input" id="order-amount" placeholder="输入订单金额">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">回款金额</label>
+        <input type="number" class="form-input" id="payment-amount" placeholder="输入回款金额">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">订单状态</label>
+        <select class="form-select" id="order-status">
+          <option value="pending">待处理</option>
+          <option value="partial">部分回款</option>
+          <option value="completed">已完成</option>
+          <option value="cancelled">已取消</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">备注</label>
+        <textarea class="form-textarea" id="order-remark" placeholder="输入备注信息"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('order-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveOrder()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拜访记录模态框 -->
+  <div id="visit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="visit-modal-title">添加拜访记录</div>
+        <div class="modal-close" onclick="closeModal('visit-modal')">
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拜访主题</label>
+        <input type="text" class="form-input" id="visit-title" placeholder="输入拜访主题">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拜访日期</label>
+        <input type="date" class="form-input" id="visit-date">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拜访时间</label>
+        <input type="time" class="form-input" id="visit-time">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拜访人员</label>
+        <input type="text" class="form-input" id="visitor-name" placeholder="输入拜访人员姓名">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">联系人</label>
+        <input type="text" class="form-input" id="contact-name" placeholder="输入联系人姓名">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拜访内容</label>
+        <textarea class="form-textarea" id="visit-content" placeholder="输入拜访内容"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('visit-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveVisit()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 背调记录模态框 -->
+  <div id="background-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="background-modal-title">添加背调记录</div>
+        <div class="modal-close" onclick="closeModal('background-modal')">
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">调查主题</label>
+        <input type="text" class="form-input" id="background-title" placeholder="输入调查主题">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">调查日期</label>
+        <input type="date" class="form-input" id="background-date">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">调查人员</label>
+        <input type="text" class="form-input" id="investigator-name" placeholder="输入调查人员姓名">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">评估结果</label>
+        <select class="form-select" id="background-result">
+          <option value="excellent">优秀</option>
+          <option value="good">良好</option>
+          <option value="average">一般</option>
+          <option value="poor">较差</option>
+          <option value="bad">不良</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">调查内容</label>
+        <textarea class="form-textarea" id="background-content" placeholder="输入调查内容"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('background-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveBackground()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 销售费用模态框 -->
+  <div id="expense-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="expense-modal-title">添加销售费用</div>
+        <div class="modal-close" onclick="closeModal('expense-modal')">
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">费用类型</label>
+        <input type="text" class="form-input" id="expense-title" placeholder="输入费用类型">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">费用日期</label>
+        <input type="date" class="form-input" id="expense-date">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">申请人</label>
+        <input type="text" class="form-input" id="applicant-name" placeholder="输入申请人姓名">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">费用金额</label>
+        <input type="number" class="form-input" id="expense-amount" placeholder="输入费用金额">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">费用状态</label>
+        <select class="form-select" id="expense-status">
+          <option value="pending">待审核</option>
+          <option value="reviewing">审核中</option>
+          <option value="approved">已报销</option>
+          <option value="rejected">已拒绝</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">费用说明</label>
+        <textarea class="form-textarea" id="expense-description" placeholder="输入费用说明"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('expense-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveExpense()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加订单弹窗 -->
+  <div id="addOrderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>添加订单</h3>
+        <span class="close" onclick="closeModal('addOrderModal')">&times;</span>
+      </div>
+      <form class="modal-form" onsubmit="submitOrderForm(event)">
+        <div class="form-group">
+          <label class="form-label">客户名称 *</label>
+          <select class="form-select" name="customerId" required>
+            <option value="">请选择客户</option>
+            <option value="1">华东人民医院</option>
+            <option value="2">西湖区医院</option>
+            <option value="3">浙江省医院</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">产品名称 *</label>
+          <select class="form-select" name="productId" required>
+            <option value="">请选择产品</option>
+            <option value="1">AI自查仪</option>
+            <option value="2">AI检查设备</option>
+            <option value="3">医疗耗材</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">订单金额 *</label>
+          <input type="number" class="form-input" name="amount" placeholder="请输入订单金额" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">数量 *</label>
+          <input type="number" class="form-input" name="quantity" placeholder="请输入数量" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">订单状态</label>
+          <select class="form-select" name="status">
+            <option value="pending">待确认</option>
+            <option value="confirmed">已确认</option>
+            <option value="processing">处理中</option>
+            <option value="completed">已完成</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">预计交付日期</label>
+          <input type="date" class="form-input" name="deliveryDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <textarea class="form-textarea" name="remark" placeholder="请输入备注信息" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addOrderModal')">取消</button>
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 添加拜访记录弹窗 -->
+  <div id="addVisitModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>添加拜访记录</h3>
+        <span class="close" onclick="closeModal('addVisitModal')">&times;</span>
+      </div>
+      <form class="modal-form" onsubmit="submitVisitForm(event)">
+        <div class="form-group">
+          <label class="form-label">客户名称 *</label>
+          <select class="form-select" name="customerId" required>
+            <option value="">请选择客户</option>
+            <option value="1">华东人民医院</option>
+            <option value="2">西湖区医院</option>
+            <option value="3">浙江省医院</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">拜访日期 *</label>
+          <input type="date" class="form-input" name="visitDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">拜访时间 *</label>
+          <input type="time" class="form-input" name="visitTime" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">拜访地点 *</label>
+          <input type="text" class="form-input" name="location" placeholder="请输入拜访地点" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">拜访目的</label>
+          <select class="form-select" name="purpose">
+            <option value="consultation">咨询洽谈</option>
+            <option value="follow-up">跟进回访</option>
+            <option value="maintenance">关系维护</option>
+            <option value="complaint">投诉处理</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">参与人员</label>
+          <input type="text" class="form-input" name="participants" placeholder="请输入参与人员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">拜访内容 *</label>
+          <textarea class="form-textarea" name="content" placeholder="请详细描述拜访内容" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">客户反馈</label>
+          <textarea class="form-textarea" name="feedback" placeholder="请输入客户反馈" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">下次跟进计划</label>
+          <textarea class="form-textarea" name="nextPlan" placeholder="请输入下次跟进计划" rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addVisitModal')">取消</button>
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 添加背调记录弹窗 -->
+  <div id="addBackgroundCheckModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>添加背调记录</h3>
+        <span class="close" onclick="closeModal('addBackgroundCheckModal')">&times;</span>
+      </div>
+      <form class="modal-form" onsubmit="submitBackgroundCheckForm(event)">
+        <div class="form-group">
+          <label class="form-label">客户名称 *</label>
+          <select class="form-select" name="customerId" required>
+            <option value="">请选择客户</option>
+            <option value="1">华东人民医院</option>
+            <option value="2">西湖区医院</option>
+            <option value="3">浙江省医院</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调查日期 *</label>
+          <input type="date" class="form-input" name="checkDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调查方式</label>
+          <select class="form-select" name="checkMethod">
+            <option value="phone">电话调查</option>
+            <option value="visit">实地走访</option>
+            <option value="online">网络查询</option>
+            <option value="reference">第三方推荐</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调查内容 *</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="checkbox" name="checkItems" value="credit" style="margin-right: 5px;"> 信用状况
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="checkbox" name="checkItems" value="business" style="margin-right: 5px;"> 经营状况
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="checkbox" name="checkItems" value="financial" style="margin-right: 5px;"> 财务状况
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="checkbox" name="checkItems" value="legal" style="margin-right: 5px;"> 法律纠纷
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="checkbox" name="checkItems" value="reputation" style="margin-right: 5px;"> 市场声誉
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">信用等级</label>
+          <select class="form-select" name="creditLevel">
+            <option value="excellent">优秀</option>
+            <option value="good">良好</option>
+            <option value="average">一般</option>
+            <option value="poor">较差</option>
+            <option value="unknown">未知</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">风险评估</label>
+          <select class="form-select" name="riskLevel">
+            <option value="low">低风险</option>
+            <option value="medium">中风险</option>
+            <option value="high">高风险</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调查结果 *</label>
+          <textarea class="form-textarea" name="result" placeholder="请详细描述调查结果" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">建议措施</label>
+          <textarea class="form-textarea" name="suggestion" placeholder="请输入建议措施" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addBackgroundCheckModal')">取消</button>
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 添加销售费用弹窗 -->
+  <div id="addExpenseModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>添加销售费用</h3>
+        <span class="close" onclick="closeModal('addExpenseModal')">&times;</span>
+      </div>
+      <form class="modal-form" onsubmit="submitExpenseForm(event)">
+        <div class="form-group">
+          <label class="form-label">客户名称 *</label>
+          <select class="form-select" name="customerId" required>
+            <option value="">请选择客户</option>
+            <option value="1">华东人民医院</option>
+            <option value="2">西湖区医院</option>
+            <option value="3">浙江省医院</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">费用日期 *</label>
+          <input type="date" class="form-input" name="expenseDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">费用类型 *</label>
+          <select class="form-select" name="expenseType" required>
+            <option value="">请选择费用类型</option>
+            <option value="travel">差旅费</option>
+            <option value="entertainment">招待费</option>
+            <option value="communication">通讯费</option>
+            <option value="marketing">市场推广费</option>
+            <option value="gift">礼品费</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">费用金额 *</label>
+          <input type="number" class="form-input" name="amount" placeholder="请输入费用金额" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">支付方式</label>
+          <select class="form-select" name="paymentMethod">
+            <option value="cash">现金</option>
+            <option value="card">刷卡</option>
+            <option value="transfer">转账</option>
+            <option value="reimbursement">报销</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">费用说明 *</label>
+          <textarea class="form-textarea" name="description" placeholder="请详细说明费用用途" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发票号码</label>
+          <input type="text" class="form-input" name="invoiceNumber" placeholder="请输入发票号码">
+        </div>
+        <div class="form-group">
+          <label class="form-label">是否有发票</label>
+          <select class="form-select" name="hasInvoice">
+            <option value="yes">有</option>
+            <option value="no">无</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <textarea class="form-textarea" name="remark" placeholder="请输入备注信息" rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addExpenseModal')">取消</button>
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 确认对话框 -->
+  <div id="confirm-dialog" class="confirm-dialog">
+    <div class="confirm-content">
+      <div class="confirm-title">确认删除</div>
+      <div class="confirm-message">确定要删除这条记录吗？此操作不可恢复。</div>
+      <div class="confirm-buttons">
+        <button class="btn btn-outline" onclick="closeConfirmDialog()">取消</button>
+        <button class="btn btn-danger" onclick="confirmDelete()">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全局变量
+    let currentTab = 'basic-info';
+    let currentDeleteType = '';
+    let currentDeleteId = null;
+    let currentEditMode = 'add';
+    let currentEditId = null;
+
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function () {
+      // 标签切换 - 为所有手机界面添加事件绑定
+      document.querySelectorAll('.detail-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+          const tabId = this.getAttribute('data-tab');
+          // 找到当前tab所在的手机界面
+          const phoneContainer = this.closest('.phone-mockup');
+          switchTab(tabId, phoneContainer);
+        });
+      });
+
+      // 底部导航切换
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function () {
+          document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    });
+
+    // 切换标签页
+    function switchTab(tabId, phoneContainer) {
+      // 更新当前标签
+      currentTab = tabId;
+
+      // 如果没有指定容器，则使用第一个手机界面（向后兼容）
+      if (!phoneContainer) {
+        phoneContainer = document.querySelector('.phone-mockup');
+      }
+
+      // 更新当前容器内的标签样式
+      phoneContainer.querySelectorAll('.detail-tab').forEach(tab => {
+        if (tab.getAttribute('data-tab') === tabId) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // 更新当前容器内的内容显示
+      phoneContainer.querySelectorAll('.tab-content').forEach(content => {
+        if (content.id === tabId) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+    }
+
+    // 打开订单模态框
+    function openOrderModal(mode, id) {
+      currentEditMode = mode;
+      currentEditId = id;
+
+      // 设置模态框标题
+      const modalTitle = document.getElementById('order-modal-title');
+      modalTitle.textContent = mode === 'add' ? '添加订单记录' : '编辑订单记录';
+
+      // 如果是编辑模式，填充表单数据
+      if (mode === 'edit' && id) {
+        // 这里应该根据id获取订单数据并填充表单
+        // 在实际应用中，这里会从API获取数据
+        // 这里仅作为示例，使用模拟数据
+        const orderData = {
+          1: {
+            number: 'ORD20250915',
+            date: '2025-09-15',
+            amount: 125000,
+            payment: 125000,
+            status: 'completed',
+            remark: '客户已全额支付，订单已完成。'
+          },
+          2: {
+            number: 'ORD20250812',
+            date: '2025-08-12',
+            amount: 86500,
+            payment: 43250,
+            status: 'partial',
+            remark: '客户已支付50%，剩余款项将在下月支付。'
+          },
+          3: {
+            number: 'ORD20250625',
+            date: '2025-06-25',
+            amount: 210000,
+            payment: 210000,
+            status: 'completed',
+            remark: '大型设备采购订单，已全额支付。'
+          }
+        };
+
+        const order = orderData[id];
+        if (order) {
+          document.getElementById('order-number').value = order.number;
+          document.getElementById('order-date').value = order.date;
+          document.getElementById('order-amount').value = order.amount;
+          document.getElementById('payment-amount').value = order.payment;
+          document.getElementById('order-status').value = order.status;
+          document.getElementById('order-remark').value = order.remark;
+        }
+      } else {
+        // 如果是添加模式，清空表单
+        document.getElementById('order-number').value = '';
+        document.getElementById('order-date').value = '';
+        document.getElementById('order-amount').value = '';
+        document.getElementById('payment-amount').value = '';
+        document.getElementById('order-status').value = 'pending';
+        document.getElementById('order-remark').value = '';
+      }
+
+      // 显示模态框
+      const modal = document.getElementById('order-modal');
+      modal.style.display = 'flex';
+    }
+
+    // 打开拜访记录模态框
+    function openVisitModal(mode, id) {
+      currentEditMode = mode;
+      currentEditId = id;
+
+      // 设置模态框标题
+      const modalTitle = document.getElementById('visit-modal-title');
+      modalTitle.textContent = mode === 'add' ? '添加拜访记录' : '编辑拜访记录';
+
+      // 如果是编辑模式，填充表单数据
+      if (mode === 'edit' && id) {
+        // 这里应该根据id获取拜访记录数据并填充表单
+        // 在实际应用中，这里会从API获取数据
+        // 这里仅作为示例，使用模拟数据
+        const visitData = {
+          1: {
+            title: '例行拜访',
+            date: '2025-09-18',
+            time: '10:30',
+            visitor: '张明',
+            contact: '李主任',
+            content: '讨论了新产品的使用情况和客户反馈，客户表示满意，并有意向增加采购量。'
+          },
+          2: {
+            title: '产品演示',
+            date: '2025-09-05',
+            time: '14:00',
+            visitor: '王芳',
+            contact: '赵院长',
+            content: '为医院相关部门进行了新产品演示，获得了积极反馈，院方表示将在下次采购中考虑。'
+          },
+          3: {
+            title: '售后回访',
+            date: '2025-08-22',
+            time: '09:15',
+            visitor: '李华',
+            contact: '王主任',
+            content: '针对上次采购的产品进行售后回访，解决了客户在使用过程中遇到的问题，提供了培训支持。'
+          },
+          4: {
+            title: '初次拜访',
+            date: '2025-07-10',
+            time: '15:30',
+            visitor: '张明',
+            contact: '李主任',
+            content: '首次拜访客户，介绍了公司产品和服务，了解了客户需求和采购计划，建立了初步合作关系。'
+          }
+        };
+
+        const visit = visitData[id];
+        if (visit) {
+          document.getElementById('visit-title').value = visit.title;
+          document.getElementById('visit-date').value = visit.date;
+          document.getElementById('visit-time').value = visit.time;
+          document.getElementById('visitor-name').value = visit.visitor;
+          document.getElementById('contact-name').value = visit.contact;
+          document.getElementById('visit-content').value = visit.content;
+        }
+      } else {
+        // 如果是添加模式，清空表单
+        document.getElementById('visit-title').value = '';
+        document.getElementById('visit-date').value = '';
+        document.getElementById('visit-time').value = '';
+        document.getElementById('visitor-name').value = '';
+        document.getElementById('contact-name').value = '';
+        document.getElementById('visit-content').value = '';
+      }
+
+      // 显示模态框
+      const modal = document.getElementById('visit-modal');
+      modal.style.display = 'flex';
+    }
+
+    // 打开背调记录模态框
+    function openBackgroundModal(mode, id) {
+      currentEditMode = mode;
+      currentEditId = id;
+
+      // 设置模态框标题
+      const modalTitle = document.getElementById('background-modal-title');
+      modalTitle.textContent = mode === 'add' ? '添加背调记录' : '编辑背调记录';
+
+      // 如果是编辑模式，填充表单数据
+      if (mode === 'edit' && id) {
+        // 这里应该根据id获取背调记录数据并填充表单
+        // 在实际应用中，这里会从API获取数据
+        // 这里仅作为示例，使用模拟数据
+        const backgroundData = {
+          1: {
+            title: '信用评估',
+            date: '2025-09-10',
+            investigator: '王芳',
+            result: 'excellent',
+            content: '对客户的信用状况进行了全面评估，包括财务状况、历史付款记录和市场声誉。客户信用良好，付款及时，无不良记录。'
+          },
+          2: {
+            title: '市场调研',
+            date: '2025-08-05',
+            investigator: '李华',
+            result: 'good',
+            content: '对客户所在市场进行了调研，分析了客户在行业中的地位、竞争优势和发展潜力。客户在当地医疗市场具有较高声誉和稳定的市场份额。'
+          }
+        };
+
+        const background = backgroundData[id];
+        if (background) {
+          document.getElementById('background-title').value = background.title;
+          document.getElementById('background-date').value = background.date;
+          document.getElementById('investigator-name').value = background.investigator;
+          document.getElementById('background-result').value = background.result;
+          document.getElementById('background-content').value = background.content;
+        }
+      } else {
+        // 如果是添加模式，清空表单
+        document.getElementById('background-title').value = '';
+        document.getElementById('background-date').value = '';
+        document.getElementById('investigator-name').value = '';
+        document.getElementById('background-result').value = 'excellent';
+        document.getElementById('background-content').value = '';
+      }
+
+      // 显示模态框
+      const modal = document.getElementById('background-modal');
+      modal.style.display = 'flex';
+    }
+
+    // 打开销售费用模态框
+    function openExpenseModal(mode, id) {
+      currentEditMode = mode;
+      currentEditId = id;
+
+      // 设置模态框标题
+      const modalTitle = document.getElementById('expense-modal-title');
+      modalTitle.textContent = mode === 'add' ? '添加销售费用' : '编辑销售费用';
+
+      // 如果是编辑模式，填充表单数据
+      if (mode === 'edit' && id) {
+        // 这里应该根据id获取销售费用数据并填充表单
+        // 在实际应用中，这里会从API获取数据
+        // 这里仅作为示例，使用模拟数据
+        const expenseData = {
+          1: {
+            title: '业务招待费',
+            date: '2025-09-18',
+            applicant: '张明',
+            amount: 2800,
+            status: 'approved',
+            description: '与客户代表进行业务洽谈的餐饮招待费用，包括5人餐饮和茶点。'
+          },
+          2: {
+            title: '差旅费',
+            date: '2025-09-05',
+            applicant: '王芳',
+            amount: 1650,
+            status: 'reviewing',
+            description: '前往客户所在地进行产品演示的交通和住宿费用，包括高铁票和一晚酒店住宿。'
+          },
+          3: {
+            title: '样品费',
+            date: '2025-08-22',
+            applicant: '李华',
+            amount: 5200,
+            status: 'approved',
+            description: '提供给客户的产品样品费用，用于客户试用和评估，包括2套医疗设备耗材。'
+          }
+        };
+
+        const expense = expenseData[id];
+        if (expense) {
+          document.getElementById('expense-title').value = expense.title;
+          document.getElementById('expense-date').value = expense.date;
+          document.getElementById('applicant-name').value = expense.applicant;
+          document.getElementById('expense-amount').value = expense.amount;
+          document.getElementById('expense-status').value = expense.status;
+          document.getElementById('expense-description').value = expense.description;
+        }
+      } else {
+        // 如果是添加模式，清空表单
+        document.getElementById('expense-title').value = '';
+        document.getElementById('expense-date').value = '';
+        document.getElementById('applicant-name').value = '';
+        document.getElementById('expense-amount').value = '';
+        document.getElementById('expense-status').value = 'pending';
+        document.getElementById('expense-description').value = '';
+      }
+
+      // 显示模态框
+      const modal = document.getElementById('expense-modal');
+      modal.style.display = 'flex';
+    }
+
+    // 关闭模态框
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'none';
+    }
+
+    // 打开确认对话框
+    function openConfirmDialog(type, id) {
+      currentDeleteType = type;
+      currentDeleteId = id;
+
+      const dialog = document.getElementById('confirm-dialog');
+      dialog.style.display = 'flex';
+    }
+
+    // 关闭确认对话框
+    function closeConfirmDialog() {
+      const dialog = document.getElementById('confirm-dialog');
+      dialog.style.display = 'none';
+    }
+
+    // 确认删除
+    function confirmDelete() {
+      // 在实际应用中，这里会调用API删除记录
+      // 这里仅作为示例，模拟删除操作
+      console.log(`删除${currentDeleteType}记录，ID: ${currentDeleteId}`);
+
+      // 关闭确认对话框
+      closeConfirmDialog();
+
+      // 可以在这里添加删除成功的提示
+      alert('删除成功！');
+    }
+
+    // 保存订单
+    function saveOrder() {
+      // 获取表单数据
+      const orderNumber = document.getElementById('order-number').value;
+      const orderDate = document.getElementById('order-date').value;
+      const orderAmount = document.getElementById('order-amount').value;
+      const paymentAmount = document.getElementById('payment-amount').value;
+      const orderStatus = document.getElementById('order-status').value;
+      const orderRemark = document.getElementById('order-remark').value;
+
+      // 表单验证
+      if (!orderNumber || !orderDate || !orderAmount) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      // 这里仅作为示例，模拟保存操作
+      console.log('保存订单数据:', {
+        mode: currentEditMode,
+        id: currentEditId,
+        number: orderNumber,
+        date: orderDate,
+        amount: orderAmount,
+        payment: paymentAmount,
+        status: orderStatus,
+        remark: orderRemark
+      });
+
+      // 关闭模态框
+      closeModal('order-modal');
+
+      // 可以在这里添加保存成功的提示
+      alert('保存成功！');
+    }
+
+    // 保存拜访记录
+    function saveVisit() {
+      // 获取表单数据
+      const visitTitle = document.getElementById('visit-title').value;
+      const visitDate = document.getElementById('visit-date').value;
+      const visitTime = document.getElementById('visit-time').value;
+      const visitorName = document.getElementById('visitor-name').value;
+      const contactName = document.getElementById('contact-name').value;
+      const visitContent = document.getElementById('visit-content').value;
+
+      // 表单验证
+      if (!visitTitle || !visitDate || !visitorName || !contactName) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      // 这里仅作为示例，模拟保存操作
+      console.log('保存拜访记录数据:', {
+        mode: currentEditMode,
+        id: currentEditId,
+        title: visitTitle,
+        date: visitDate,
+        time: visitTime,
+        visitor: visitorName,
+        contact: contactName,
+        content: visitContent
+      });
+
+      // 关闭模态框
+      closeModal('visit-modal');
+
+      // 可以在这里添加保存成功的提示
+      alert('保存成功！');
+    }
+
+    // 保存背调记录
+    function saveBackground() {
+      // 获取表单数据
+      const backgroundTitle = document.getElementById('background-title').value;
+      const backgroundDate = document.getElementById('background-date').value;
+      const investigatorName = document.getElementById('investigator-name').value;
+      const backgroundResult = document.getElementById('background-result').value;
+      const backgroundContent = document.getElementById('background-content').value;
+
+      // 表单验证
+      if (!backgroundTitle || !backgroundDate || !investigatorName) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      // 这里仅作为示例，模拟保存操作
+      console.log('保存背调记录数据:', {
+        mode: currentEditMode,
+        id: currentEditId,
+        title: backgroundTitle,
+        date: backgroundDate,
+        investigator: investigatorName,
+        result: backgroundResult,
+        content: backgroundContent
+      });
+
+      // 关闭模态框
+      closeModal('background-modal');
+
+      // 可以在这里添加保存成功的提示
+      alert('保存成功！');
+    }
+
+    // 保存销售费用
+    function saveExpense() {
+      // 获取表单数据
+      const expenseTitle = document.getElementById('expense-title').value;
+      const expenseDate = document.getElementById('expense-date').value;
+      const applicantName = document.getElementById('applicant-name').value;
+      const expenseAmount = document.getElementById('expense-amount').value;
+      const expenseStatus = document.getElementById('expense-status').value;
+      const expenseDescription = document.getElementById('expense-description').value;
+
+      // 表单验证
+      if (!expenseTitle || !expenseDate || !applicantName || !expenseAmount) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      // 这里仅作为示例，模拟保存操作
+      console.log('保存销售费用数据:', {
+        mode: currentEditMode,
+        id: currentEditId,
+        title: expenseTitle,
+        date: expenseDate,
+        applicant: applicantName,
+        amount: expenseAmount,
+        status: expenseStatus,
+        description: expenseDescription
+      });
+
+      // 关闭模态框
+      closeModal('expense-modal');
+
+      // 可以在这里添加保存成功的提示
+      alert('保存成功！');
+    }
+
+    // 显示添加订单弹窗
+    function showAddOrderModal() {
+      const modal = document.getElementById('addOrderModal');
+      modal.style.display = 'flex';
+    }
+
+    // 显示添加拜访记录弹窗
+    function showAddVisitModal() {
+      const modal = document.getElementById('addVisitModal');
+      modal.style.display = 'flex';
+    }
+
+    // 显示添加背调记录弹窗
+    function showAddBackgroundCheckModal() {
+      const modal = document.getElementById('addBackgroundCheckModal');
+      modal.style.display = 'flex';
+    }
+
+    // 显示添加销售费用弹窗
+    function showAddExpenseModal() {
+      const modal = document.getElementById('addExpenseModal');
+      modal.style.display = 'flex';
+    }
+
+    // 关闭弹窗的通用函数
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'none';
+    }
+
+    // 提交订单表单
+    function submitOrderForm(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const orderData = {
+        customerId: formData.get('customerId'),
+        productId: formData.get('productId'),
+        amount: formData.get('amount'),
+        quantity: formData.get('quantity'),
+        status: formData.get('status'),
+        deliveryDate: formData.get('deliveryDate'),
+        remark: formData.get('remark')
+      };
+
+      // 表单验证
+      if (!orderData.customerId || !orderData.productId || !orderData.amount || !orderData.quantity) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      console.log('提交订单数据:', orderData);
+      
+      // 关闭弹窗
+      closeModal('addOrderModal');
+      
+      // 重置表单
+      event.target.reset();
+      
+      alert('订单添加成功！');
+    }
+
+    // 提交拜访记录表单
+    function submitVisitForm(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const visitData = {
+        customerId: formData.get('customerId'),
+        visitDate: formData.get('visitDate'),
+        visitTime: formData.get('visitTime'),
+        location: formData.get('location'),
+        purpose: formData.get('purpose'),
+        participants: formData.get('participants'),
+        content: formData.get('content'),
+        feedback: formData.get('feedback'),
+        nextPlan: formData.get('nextPlan')
+      };
+
+      // 表单验证
+      if (!visitData.customerId || !visitData.visitDate || !visitData.visitTime || !visitData.location || !visitData.content) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      console.log('提交拜访记录数据:', visitData);
+      
+      // 关闭弹窗
+      closeModal('addVisitModal');
+      
+      // 重置表单
+      event.target.reset();
+      
+      alert('拜访记录添加成功！');
+    }
+
+    // 提交背调记录表单
+    function submitBackgroundCheckForm(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      
+      // 获取选中的调查内容
+      const checkItems = [];
+      const checkboxes = event.target.querySelectorAll('input[name="checkItems"]:checked');
+      checkboxes.forEach(checkbox => {
+        checkItems.push(checkbox.value);
+      });
+
+      const backgroundData = {
+        customerId: formData.get('customerId'),
+        checkDate: formData.get('checkDate'),
+        checkMethod: formData.get('checkMethod'),
+        checkItems: checkItems,
+        creditLevel: formData.get('creditLevel'),
+        riskLevel: formData.get('riskLevel'),
+        result: formData.get('result'),
+        suggestion: formData.get('suggestion')
+      };
+
+      // 表单验证
+      if (!backgroundData.customerId || !backgroundData.checkDate || !backgroundData.result) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      console.log('提交背调记录数据:', backgroundData);
+      
+      // 关闭弹窗
+      closeModal('addBackgroundCheckModal');
+      
+      // 重置表单
+      event.target.reset();
+      
+      alert('背调记录添加成功！');
+    }
+
+    // 提交销售费用表单
+    function submitExpenseForm(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const expenseData = {
+        customerId: formData.get('customerId'),
+        expenseDate: formData.get('expenseDate'),
+        expenseType: formData.get('expenseType'),
+        amount: formData.get('amount'),
+        paymentMethod: formData.get('paymentMethod'),
+        description: formData.get('description'),
+        invoiceNumber: formData.get('invoiceNumber'),
+        hasInvoice: formData.get('hasInvoice'),
+        remark: formData.get('remark')
+      };
+
+      // 表单验证
+      if (!expenseData.customerId || !expenseData.expenseDate || !expenseData.expenseType || !expenseData.amount || !expenseData.description) {
+        alert('请填写必填字段！');
+        return;
+      }
+
+      // 在实际应用中，这里会调用API保存数据
+      console.log('提交销售费用数据:', expenseData);
+      
+      // 关闭弹窗
+      closeModal('addExpenseModal');
+      
+      // 重置表单
+      event.target.reset();
+      
+      alert('销售费用添加成功！');
+    }
+
+    // 点击弹窗外部关闭弹窗
+    window.onclick = function(event) {
+      const modals = ['addOrderModal', 'addVisitModal', 'addBackgroundCheckModal', 'addExpenseModal'];
+      modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+          closeModal(modalId);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

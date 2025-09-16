@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM客户管理系统 - 客户页</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      /* 蓝色主色调 */
+      --primary-light: #93c5fd;
+      --primary-dark: #1d4ed8;
+      --gradient-start: #dbeafe;
+      --gradient-end: #eff6ff;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: #f5f5f7;
+      color: #000000;
+      overflow-x: hidden;
+    }
+
+    /* 设备容器样式 */
+    .device-container {
+      width: 375px;
+      height: 812px;
+      margin: 20px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 40px;
+      border: 1px solid #ddd;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      flex-direction: column;
+      background-color: white;
+    }
+
+    /* 状态栏样式 */
+    .status-bar {
+      height: 44px;
+      width: 100%;
+      background-color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .status-bar-time {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .status-bar-icons {
+      display: flex;
+      align-items: center;
+    }
+
+    .status-bar-icons i {
+      margin-left: 5px;
+      font-size: 12px;
+    }
+
+    /* 应用内容区域 */
+    .app-content {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      background: #f2f2f2;
+    }
+
+    /* 隐藏滚动条 */
+    .app-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 底部导航栏 */
+    .tab-bar {
+      height: 80px;
+      width: 100%;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #f0f0f0;
+      padding-bottom: 20px;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      color: #6b7280;
+      transition: all 0.3s ease;
+    }
+
+    .tab-item.active {
+      color: var(--primary-color);
+    }
+
+    .tab-item i {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .tab-item span {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* 标签页样式 */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+
+    .tab {
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: var(--primary-color);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    /* 卡片样式 */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 按钮样式 */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      color: white;
+    }
+
+    .btn-outline {
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      background: transparent;
+    }
+
+    .btn i {
+      margin-right: 4px;
+      font-size: 10px;
+    }
+
+    /* 输入框样式 */
+    .input-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background-color: #f9fafb;
+      border: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 12px;
+      color: #6b7280;
+    }
+
+    .input-with-icon {
+      padding-left: 40px;
+    }
+
+    /* 客户卡片样式 */
+    .customer-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .customer-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .customer-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .customer-type {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background-color: #f3f4f6;
+    }
+
+    .customer-info {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .customer-info-item {
+      font-size: 12px;
+      color: #6b7280;
+      margin-right: 12px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .customer-info-item i {
+      margin-right: 4px;
+      font-size: 10px;
+    }
+
+    .customer-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* 标签页内容样式 */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* 下拉刷新和上拉加载样式 */
+    .pull-indicator {
+      text-align: center;
+      padding: 10px 0;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .slide-up {
+      animation: slideUp 0.3s ease forwards;
+    }
+
+    /* 确认模态框样式 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 340px;
+      background-color: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      font-size: 20px;
+      color: #6b7280;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class="flex justify-center items-start p-4 bg-gray-100">
+  <!-- 设备容器 -->
+  <div class="device-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div class="status-bar-time">9:41</div>
+      <div class="status-bar-icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 应用内容区域 -->
+    <div class="app-content" id="app-content">
+      <!-- 客户页 -->
+      <div class="page active" id="customer-page">
+
+        <!-- 客户页标签 -->
+        <div class="tabs" id="customer-tabs">
+          <div class="tab active" data-tab="closed-customers">成交客户</div>
+          <div class="tab" data-tab="potential-customers">意向客户</div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="input-group mb-4">
+          <i class="fas fa-search input-icon"></i>
+          <input type="text" class="input input-with-icon" id="customer-search" placeholder="搜索客户名称">
+        </div>
+
+        <!-- 成交客户列表 -->
+        <div class="tab-content active" id="closed-customers">
+          <div class="customer-list" id="closed-customer-list">
+            <!-- 客户卡片 -->
+            <div class="card customer-card" data-customer-id="1">
+              <div class="customer-card-header">
+                <div class="customer-name">北京协和医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>北京市/海淀区</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>陌拜</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card customer-card" data-customer-id="2">
+              <div class="customer-card-header">
+                <div class="customer-name">上海瑞金商务对接</div>
+                <div class="customer-type">代理商</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>上海市/青浦区</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>资源对接</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card customer-card" data-customer-id="3">
+              <div class="customer-card-header">
+                <div class="customer-name">广州国新按经销商</div>
+                <div class="customer-type">民营</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>广州市/白云区</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>联盟介绍</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pull-indicator" id="closed-load-more">上拉加载更多</div>
+          </div>
+        </div>
+
+        <!-- 意向客户列表 -->
+        <div class="tab-content" id="potential-customers">
+          <button class="px-4 py-2 mb-2" style="background-color: #a9c7f8;border-radius: .5rem;">导入</button>
+          <div class="customer-list" id="potential-customer-list">
+            <!-- 客户卡片 -->
+            <div class="card customer-card" data-customer-id="4">
+              <div class="customer-card-header">
+                <div class="customer-name">成都华西商务对接</div>
+                <div class="customer-type">代理商</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>四川省/成都市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>陌拜</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="4">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+
+            <div class="card customer-card" data-customer-id="5">
+              <div class="customer-card-header">
+                <div class="customer-name">深圳市第二人民医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>广东省/深圳市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>资源对接</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="5">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+
+            <div class="card customer-card" data-customer-id="6">
+              <div class="customer-card-header">
+                <div class="customer-name">武汉同济医院</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>湖北省/武汉市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>联盟介绍</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="6">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            </div>
+
+            <div class="pull-indicator" id="potential-load-more">上拉加载更多</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item" data-page="home-page">
+        <i class="fas fa-chart-line"></i>
+        <span>首页</span>
+      </div>
+      <div class="tab-item active" data-page="customer-page">
+        <i class="fas fa-user-friends"></i>
+        <span>客户</span>
+      </div>
+      <div class="tab-item" data-page="profile-page">
+        <i class="fas fa-user"></i>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认模态框 -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">确认操作</div>
+        <div class="modal-close" id="close-confirm-modal">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="p-4">
+        <p class="text-center mb-4" id="confirm-message">确定要将该客户转为成交客户吗？</p>
+        <div class="flex justify-center gap-4">
+          <button class="btn btn-outline" id="cancel-confirm">取消</button>
+          <button class="btn btn-primary" id="confirm-action">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 客户页标签切换
+      const customerTabs = document.querySelectorAll('#customer-tabs .tab');
+      const customerContents = document.querySelectorAll('#customer-page .tab-content');
+
+      customerTabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+          const tabId = this.getAttribute('data-tab');
+
+          // 更新标签激活状态
+          customerTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+
+          // 更新内容显示
+          customerContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+
+      // 客户搜索功能
+      const customerSearch = document.getElementById('customer-search');
+      const closedCustomerList = document.getElementById('closed-customer-list');
+      const potentialCustomerList = document.getElementById('potential-customer-list');
+      const closedCustomers = closedCustomerList.querySelectorAll('.customer-card');
+      const potentialCustomers = potentialCustomerList.querySelectorAll('.customer-card');
+
+      customerSearch.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+
+        // 搜索成交客户
+        closedCustomers.forEach(customer => {
+          const customerName = customer.querySelector('.customer-name').textContent.toLowerCase();
+          if (customerName.includes(searchTerm)) {
+            customer.style.display = 'flex';
+          } else {
+            customer.style.display = 'none';
+          }
+        });
+
+        // 搜索意向客户
+        potentialCustomers.forEach(customer => {
+          const customerName = customer.querySelector('.customer-name').textContent.toLowerCase();
+          if (customerName.includes(searchTerm)) {
+            customer.style.display = 'flex';
+          } else {
+            customer.style.display = 'none';
+          }
+        });
+      });
+
+      // 转为成交客户功能
+      const convertButtons = document.querySelectorAll('.convert-btn');
+      const confirmModal = document.getElementById('confirm-modal');
+      const closeConfirmModal = document.getElementById('close-confirm-modal');
+      const cancelConfirm = document.getElementById('cancel-confirm');
+      const confirmAction = document.getElementById('confirm-action');
+      let currentCustomerId = null;
+
+      convertButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          currentCustomerId = this.getAttribute('data-customer-id');
+          confirmModal.classList.add('active');
+        });
+      });
+
+      closeConfirmModal.addEventListener('click', function () {
+        confirmModal.classList.remove('active');
+      });
+
+      cancelConfirm.addEventListener('click', function () {
+        confirmModal.classList.remove('active');
+      });
+
+      confirmAction.addEventListener('click', function () {
+        // 模拟转为成交客户的操作
+        const customerCard = document.querySelector(`.customer-card[data-customer-id="${currentCustomerId}"]`);
+        if (customerCard) {
+          // 移除转为成交按钮
+          const actionDiv = customerCard.querySelector('.customer-actions');
+          if (actionDiv) {
+            actionDiv.remove();
+          }
+
+          // 将客户卡片移动到成交客户列表
+          customerCard.remove();
+          closedCustomerList.insertBefore(customerCard, closedCustomerList.firstChild);
+
+          // 添加动画效果
+          customerCard.classList.add('fade-in');
+
+          // 关闭模态框
+          confirmModal.classList.remove('active');
+
+          // 切换到成交客户标签
+          customerTabs[0].click();
+        }
+      });
+
+      // 模拟上拉加载更多
+      const closedLoadMore = document.getElementById('closed-load-more');
+      const potentialLoadMore = document.getElementById('potential-load-more');
+
+      closedLoadMore.addEventListener('click', function () {
+        this.textContent = '加载中...';
+
+        // 模拟加载延迟
+        setTimeout(() => {
+          // 模拟添加新客户
+          for (let i = 0; i < 2; i++) {
+            const newCustomer = document.createElement('div');
+            newCustomer.className = 'card customer-card fade-in';
+            newCustomer.setAttribute('data-customer-id', Math.floor(Math.random() * 1000) + 10);
+            newCustomer.innerHTML = `
+              <div class="customer-card-header">
+                <div class="customer-name">新增成交客户 ${i + 1}</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>北京市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>陌拜</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>新客户联系人</span>
+                </div>
+              </div>
+            `;
+
+            closedCustomerList.insertBefore(newCustomer, closedLoadMore);
+          }
+
+          this.textContent = '上拉加载更多';
+        }, 1000);
+      });
+
+      potentialLoadMore.addEventListener('click', function () {
+        this.textContent = '加载中...';
+
+        // 模拟加载延迟
+        setTimeout(() => {
+          // 模拟添加新客户
+          for (let i = 0; i < 2; i++) {
+            const newCustomer = document.createElement('div');
+            newCustomer.className = 'card customer-card fade-in';
+            newCustomer.setAttribute('data-customer-id', Math.floor(Math.random() * 1000) + 100);
+            newCustomer.innerHTML = `
+              <div class="customer-card-header">
+                <div class="customer-name">新增意向客户 ${i + 1}</div>
+                <div class="customer-type">公立</div>
+              </div>
+              <div class="customer-info">
+                <div class="customer-info-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>上海市</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-tag"></i>
+                  <span>资源对接</span>
+                </div>
+                <div class="customer-info-item">
+                  <i class="fas fa-user"></i>
+                  <span>新意向联系人</span>
+                </div>
+              </div>
+              <div class="customer-actions mt-2">
+                <button class="btn btn-outline btn-sm convert-btn" data-customer-id="${Math.floor(Math.random() * 1000) + 100}">
+                  <i class="fas fa-exchange-alt"></i> 转为成交
+                </button>
+              </div>
+            `;
+
+            potentialCustomerList.insertBefore(newCustomer, potentialLoadMore);
+          }
+
+          // 为新添加的转换按钮绑定事件
+          const newConvertButtons = potentialCustomerList.querySelectorAll('.convert-btn:not([data-event-bound])');
+          newConvertButtons.forEach(button => {
+            button.setAttribute('data-event-bound', 'true');
+            button.addEventListener('click', function () {
+              currentCustomerId = this.getAttribute('data-customer-id');
+              confirmModal.classList.add('active');
+            });
+          });
+
+          this.textContent = '上拉加载更多';
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+
+</html>

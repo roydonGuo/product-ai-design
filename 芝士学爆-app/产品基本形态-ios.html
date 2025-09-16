@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>芝士学爆 - iOS App原型</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5E72E4;
+            --secondary-color: #F7FAFC;
+            --accent-color: #FF6B6B;
+            --text-primary: #1A202C;
+            --text-secondary: #718096;
+            --border-color: #E2E8F0;
+            --success-color: #48BB78;
+            --warning-color: #F6AD55;
+            --error-color: #F56565;
+            --background-color: #F8F9FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* iOS设备框架 */
+        .device-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 10px solid #111;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            position: relative;
+            z-index: 100;
+        }
+
+        .status-bar-time {
+            flex: 1;
+            text-align: center;
+        }
+
+        .status-bar-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* 内容区域 */
+        .app-content {
+            height: calc(100% - 44px - 70px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            background-color: white;
+        }
+
+        /* 底部导航 */
+        .tab-bar {
+            height: 70px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
+            color: var(--text-secondary);
+            font-size: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-item.active {
+            color: var(--primary-color);
+        }
+
+        .tab-item i {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        /* 瀑布流布局 */
+        .masonry {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s ease forwards;
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.3s ease forwards;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 100%;
+            max-height: 70%;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(94, 114, 228, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(113, 128, 150, 0.3);
+            border-radius: 4px;
+        }
+
+        /* 页面切换动画 */
+        .page-transition {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .page-enter {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .page-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 视频播放器样式 */
+        .video-player {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-player:hover .video-controls {
+            opacity: 1;
+        }
+
+        /* 轮播图样式 */
+        .carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item {
+            flex: 0 0 100%;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .carousel-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .carousel-indicator.active {
+            background-color: white;
+        }
+
+        /* Fragment弹出样式 */
+        .fragment-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 900;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .fragment-container.active {
+            transform: translateX(0);
+        }
+
+        /* 评论样式 */
+        .comment-item {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #DDD;
+            overflow: hidden;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .comment-meta {
+            display: flex;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 用户头像样式 */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #DDD;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* 徽章样式 */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            padding: 0 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            background-color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="device-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-bar-time">9:41</div>
+            <div class="status-bar-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="app-content">
+            <!-- 首页 -->
+            <div id="home-page" class="page active">
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">发现</h1>
+                </div>
+                <div class="masonry">
+                    <!-- 瀑布流内容将通过JavaScript动态生成 -->
+                </div>
+            </div>
+
+            <!-- 动态页 -->
+            <div id="dynamics-page" class="page">
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">动态</h1>
+                </div>
+                <!-- 动态页内容将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- AI页 -->
+            <div id="ai-page" class="page">
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">AI助手</h1>
+                </div>
+                <!-- AI页内容将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 消息页 -->
+            <div id="messages-page" class="page">
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">消息</h1>
+                </div>
+                <!-- 消息页内容将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 我的页 -->
+            <div id="profile-page" class="page">
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">我的</h1>
+                </div>
+                <!-- 我的页内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 底部导航栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active" data-page="home-page">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </div>
+            <div class="tab-item" data-page="dynamics-page">
+                <i class="fas fa-compass"></i>
+                <span>动态</span>
+            </div>
+            <div class="tab-item" data-page="ai-page">
+                <i class="fas fa-robot"></i>
+                <span></span>
+            </div>
+            <div class="tab-item" data-page="messages-page">
+                <i class="fas fa-comment"></i>
+                <span>消息</span>
+            </div>
+            <div class="tab-item" data-page="profile-page">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框容器 -->
+    <div id="modal-container"></div>
+
+    <!-- Fragment容器 -->
+    <div id="fragment-container" class="fragment-container"></div>
+
+    <script>
+        // 页面切换逻辑
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 更新标签状态
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 更新页面显示
+                const pageId = tab.getAttribute('data-page');
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                    page.classList.remove('page-enter-active');
+                    page.classList.add('page-enter');
+                });
+                
+                const targetPage = document.getElementById(pageId);
+                targetPage.classList.add('active');
+                
+                // 添加过渡动画
+                setTimeout(() => {
+                    targetPage.classList.remove('page-enter');
+                    targetPage.classList.add('page-enter-active');
+                }, 10);
+            });
+        });
+
+        // 生成虚拟数据
+        function generateVirtualData() {
+            // 首页瀑布流数据生成
+            generateHomePageData();
+            
+            // 动态页数据生成
+            generateDynamicsPageData();
+            
+            // AI页数据生成
+            generateAIPageData();
+            
+            // 消息页数据生成
+            generateMessagesPageData();
+            
+            // 我的页数据生成
+            generateProfilePageData();
+        }
+
+        // 首页瀑布流数据生成
+        function generateHomePageData() {
+            const masonryContainer = document.querySelector('.masonry');
+            const contentTypes = ['text', 'carousel', 'video'];
+            const titles = [
+                '如何高效学习一门新语言？',
+                '数据结构与算法入门指南',
+                '人工智能的未来发展趋势',
+                '前端开发必备技能',
+                '后端架构设计原则',
+                '产品经理必读书籍推荐',
+                '设计思维与用户体验',
+                '区块链技术解析',
+                '云计算与微服务架构',
+                '移动应用开发最佳实践'
+            ];
+            
+            // 清空容器
+            masonryContainer.innerHTML = '';
+            
+            // 生成20个随机卡片
+            for (let i = 0; i < 20; i++) {
+                const contentType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+                const title = titles[Math.floor(Math.random() * titles.length)];
+                const likes = Math.floor(Math.random() * 1000);
+                const comments = Math.floor(Math.random() * 100);
+                
+                let cardContent = '';
+                
+                if (contentType === 'text') {
+                    cardContent = `
+                        <div class="p-3">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                            <p class="text-sm text-gray-600 mb-3">这是一段关于${title}的详细解析，包含了核心知识点和实践建议...</p>
+                        </div>
+                    `;
+                } else if (contentType === 'carousel') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    cardContent = `
+                        <div class="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item">
+                                    <img src="https://source.unsplash.com/random/400x300?sig=${imageId}" alt="图片" class="w-full h-40 object-cover">
+                                </div>
+                            </div>
+                            <div class="carousel-indicators">
+                                <div class="carousel-indicator active"></div>
+                                <div class="carousel-indicator"></div>
+                                <div class="carousel-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                } else if (contentType === 'video') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    cardContent = `
+                        <div class="video-player">
+                            <img src="https://source.unsplash.com/random/400x300?sig=${imageId}" alt="视频封面" class="w-full h-40 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                                    <i class="fas fa-play text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'card fade-in';
+                card.style.animationDelay = `${i * 0.05}s`;
+                card.innerHTML = `
+                    ${cardContent}
+                    <div class="flex items-center justify-between px-3 pb-3">
+                        <div class="flex items-center">
+                            <div class="avatar mr-2">
+                                <img src="https://source.unsplash.com/random/100x100?face&sig=${Math.random()}" alt="头像">
+                            </div>
+                            <span class="text-xs">用户${Math.floor(Math.random() * 1000)}</span>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <span class="mr-2"><i class="far fa-heart mr-1"></i>${likes}</span>
+                            <span><i class="far fa-comment mr-1"></i>${comments}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加点击事件，跳转到详情页
+                card.addEventListener('click', () => {
+                    showContentDetail(contentType, title, likes, comments);
+                });
+                
+                masonryContainer.appendChild(card);
+            }
+        }
+
+        // 显示内容详情
+        function showContentDetail(contentType, title, likes, comments) {
+            // 这里将根据内容类型显示不同的详情页
+            console.log(`显示${contentType}类型的详情页: ${title}`);
+            // 实际实现将在后续完成
+        }
+
+        // 动态页数据生成
+        function generateDynamicsPageData() {
+            const dynamicsPage = document.getElementById('dynamics-page');
+            
+            // 清空内容
+            dynamicsPage.innerHTML = `
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">动态</h1>
+                </div>
+                
+                <!-- 关注作者横向列表 -->
+                <div class="px-3 mb-4">
+                    <div class="text-sm font-medium mb-2">关注的创作者</div>
+                    <div class="author-list flex overflow-x-auto pb-2" style="-webkit-overflow-scrolling: touch;">
+                        <!-- 作者列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 作品列表 -->
+                <div class="px-3">
+                    <div class="text-sm font-medium mb-2">最新动态</div>
+                    <div class="updates-list">
+                        <!-- 作品列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            `;
+            
+            // 生成作者列表
+            const authorList = dynamicsPage.querySelector('.author-list');
+            const authorNames = ['张教授', '李老师', '王工程师', '设计师小米', '数据分析师', '产品经理', '前端开发', '后端架构师'];
+            
+            for (let i = 0; i < 8; i++) {
+                const hasUpdate = Math.random() > 0.3; // 70%的概率有更新
+                const authorItem = document.createElement('div');
+                authorItem.className = 'author-item flex-shrink-0 flex flex-col items-center mr-4';
+                authorItem.innerHTML = `
+                    <div class="relative">
+                        <div class="avatar ${hasUpdate ? 'ring-2 ring-primary ring-offset-2' : ''}">
+                            <img src="https://source.unsplash.com/random/100x100?face&sig=${Math.random()}" alt="头像">
+                        </div>
+                        ${hasUpdate ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>' : ''}
+                    </div>
+                    <span class="text-xs mt-1">${authorNames[i]}</span>
+                `;
+                
+                // 添加点击事件，显示作者作品Fragment
+                authorItem.addEventListener('click', () => {
+                    showAuthorFragment(i, authorNames[i]);
+                });
+                
+                authorList.appendChild(authorItem);
+            }
+            
+            // 生成作品列表
+            const updatesList = dynamicsPage.querySelector('.updates-list');
+            const contentTypes = ['text', 'carousel', 'video'];
+            const titles = [
+                '如何高效学习一门新语言？',
+                '数据结构与算法入门指南',
+                '人工智能的未来发展趋势',
+                '前端开发必备技能',
+                '后端架构设计原则',
+                '产品经理必读书籍推荐',
+                '设计思维与用户体验',
+                '区块链技术解析',
+                '云计算与微服务架构',
+                '移动应用开发最佳实践'
+            ];
+            
+            for (let i = 0; i < 10; i++) {
+                const contentType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+                const title = titles[Math.floor(Math.random() * titles.length)];
+                const authorIndex = Math.floor(Math.random() * authorNames.length);
+                const timeAgo = Math.floor(Math.random() * 24) + 1;
+                const likes = Math.floor(Math.random() * 1000);
+                const comments = Math.floor(Math.random() * 100);
+                
+                const updateItem = document.createElement('div');
+                updateItem.className = 'update-item card mb-4 fade-in';
+                updateItem.style.animationDelay = `${i * 0.05}s`;
+                
+                let contentHtml = '';
+                
+                if (contentType === 'text') {
+                    contentHtml = `
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                            <p class="text-sm text-gray-600">这是一段关于${title}的详细解析，包含了核心知识点和实践建议...</p>
+                        </div>
+                    `;
+                } else if (contentType === 'carousel') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    contentHtml = `
+                        <div class="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item">
+                                    <img src="https://source.unsplash.com/random/600x400?sig=${imageId}" alt="图片" class="w-full h-48 object-cover">
+                                </div>
+                            </div>
+                            <div class="carousel-indicators">
+                                <div class="carousel-indicator active"></div>
+                                <div class="carousel-indicator"></div>
+                                <div class="carousel-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                } else if (contentType === 'video') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    contentHtml = `
+                        <div class="video-player">
+                            <img src="https://source.unsplash.com/random/600x400?sig=${imageId}" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                                    <i class="fas fa-play text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                }
+                
+                updateItem.innerHTML = `
+                    <div class="flex items-center p-4 pb-2">
+                        <div class="avatar mr-3">
+                            <img src="https://source.unsplash.com/random/100x100?face&sig=${authorIndex}" alt="头像">
+                        </div>
+                        <div>
+                            <div class="font-medium text-sm">${authorNames[authorIndex]}</div>
+                            <div class="text-xs text-gray-500">${timeAgo}小时前</div>
+                        </div>
+                    </div>
+                    ${contentHtml}
+                    <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span class="mr-4"><i class="far fa-heart mr-1"></i>${likes}</span>
+                            <span><i class="far fa-comment mr-1"></i>${comments}</span>
+                        </div>
+                        <button class="btn btn-icon btn-outline">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                updatesList.appendChild(updateItem);
+            }
+        }
+        
+        // 显示作者Fragment
+        function showAuthorFragment(authorIndex, authorName) {
+            const fragmentContainer = document.getElementById('fragment-container');
+            
+            // 生成作者作品列表
+            const contentTypes = ['text', 'carousel', 'video'];
+            const titles = [
+                '如何高效学习一门新语言？',
+                '数据结构与算法入门指南',
+                '人工智能的未来发展趋势',
+                '前端开发必备技能',
+                '后端架构设计原则',
+                '产品经理必读书籍推荐',
+                '设计思维与用户体验',
+                '区块链技术解析',
+                '云计算与微服务架构',
+                '移动应用开发最佳实践'
+            ];
+            
+            // 为当前作者生成5-10个作品
+            const workCount = Math.floor(Math.random() * 6) + 5;
+            let worksHtml = '';
+            
+            for (let i = 0; i < workCount; i++) {
+                const contentType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+                const title = titles[Math.floor(Math.random() * titles.length)];
+                const timeAgo = Math.floor(Math.random() * 30) + 1;
+                const likes = Math.floor(Math.random() * 1000);
+                const comments = Math.floor(Math.random() * 100);
+                
+                let contentHtml = '';
+                
+                if (contentType === 'text') {
+                    contentHtml = `
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                            <p class="text-sm text-gray-600">这是一段关于${title}的详细解析，包含了核心知识点和实践建议...</p>
+                        </div>
+                    `;
+                } else if (contentType === 'carousel') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    contentHtml = `
+                        <div class="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item">
+                                    <img src="https://source.unsplash.com/random/600x400?sig=${imageId}" alt="图片" class="w-full h-48 object-cover">
+                                </div>
+                            </div>
+                            <div class="carousel-indicators">
+                                <div class="carousel-indicator active"></div>
+                                <div class="carousel-indicator"></div>
+                                <div class="carousel-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                } else if (contentType === 'video') {
+                    const imageId = Math.floor(Math.random() * 1000);
+                    contentHtml = `
+                        <div class="video-player">
+                            <img src="https://source.unsplash.com/random/600x400?sig=${imageId}" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                                    <i class="fas fa-play text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-base mb-2">${title}</h3>
+                        </div>
+                    `;
+                }
+                
+                worksHtml += `
+                    <div class="card mb-4 fade-in" style="animation-delay: ${i * 0.05}s">
+                        ${contentHtml}
+                        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+                            <div class="text-xs text-gray-500">${timeAgo}天前</div>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="mr-4"><i class="far fa-heart mr-1"></i>${likes}</span>
+                                <span><i class="far fa-comment mr-1"></i>${comments}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 生成作者列表HTML
+            const authorNames = ['张教授', '李老师', '王工程师', '设计师小米', '数据分析师', '产品经理', '前端开发', '后端架构师'];
+            let authorsHtml = '';
+            
+            for (let i = 0; i < authorNames.length; i++) {
+                authorsHtml += `
+                    <div class="author-item flex-shrink-0 flex flex-col items-center mr-4 ${i === authorIndex ? 'opacity-100' : 'opacity-50'}" data-index="${i}">
+                        <div class="avatar">
+                            <img src="https://source.unsplash.com/random/100x100?face&sig=${i}" alt="头像">
+                        </div>
+                        <span class="text-xs mt-1">${authorNames[i]}</span>
+                    </div>
+                `;
+            }
+            
+            // 设置Fragment内容
+            fragmentContainer.innerHTML = `
+                <div class="status-bar">
+                    <div class="status-bar-time">9:41</div>
+                    <div class="status-bar-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+                
+                <div class="p-4 flex items-center">
+                    <button id="close-fragment" class="btn btn-icon btn-outline mr-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1 class="text-xl font-bold">${authorName}的作品</h1>
+                </div>
+                
+                <!-- 作者横向列表 -->
+                <div class="px-4 mb-4">
+                    <div class="author-list flex overflow-x-auto pb-2" style="-webkit-overflow-scrolling: touch;">
+                        ${authorsHtml}
+                    </div>
+                </div>
+                
+                <!-- 作品列表 -->
+                <div class="px-4 pb-20 overflow-y-auto" style="height: calc(100% - 140px);">
+                    ${worksHtml}
+                </div>
+            `;
+            
+            // 显示Fragment
+            fragmentContainer.classList.add('active');
+            
+            // 关闭Fragment按钮事件
+            document.getElementById('close-fragment').addEventListener('click', () => {
+                fragmentContainer.classList.remove('active');
+            });
+            
+            // 作者切换事件
+            fragmentContainer.querySelectorAll('.author-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const index = parseInt(item.getAttribute('data-index'));
+                    showAuthorFragment(index, authorNames[index]);
+                });
+            });
+            
+            // 添加左右滑动切换作者的功能
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            fragmentContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            fragmentContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                const threshold = 50; // 最小滑动距离
+                
+                if (touchEndX < touchStartX - threshold) {
+                    // 向左滑动，显示下一个作者
+                    const nextIndex = (authorIndex + 1) % authorNames.length;
+                    showAuthorFragment(nextIndex, authorNames[nextIndex]);
+                }
+                
+                if (touchEndX > touchStartX + threshold) {
+                    // 向右滑动，显示上一个作者
+                    const prevIndex = (authorIndex - 1 + authorNames.length) % authorNames.length;
+                    showAuthorFragment(prevIndex, authorNames[prevIndex]);
+                }
+            }
+        }
+
+
+        // AI页数据生成
+        function generateAIPageData() {
+            const aiPage = document.getElementById('ai-page');
+            
+            // 清空内容
+            aiPage.innerHTML = `
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">AI助手</h1>
+                </div>
+                
+                <!-- AI功能选择 -->
+                <div class="px-3 mb-4">
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="ai-feature-card" data-feature="chat">
+                            <div class="card p-4 text-center">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-comment-dots text-white text-xl"></i>
+                                </div>
+                                <div class="font-medium">智能对话</div>
+                            </div>
+                        </div>
+                        <div class="ai-feature-card" data-feature="draw">
+                            <div class="card p-4 text-center">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-paint-brush text-white text-xl"></i>
+                                </div>
+                                <div class="font-medium">AI绘图</div>
+                            </div>
+                        </div>
+                        <div class="ai-feature-card" data-feature="video">
+                            <div class="card p-4 text-center">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-video text-white text-xl"></i>
+                                </div>
+                                <div class="font-medium">视频生成</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI功能内容区域 -->
+                <div id="ai-feature-content" class="px-3 pb-20">
+                    <!-- 默认显示欢迎信息 -->
+                    <div class="flex flex-col items-center justify-center text-center p-6">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center mb-4">
+                            <i class="fas fa-robot text-white text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold mb-2">芝士AI助手</h2>
+                        <p class="text-gray-600 mb-4">选择上方功能，开启智能创作之旅</p>
+                    </div>
+                </div>
+            `;
+            
+            // 添加功能卡片点击事件
+            aiPage.querySelectorAll('.ai-feature-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const feature = card.getAttribute('data-feature');
+                    showAIFeature(feature);
+                });
+            });
+        }
+        
+        // 显示AI功能
+        function showAIFeature(feature) {
+            const contentContainer = document.getElementById('ai-feature-content');
+            
+            // 根据功能类型显示不同内容
+            if (feature === 'chat') {
+                contentContainer.innerHTML = `
+                    <div class="card p-4 mb-4">
+                        <h3 class="font-medium text-base mb-3">智能对话</h3>
+                        <p class="text-sm text-gray-600 mb-4">与AI助手进行自然语言对话，获取知识解答和创作灵感</p>
+                        
+                        <!-- 对话历史 -->
+                        <div class="chat-history mb-4 max-h-80 overflow-y-auto">
+                            <!-- 系统消息 -->
+                            <div class="chat-message system mb-3">
+                                <div class="message-content card p-3">
+                                    <p class="text-sm">你好！我是芝士AI助手，有什么可以帮助你的吗？</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 示例对话 -->
+                            <div class="chat-message user mb-3 flex justify-end">
+                                <div class="message-content card p-3 bg-primary text-white">
+                                    <p class="text-sm">如何高效学习一门编程语言？</p>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-message system mb-3">
+                                <div class="message-content card p-3">
+                                    <p class="text-sm">高效学习编程语言需要以下几个步骤：</p>
+                                    <ol class="text-sm list-decimal pl-5 mt-2">
+                                        <li>明确学习目标和应用场景</li>
+                                        <li>掌握核心语法和基础概念</li>
+                                        <li>通过小项目实践巩固知识</li>
+                                        <li>阅读优质代码提升编程思维</li>
+                                        <li>参与社区交流解决问题</li>
+                                    </ol>
+                                    <p class="text-sm mt-2">建议从简单的项目开始，循序渐进地增加难度，保持编码的持续性和规律性。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 输入框 -->
+                        <div class="chat-input flex items-center">
+                            <input type="text" class="form-control flex-1 mr-2" placeholder="输入你的问题...">
+                            <button class="btn btn-primary btn-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 推荐问题 -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-sm mb-2">推荐问题</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="chip">如何提高学习效率？</div>
+                            <div class="chip">推荐一些计算机科学书籍</div>
+                            <div class="chip">前端开发学习路线</div>
+                            <div class="chip">数据结构重要性</div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加推荐问题点击事件
+                contentContainer.querySelectorAll('.chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const question = chip.textContent;
+                        const input = contentContainer.querySelector('input');
+                        input.value = question;
+                    });
+                });
+                
+                // 添加发送按钮点击事件
+                const sendButton = contentContainer.querySelector('.btn-primary');
+                const input = contentContainer.querySelector('input');
+                
+                sendButton.addEventListener('click', () => {
+                    if (input.value.trim() !== '') {
+                        sendChatMessage(input.value);
+                        input.value = '';
+                    }
+                });
+                
+                // 添加输入框回车事件
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && input.value.trim() !== '') {
+                        sendChatMessage(input.value);
+                        input.value = '';
+                    }
+                });
+            } else if (feature === 'draw') {
+                contentContainer.innerHTML = `
+                    <div class="card p-4 mb-4">
+                        <h3 class="font-medium text-base mb-3">AI绘图</h3>
+                        <p class="text-sm text-gray-600 mb-4">通过文字描述生成精美图像，激发创作灵感</p>
+                        
+                        <!-- 提示词输入 -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">输入提示词</label>
+                            <textarea class="form-control w-full" rows="3" placeholder="描述你想要生成的图像内容..."></textarea>
+                        </div>
+                        
+                        <!-- 风格选择 -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">选择风格</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="style-option active">
+                                    <div class="aspect-square rounded-lg overflow-hidden">
+                                        <img src="https://source.unsplash.com/random/100x100?art&sig=1" alt="写实风格" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="text-xs text-center mt-1">写实</div>
+                                </div>
+                                <div class="style-option">
+                                    <div class="aspect-square rounded-lg overflow-hidden">
+                                        <img src="https://source.unsplash.com/random/100x100?cartoon&sig=2" alt="卡通风格" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="text-xs text-center mt-1">卡通</div>
+                                </div>
+                                <div class="style-option">
+                                    <div class="aspect-square rounded-lg overflow-hidden">
+                                        <img src="https://source.unsplash.com/random/100x100?painting&sig=3" alt="油画风格" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="text-xs text-center mt-1">油画</div>
+                                </div>
+                                <div class="style-option">
+                                    <div class="aspect-square rounded-lg overflow-hidden">
+                                        <img src="https://source.unsplash.com/random/100x100?sketch&sig=4" alt="素描风格" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="text-xs text-center mt-1">素描</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 生成按钮 -->
+                        <button class="btn btn-primary w-full">
+                            <i class="fas fa-magic mr-2"></i>生成图像
+                        </button>
+                    </div>
+                    
+                    <!-- 生成结果展示 -->
+                    <div class="card p-4 mb-4">
+                        <h3 class="font-medium text-base mb-3">生成结果</h3>
+                        <div class="generated-image-container">
+                            <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-image text-3xl mb-2"></i>
+                                    <p class="text-sm">图像将在这里显示</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-outline flex-1" disabled>
+                                <i class="fas fa-download mr-1"></i>保存
+                            </button>
+                            <button class="btn btn-outline flex-1" disabled>
+                                <i class="fas fa-share-alt mr-1"></i>分享
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门提示词 -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-sm mb-2">热门提示词</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="chip">未来城市</div>
+                            <div class="chip">梦幻森林</div>
+                            <div class="chip">科技与自然</div>
+                            <div class="chip">太空探索</div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加风格选择点击事件
+                contentContainer.querySelectorAll('.style-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        contentContainer.querySelectorAll('.style-option').forEach(opt => {
+                            opt.classList.remove('active');
+                        });
+                        option.classList.add('active');
+                    });
+                });
+                
+                // 添加热门提示词点击事件
+                contentContainer.querySelectorAll('.chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const prompt = chip.textContent;
+                        const textarea = contentContainer.querySelector('textarea');
+                        textarea.value = prompt;
+                    });
+                });
+                
+                // 添加生成按钮点击事件
+                const generateButton = contentContainer.querySelector('.btn-primary');
+                generateButton.addEventListener('click', () => {
+                    const textarea = contentContainer.querySelector('textarea');
+                    if (textarea.value.trim() !== '') {
+                        // 模拟生成图像
+                        const imageContainer = contentContainer.querySelector('.generated-image-container');
+                        imageContainer.innerHTML = `
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-100">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                                <img src="" alt="生成中" class="w-full h-full object-cover opacity-0" id="generated-image">
+                            </div>
+                        `;
+                        
+                        // 模拟加载延迟
+                        setTimeout(() => {
+                            const randomId = Math.floor(Math.random() * 1000);
+                            const img = document.getElementById('generated-image');
+                            img.src = `https://source.unsplash.com/random/600x600?${textarea.value.split(' ').join(',')}&sig=${randomId}`;
+                            img.onload = () => {
+                                img.classList.remove('opacity-0');
+                                const buttons = contentContainer.querySelectorAll('.btn-outline');
+                                buttons.forEach(btn => {
+                                    btn.removeAttribute('disabled');
+                                });
+                            };
+                        }, 1500);
+                    }
+                });
+            } else if (feature === 'video') {
+                contentContainer.innerHTML = `
+                    <div class="card p-4 mb-4">
+                        <h3 class="font-medium text-base mb-3">视频生成</h3>
+                        <p class="text-sm text-gray-600 mb-4">通过文字描述生成短视频内容，轻松创作精彩视频</p>
+                        
+                        <!-- 提示词输入 -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">视频描述</label>
+                            <textarea class="form-control w-full" rows="3" placeholder="描述你想要生成的视频内容、风格和场景..."></textarea>
+                        </div>
+                        
+                        <!-- 视频设置 -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">视频时长</label>
+                                <select class="form-control w-full">
+                                    <option>15秒</option>
+                                    <option>30秒</option>
+                                    <option>60秒</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">视频比例</label>
+                                <select class="form-control w-full">
+                                    <option>竖屏 9:16</option>
+                                    <option>横屏 16:9</option>
+                                    <option>方形 1:1</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 生成按钮 -->
+                        <button class="btn btn-primary w-full">
+                            <i class="fas fa-film mr-2"></i>生成视频
+                        </button>
+                    </div>
+                    
+                    <!-- 生成结果展示 -->
+                    <div class="card p-4 mb-4">
+                        <h3 class="font-medium text-base mb-3">生成结果</h3>
+                        <div class="generated-video-container">
+                            <div class="aspect-video rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-video text-3xl mb-2"></i>
+                                    <p class="text-sm">视频将在这里显示</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-outline flex-1" disabled>
+                                <i class="fas fa-download mr-1"></i>保存
+                            </button>
+                            <button class="btn btn-outline flex-1" disabled>
+                                <i class="fas fa-share-alt mr-1"></i>分享
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门视频模板 -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-sm mb-2">热门视频模板</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="video-template card overflow-hidden">
+                                <div class="aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?lecture&sig=1" alt="知识讲解" class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-2">
+                                    <div class="text-xs font-medium">知识讲解</div>
+                                </div>
+                            </div>
+                            <div class="video-template card overflow-hidden">
+                                <div class="aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?tutorial&sig=2" alt="操作教程" class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-2">
+                                    <div class="text-xs font-medium">操作教程</div>
+                                </div>
+                            </div>
+                            <div class="video-template card overflow-hidden">
+                                <div class="aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?story&sig=3" alt="故事叙述" class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-2">
+                                    <div class="text-xs font-medium">故事叙述</div>
+                                </div>
+                            </div>
+                            <div class="video-template card overflow-hidden">
+                                <div class="aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?animation&sig=4" alt="动画演示" class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-2">
+                                    <div class="text-xs font-medium">动画演示</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加视频模板点击事件
+                contentContainer.querySelectorAll('.video-template').forEach(template => {
+                    template.addEventListener('click', () => {
+                        const templateName = template.querySelector('.text-xs').textContent;
+                        const textarea = contentContainer.querySelector('textarea');
+                        textarea.value = `使用${templateName}风格创建一个视频，内容关于...`;
+                    });
+                });
+                
+                // 添加生成按钮点击事件
+                const generateButton = contentContainer.querySelector('.btn-primary');
+                generateButton.addEventListener('click', () => {
+                    const textarea = contentContainer.querySelector('textarea');
+                    if (textarea.value.trim() !== '') {
+                        // 模拟生成视频
+                        const videoContainer = contentContainer.querySelector('.generated-video-container');
+                        videoContainer.innerHTML = `
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-100">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                                <div class="aspect-video opacity-0" id="generated-video">
+                                    <video class="w-full h-full object-cover" controls>
+                                        <source src="" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // 模拟加载延迟
+                        setTimeout(() => {
+                            // 由于无法真实生成视频，这里只显示一个图像作为替代
+                            const randomId = Math.floor(Math.random() * 1000);
+                            const videoContainer = document.getElementById('generated-video');
+                            videoContainer.innerHTML = `
+                                <img src="https://source.unsplash.com/random/600x400?${textarea.value.split(' ').join(',')}&sig=${randomId}" alt="生成的视频" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                                        <i class="fas fa-play text-white text-xl"></i>
+                                    </div>
+                                </div>
+                            `;
+                            videoContainer.classList.remove('opacity-0');
+                            
+                            const buttons = contentContainer.querySelectorAll('.btn-outline');
+                            buttons.forEach(btn => {
+                                btn.removeAttribute('disabled');
+                            });
+                        }, 2000);
+                    }
+                });
+            }
+        }
+        
+        // 发送聊天消息
+        function sendChatMessage(message) {
+            const chatHistory = document.querySelector('.chat-history');
+            
+            // 添加用户消息
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user mb-3 flex justify-end';
+            userMessage.innerHTML = `
+                <div class="message-content card p-3 bg-primary text-white">
+                    <p class="text-sm">${message}</p>
+                </div>
+            `;
+            chatHistory.appendChild(userMessage);
+            
+            // 滚动到底部
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // 模拟AI回复
+            setTimeout(() => {
+                // 显示加载中
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'chat-message system mb-3';
+                loadingMessage.innerHTML = `
+                    <div class="message-content card p-3">
+                        <div class="flex items-center">
+                            <div class="loading-dots"></div>
+                        </div>
+                    </div>
+                `;
+                chatHistory.appendChild(loadingMessage);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                
+                // 模拟延迟后显示回复
+                setTimeout(() => {
+                    chatHistory.removeChild(loadingMessage);
+                    
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'chat-message system mb-3';
+                    
+                    // 根据问题生成不同回复
+                    let reply = '';
+                    if (message.includes('学习') || message.includes('效率')) {
+                        reply = `提高学习效率的关键是：
+                        <ol class="text-sm list-decimal pl-5 mt-2">
+                            <li>制定明确的学习计划和目标</li>
+                            <li>采用番茄工作法等时间管理技巧</li>
+                            <li>保持专注，减少干扰因素</li>
+                            <li>定期复习和实践应用所学知识</li>
+                            <li>保持充足的休息和良好的生活习惯</li>
+                        </ol>`;
+                    } else if (message.includes('书籍') || message.includes('推荐')) {
+                        reply = `以下是几本计算机科学经典书籍：
+                        <ul class="text-sm list-disc pl-5 mt-2">
+                            <li>《算法导论》- 计算机算法基础</li>
+                            <li>《代码大全》- 软件构建实践指南</li>
+                            <li>《深入理解计算机系统》- 计算机系统原理</li>
+                            <li>《设计模式》- 软件设计的经典之作</li>
+                            <li>《人月神话》- 软件项目管理的经典</li>
+                        </ul>`;
+                    } else if (message.includes('前端') || message.includes('路线')) {
+                        reply = `前端开发学习路线：
+                        <ol class="text-sm list-decimal pl-5 mt-2">
+                            <li>HTML/CSS基础 - 网页结构与样式</li>
+                            <li>JavaScript基础 - 编程语言核心</li>
+                            <li>DOM操作与事件处理</li>
+                            <li>响应式设计与移动端适配</li>
+                            <li>现代JS框架（React/Vue/Angular）</li>
+                            <li>构建工具与模块化开发</li>
+                            <li>性能优化与最佳实践</li>
+                        </ol>`;
+                    } else {
+                        reply = `感谢你的提问！这是一个很好的问题。
+                        <p class="text-sm mt-2">根据我的理解，${message}涉及到了知识学习的核心问题。学习是一个持续的过程，需要结合理论与实践，系统性思考与刻意练习。</p>
+                        <p class="text-sm mt-2">你可以尝试将大问题拆解为小目标，逐步攻克，同时注重知识的连接与应用。</p>`;
+                    }
+                    
+                    aiMessage.innerHTML = `
+                        <div class="message-content card p-3">
+                            <p class="text-sm">${reply}</p>
+                        </div>
+                    `;
+                    chatHistory.appendChild(aiMessage);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                }, 1500);
+            }, 500);
+        }
+
+
+        // 消息页数据生成
+        function generateMessagesPageData() {
+            const messagesPage = document.getElementById('messages-page');
+            
+            // 清空内容
+            messagesPage.innerHTML = `
+                <div class="p-3">
+                    <h1 class="text-xl font-bold mb-3">消息</h1>
+                </div>
+                
+                <!-- 消息类型选项卡 -->
+                <div class="px-3 mb-4">
+                    <div class="tabs-container">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="system">系统消息</div>
+                            <div class="tab" data-tab="interaction">互动消息</div>
+                            <div class="tab" data-tab="chat">聊天</div>
+                        </div>
+                        <div class="tab-indicator" style="width: 33.33%; left: 0%;"></div>
+                    </div>
+                </div>
+                
+                <!-- 消息内容区域 -->
+                <div id="message-content" class="px-3 pb-20">
+                    <!-- 默认显示系统消息 -->
+                    <div id="system-messages" class="message-tab-content active">
+                        <!-- 系统消息列表 -->
+                    </div>
+                    
+                    <div id="interaction-messages" class="message-tab-content">
+                        <!-- 互动消息列表 -->
+                    </div>
+                    
+                    <div id="chat-messages" class="message-tab-content">
+                        <!-- 聊天列表 -->
+                    </div>
+                </div>
+            `;
+            
+            // 生成系统消息
+            generateSystemMessages();
+            
+            // 生成互动消息
+            generateInteractionMessages();
+            
+            // 生成聊天列表
+            generateChatList();
+            
+            // 添加选项卡切换事件
+            const tabs = messagesPage.querySelectorAll('.tab');
+            const tabIndicator = messagesPage.querySelector('.tab-indicator');
+            
+            tabs.forEach((tab, index) => {
+                tab.addEventListener('click', () => {
+                    // 更新选项卡状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // 移动指示器
+                    tabIndicator.style.left = `${index * 33.33}%`;
+                    
+                    // 显示对应内容
+                    const tabId = tab.getAttribute('data-tab');
+                    const contents = messagesPage.querySelectorAll('.message-tab-content');
+                    contents.forEach(content => content.classList.remove('active'));
+                    messagesPage.querySelector(`#${tabId}-messages`).classList.add('active');
+                });
+            });
+        }
+        
+        // 生成系统消息
+        function generateSystemMessages() {
+            const systemMessagesContainer = document.getElementById('system-messages');
+            
+            const systemMessages = [
+                {
+                    id: 1,
+                    title: '账号安全提醒',
+                    content: '您的账号已开启二次验证，账号安全性提升。',
+                    time: '今天 10:30',
+                    read: false,
+                    icon: 'shield-alt',
+                    iconBg: 'bg-blue-500'
+                },
+                {
+                    id: 2,
+                    title: '新功能上线',
+                    content: '芝士学爆新增AI创作功能，快来体验智能创作！',
+                    time: '昨天 15:45',
+                    read: false,
+                    icon: 'bullhorn',
+                    iconBg: 'bg-purple-500'
+                },
+                {
+                    id: 3,
+                    title: '活动通知',
+                    content: '「知识创作挑战赛」正在火热进行中，参与即可赢取丰厚奖励。',
+                    time: '3天前',
+                    read: true,
+                    icon: 'calendar-check',
+                    iconBg: 'bg-green-500'
+                },
+                {
+                    id: 4,
+                    title: '系统维护通知',
+                    content: '系统将于本周六凌晨2:00-4:00进行例行维护，期间部分功能可能暂时无法使用。',
+                    time: '5天前',
+                    read: true,
+                    icon: 'wrench',
+                    iconBg: 'bg-gray-500'
+                }
+            ];
+            
+            // 渲染系统消息
+            systemMessagesContainer.innerHTML = systemMessages.map(message => `
+                <div class="message-item card p-3 mb-3 ${message.read ? '' : 'unread'}">
+                    <div class="flex items-start">
+                        <div class="message-icon ${message.iconBg} text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-${message.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-medium text-base">${message.title}</h3>
+                                <span class="text-xs text-gray-500">${message.time}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">${message.content}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 添加消息点击事件
+            systemMessagesContainer.querySelectorAll('.message-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    // 标记为已读
+                    item.classList.remove('unread');
+                    
+                    // 显示消息详情
+                    showMessageDetail(systemMessages[index]);
+                });
+            });
+        }
+        
+        // 生成互动消息
+        function generateInteractionMessages() {
+            const interactionMessagesContainer = document.getElementById('interaction-messages');
+            
+            const interactionMessages = [
+                {
+                    id: 1,
+                    type: 'like',
+                    user: {
+                        name: '知识达人',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=1'
+                    },
+                    content: '点赞了你的作品',
+                    work: {
+                        title: '如何高效学习一门编程语言',
+                        cover: 'https://source.unsplash.com/random/300x200?coding&sig=1'
+                    },
+                    time: '10分钟前',
+                    read: false
+                },
+                {
+                    id: 2,
+                    type: 'comment',
+                    user: {
+                        name: '学习爱好者',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=2'
+                    },
+                    content: '评论了你的作品：「这篇文章太有用了，学到很多！」',
+                    work: {
+                        title: '数据结构入门指南',
+                        cover: 'https://source.unsplash.com/random/300x200?data&sig=2'
+                    },
+                    time: '1小时前',
+                    read: false
+                },
+                {
+                    id: 3,
+                    type: 'favorite',
+                    user: {
+                        name: '编程小能手',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=3'
+                    },
+                    content: '收藏了你的作品',
+                    work: {
+                        title: 'JavaScript异步编程详解',
+                        cover: 'https://source.unsplash.com/random/300x200?javascript&sig=3'
+                    },
+                    time: '3小时前',
+                    read: true
+                },
+                {
+                    id: 4,
+                    type: 'follow',
+                    user: {
+                        name: '科技迷',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=4'
+                    },
+                    content: '关注了你',
+                    work: null,
+                    time: '昨天',
+                    read: true
+                }
+            ];
+            
+            // 渲染互动消息
+            interactionMessagesContainer.innerHTML = interactionMessages.map(message => `
+                <div class="message-item card p-3 mb-3 ${message.read ? '' : 'unread'}">
+                    <div class="flex items-start">
+                        <div class="avatar w-10 h-10 rounded-full overflow-hidden mr-3">
+                            <img src="${message.user.avatar}" alt="${message.user.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-medium text-base">${message.user.name}</h3>
+                                <span class="text-xs text-gray-500">${message.time}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">${message.content}</p>
+                            ${message.work ? `
+                                <div class="work-preview mt-2 flex items-center p-2 bg-gray-50 rounded">
+                                    <div class="work-cover w-12 h-12 rounded overflow-hidden mr-2">
+                                        <img src="${message.work.cover}" alt="${message.work.title}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="work-title text-xs">${message.work.title}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 添加消息点击事件
+            interactionMessagesContainer.querySelectorAll('.message-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    // 标记为已读
+                    item.classList.remove('unread');
+                    
+                    // 如果有作品，显示作品详情
+                    if (interactionMessages[index].work) {
+                        // 这里可以跳转到作品详情页
+                        console.log('查看作品详情:', interactionMessages[index].work.title);
+                    } else {
+                        // 查看用户主页
+                        console.log('查看用户主页:', interactionMessages[index].user.name);
+                    }
+                });
+            });
+        }
+        
+        // 生成聊天列表
+        function generateChatList() {
+            const chatMessagesContainer = document.getElementById('chat-messages');
+            
+            const chatList = [
+                {
+                    id: 1,
+                    user: {
+                        name: '知识达人',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=1'
+                    },
+                    lastMessage: '你好，我看了你的编程教程，有几个问题想请教一下。',
+                    time: '10:30',
+                    unread: 2
+                },
+                {
+                    id: 2,
+                    user: {
+                        name: '学习爱好者',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=2'
+                    },
+                    lastMessage: '谢谢分享，你的文章对我帮助很大！',
+                    time: '昨天',
+                    unread: 0
+                },
+                {
+                    id: 3,
+                    user: {
+                        name: '编程小能手',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=3'
+                    },
+                    lastMessage: '关于那个算法问题，我有一个更优的解决方案。',
+                    time: '周二',
+                    unread: 0
+                },
+                {
+                    id: 4,
+                    user: {
+                        name: '科技迷',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=4'
+                    },
+                    lastMessage: '最近有什么新的学习资源推荐吗？',
+                    time: '上周',
+                    unread: 0
+                }
+            ];
+            
+            // 渲染聊天列表
+            chatMessagesContainer.innerHTML = `
+                <div class="search-box mb-3">
+                    <div class="relative">
+                        <input type="text" class="form-control w-full pl-10" placeholder="搜索聊天">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="chat-list">
+                    ${chatList.map(chat => `
+                        <div class="chat-item card p-3 mb-3" data-chat-id="${chat.id}">
+                            <div class="flex items-center">
+                                <div class="avatar w-12 h-12 rounded-full overflow-hidden mr-3 relative">
+                                    <img src="${chat.user.avatar}" alt="${chat.user.name}" class="w-full h-full object-cover">
+                                    ${chat.unread > 0 ? `
+                                        <div class="badge badge-primary absolute -top-1 -right-1">${chat.unread}</div>
+                                    ` : ''}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="font-medium">${chat.user.name}</h3>
+                                        <span class="text-xs text-gray-500">${chat.time}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 truncate mt-1">${chat.lastMessage}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // 添加聊天项点击事件
+            chatMessagesContainer.querySelectorAll('.chat-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    const chatId = item.getAttribute('data-chat-id');
+                    const chat = chatList.find(c => c.id == chatId);
+                    
+                    // 打开聊天详情
+                    openChatDetail(chat);
+                });
+            });
+        }
+        
+        // 显示消息详情
+        function showMessageDetail(message) {
+            // 创建消息详情弹窗
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3 class="modal-title">${message.title || '消息详情'}</h3>
+                        <button class="modal-close"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        ${message.icon ? `
+                            <div class="flex justify-center mb-4">
+                                <div class="message-icon ${message.iconBg} text-white rounded-full w-16 h-16 flex items-center justify-center">
+                                    <i class="fas fa-${message.icon} text-2xl"></i>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div class="text-sm text-gray-600">
+                            <p>${message.content}</p>
+                            <div class="text-right text-xs text-gray-500 mt-4">${message.time}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 添加关闭事件
+            modal.querySelector('.modal-close').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.querySelector('.modal-overlay').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+        
+        // 打开聊天详情
+        function openChatDetail(chat) {
+            // 创建聊天详情页面
+            const chatDetail = document.createElement('div');
+            chatDetail.className = 'fragment active right-fragment';
+            chatDetail.innerHTML = `
+                <div class="fragment-header">
+                    <button class="fragment-back"><i class="fas fa-arrow-left"></i></button>
+                    <h3 class="fragment-title">${chat.user.name}</h3>
+                    <button class="fragment-more"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+                <div class="fragment-body">
+                    <div class="chat-detail-container">
+                        <!-- 聊天历史 -->
+                        <div class="chat-history p-3 pb-20">
+                            <!-- 时间分割线 -->
+                            <div class="time-divider my-3">
+                                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">今天</span>
+                            </div>
+                            
+                            <!-- 对方消息 -->
+                            <div class="chat-message other mb-3 flex">
+                                <div class="avatar w-8 h-8 rounded-full overflow-hidden mr-2">
+                                    <img src="${chat.user.avatar}" alt="${chat.user.name}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="message-content card p-3 max-w-[70%]">
+                                    <p class="text-sm">${chat.lastMessage}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 我的消息 -->
+                            <div class="chat-message me mb-3 flex justify-end">
+                                <div class="message-content card p-3 bg-primary text-white max-w-[70%]">
+                                    <p class="text-sm">你好！很高兴收到你的消息。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 对方消息 -->
+                            <div class="chat-message other mb-3 flex">
+                                <div class="avatar w-8 h-8 rounded-full overflow-hidden mr-2">
+                                    <img src="${chat.user.avatar}" alt="${chat.user.name}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="message-content card p-3 max-w-[70%]">
+                                    <p class="text-sm">我想请教一下关于你最近分享的那篇文章中提到的学习方法，能详细解释一下吗？</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 我的消息 -->
+                            <div class="chat-message me mb-3 flex justify-end">
+                                <div class="message-content card p-3 bg-primary text-white max-w-[70%]">
+                                    <p class="text-sm">当然可以！那篇文章中我主要强调了以下几点：</p>
+                                    <ol class="text-sm list-decimal pl-5 mt-1">
+                                        <li>设定明确的学习目标</li>
+                                        <li>分解知识点，循序渐进</li>
+                                        <li>实践与理论结合</li>
+                                        <li>定期复习与反馈</li>
+                                    </ol>
+                                    <p class="text-sm mt-1">你对哪一点特别感兴趣？</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 输入框 -->
+                        <div class="chat-input-container p-3 bg-white border-t fixed bottom-0 left-0 right-0">
+                            <div class="flex items-center">
+                                <button class="btn btn-icon mr-2"><i class="fas fa-plus"></i></button>
+                                <input type="text" class="form-control flex-1" placeholder="输入消息...">
+                                <button class="btn btn-primary btn-icon ml-2"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(chatDetail);
+            
+            // 添加返回事件
+            chatDetail.querySelector('.fragment-back').addEventListener('click', () => {
+                chatDetail.classList.remove('active');
+                setTimeout(() => {
+                    document.body.removeChild(chatDetail);
+                }, 300);
+            });
+            
+            // 添加发送消息事件
+            const sendButton = chatDetail.querySelector('.btn-primary');
+            const input = chatDetail.querySelector('input');
+            
+            sendButton.addEventListener('click', () => {
+                if (input.value.trim() !== '') {
+                    sendMessage(chatDetail, input.value);
+                    input.value = '';
+                }
+            });
+            
+            // 添加输入框回车事件
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && input.value.trim() !== '') {
+                    sendMessage(chatDetail, input.value);
+                    input.value = '';
+                }
+            });
+            
+            // 滚动到底部
+            const chatHistory = chatDetail.querySelector('.chat-history');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // 延迟一下再添加active类，以触发动画
+            setTimeout(() => {
+                chatDetail.classList.add('active');
+            }, 10);
+        }
+        
+        // 发送消息
+        function sendMessage(chatDetail, message) {
+            const chatHistory = chatDetail.querySelector('.chat-history');
+            
+            // 创建消息元素
+            const messageElement = document.createElement('div');
+            messageElement.className = 'chat-message me mb-3 flex justify-end';
+            messageElement.innerHTML = `
+                <div class="message-content card p-3 bg-primary text-white max-w-[70%]">
+                    <p class="text-sm">${message}</p>
+                </div>
+            `;
+            
+            // 添加到聊天历史
+            chatHistory.appendChild(messageElement);
+            
+            // 滚动到底部
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // 模拟回复
+            setTimeout(() => {
+                // 创建对方正在输入的提示
+                const typingElement = document.createElement('div');
+                typingElement.className = 'chat-message other mb-3 flex';
+                typingElement.innerHTML = `
+                    <div class="avatar w-8 h-8 rounded-full overflow-hidden mr-2">
+                        <img src="${chatDetail.querySelector('.avatar img').src}" alt="用户" class="w-full h-full object-cover">
+                    </div>
+                    <div class="message-content card p-2 max-w-[70%]">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                `;
+                
+                chatHistory.appendChild(typingElement);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                
+                // 延迟后显示回复
+                setTimeout(() => {
+                    // 移除输入中提示
+                    chatHistory.removeChild(typingElement);
+                    
+                    // 添加回复消息
+                    const replyElement = document.createElement('div');
+                    replyElement.className = 'chat-message other mb-3 flex';
+                    
+                    // 根据消息内容生成不同回复
+                    let reply = '';
+                    if (message.includes('谢谢') || message.includes('感谢')) {
+                        reply = '不客气！很高兴能帮到你。如果还有其他问题，随时可以问我。';
+                    } else if (message.includes('问题') || message.includes('请教') || message.includes('?') || message.includes('？')) {
+                        reply = '这是个好问题！让我思考一下...<br>我建议你可以从基础概念开始，然后逐步深入实践。学习过程中遇到困难是正常的，坚持下去就会有收获。';
+                    } else if (message.includes('学习') || message.includes('方法')) {
+                        reply = '关于学习方法，我个人认为以下几点很重要：<br>1. 建立知识体系<br>2. 多动手实践<br>3. 定期复习巩固<br>4. 教会别人是最好的学习';
+                    } else {
+                        reply = '谢谢分享！我会认真考虑你的建议。希望我们能有更多交流，一起进步！';
+                    }
+                    
+                    replyElement.innerHTML = `
+                        <div class="avatar w-8 h-8 rounded-full overflow-hidden mr-2">
+                            <img src="${chatDetail.querySelector('.avatar img').src}" alt="用户" class="w-full h-full object-cover">
+                        </div>
+                        <div class="message-content card p-3 max-w-[70%]">
+                            <p class="text-sm">${reply}</p>
+                        </div>
+                    `;
+                    
+                    chatHistory.appendChild(replyElement);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                }, 1500);
+            }, 1000);
+        }
+
+
+        // 我的页数据生成
+        function generateProfilePageData() {
+            const myPage = document.getElementById('profile-page');
+            
+            // 清空内容
+            myPage.innerHTML = `
+                <!-- 用户信息头部 -->
+                <div class="user-profile-header relative">
+                    <!-- 背景图 -->
+                    <div class="profile-bg h-40 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/800x400?gradient" alt="背景" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- 用户信息 -->
+                    <div class="user-info px-4 pb-4 relative">
+                        <!-- 头像 -->
+                        <div class="avatar w-20 h-20 rounded-full border-4 border-white overflow-hidden absolute -mt-10">
+                            <img src="https://source.unsplash.com/random/200x200?portrait" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <!-- 用户名和简介 -->
+                        <div class="user-details ml-24 mt-2">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-bold">芝士学习者</h2>
+                                <button class="btn btn-outline-primary btn-sm">编辑资料</button>
+                            </div>
+                            <div class="user-stats flex items-center mt-1">
+                                <div class="stat mr-4">
+                                    <span class="font-medium">128</span>
+                                    <span class="text-xs text-gray-500">关注</span>
+                                </div>
+                                <div class="stat mr-4">
+                                    <span class="font-medium">3.2k</span>
+                                    <span class="text-xs text-gray-500">粉丝</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="font-medium">256</span>
+                                    <span class="text-xs text-gray-500">获赞</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2">热爱学习和分享，专注于编程、设计和知识创作 | 芝士学爆认证创作者</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 内容选项卡 -->
+                <div class="content-tabs px-3 border-b">
+                    <div class="tabs-container">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="works">作品</div>
+                            <div class="tab" data-tab="collections">收藏</div>
+                            <div class="tab" data-tab="likes">点赞</div>
+                        </div>
+                        <div class="tab-indicator" style="width: 33.33%; left: 0%;"></div>
+                    </div>
+                </div>
+                
+                <!-- 内容区域 -->
+                <div id="my-content" class="px-3 pb-20 pt-3">
+                    <!-- 默认显示作品 -->
+                    <div id="works-content" class="tab-content active">
+                        <!-- 作品列表 -->
+                    </div>
+                    
+                    <div id="collections-content" class="tab-content">
+                        <!-- 收藏列表 -->
+                    </div>
+                    
+                    <div id="likes-content" class="tab-content">
+                        <!-- 点赞列表 -->
+                    </div>
+                </div>
+            `;
+            
+            // 生成作品列表
+            generateMyWorks();
+            
+            // 生成收藏列表
+            generateMyCollections();
+            
+            // 生成点赞列表
+            generateMyLikes();
+            
+            // 添加选项卡切换事件
+            const tabs = myPage.querySelectorAll('.tab');
+            const tabIndicator = myPage.querySelector('.tab-indicator');
+            
+            tabs.forEach((tab, index) => {
+                tab.addEventListener('click', () => {
+                    // 更新选项卡状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // 移动指示器
+                    tabIndicator.style.left = `${index * 33.33}%`;
+                    
+                    // 显示对应内容
+                    const tabId = tab.getAttribute('data-tab');
+                    const contents = myPage.querySelectorAll('.tab-content');
+                    contents.forEach(content => content.classList.remove('active'));
+                    myPage.querySelector(`#${tabId}-content`).classList.add('active');
+                });
+            });
+        }
+        
+        // 生成我的作品列表
+        function generateMyWorks() {
+            const worksContainer = document.getElementById('works-content');
+            
+            // 作品数据
+            const works = [
+                {
+                    id: 1,
+                    type: 'video',
+                    title: '5分钟学会JavaScript箭头函数',
+                    cover: 'https://source.unsplash.com/random/600x400?javascript',
+                    views: 2568,
+                    likes: 342,
+                    comments: 56,
+                    time: '3天前'
+                },
+                {
+                    id: 2,
+                    type: 'carousel',
+                    title: 'UI设计必备的10个配色技巧',
+                    cover: 'https://source.unsplash.com/random/600x400?design',
+                    views: 1243,
+                    likes: 231,
+                    comments: 42,
+                    time: '1周前'
+                },
+                {
+                    id: 3,
+                    type: 'markdown',
+                    title: '数据结构与算法入门指南',
+                    cover: 'https://source.unsplash.com/random/600x400?algorithm',
+                    views: 3421,
+                    likes: 567,
+                    comments: 89,
+                    time: '2周前'
+                },
+                {
+                    id: 4,
+                    type: 'video',
+                    title: 'React Hooks完全指南',
+                    cover: 'https://source.unsplash.com/random/600x400?react',
+                    views: 5632,
+                    likes: 876,
+                    comments: 124,
+                    time: '1个月前'
+                }
+            ];
+            
+            // 渲染作品列表
+            worksContainer.innerHTML = `
+                <div class="grid grid-cols-2 gap-3">
+                    ${works.map(work => `
+                        <div class="work-item card overflow-hidden" data-work-id="${work.id}">
+                            <div class="work-cover relative">
+                                <img src="${work.cover}" alt="${work.title}" class="w-full aspect-video object-cover">
+                                ${work.type === 'video' ? `
+                                    <div class="video-icon absolute right-2 bottom-2 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center">
+                                        <i class="fas fa-play text-white text-xs"></i>
+                                    </div>
+                                ` : work.type === 'carousel' ? `
+                                    <div class="carousel-icon absolute right-2 bottom-2 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center">
+                                        <i class="fas fa-images text-white text-xs"></i>
+                                    </div>
+                                ` : `
+                                    <div class="markdown-icon absolute right-2 bottom-2 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-white text-xs"></i>
+                                    </div>
+                                `}
+                            </div>
+                            <div class="work-info p-2">
+                                <h3 class="work-title text-sm font-medium line-clamp-2">${work.title}</h3>
+                                <div class="work-stats flex items-center justify-between mt-1 text-xs text-gray-500">
+                                    <div class="flex items-center">
+                                        <span class="mr-2"><i class="fas fa-eye mr-1"></i>${work.views}</span>
+                                        <span class="mr-2"><i class="fas fa-heart mr-1"></i>${work.likes}</span>
+                                        <span><i class="fas fa-comment mr-1"></i>${work.comments}</span>
+                                    </div>
+                                    <span>${work.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <!-- 创建新作品按钮 -->
+                <div class="fixed right-5 bottom-20">
+                    <button class="btn btn-primary btn-circle shadow-lg" id="create-work-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `;
+            
+            // 添加作品点击事件
+            worksContainer.querySelectorAll('.work-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    const workId = item.getAttribute('data-work-id');
+                    const work = works.find(w => w.id == workId);
+                    
+                    // 根据作品类型打开不同的详情页
+                    if (work.type === 'video') {
+                        showVideoDetail(work);
+                    } else if (work.type === 'carousel') {
+                        showCarouselDetail(work);
+                    } else {
+                        showMarkdownDetail(work);
+                    }
+                });
+            });
+            
+            // 添加创建作品按钮事件
+            const createWorkBtn = document.getElementById('create-work-btn');
+            if (createWorkBtn) {
+                createWorkBtn.addEventListener('click', () => {
+                    showCreateWorkModal();
+                });
+            }
+        }
+        
+        // 生成我的收藏列表
+        function generateMyCollections() {
+            const collectionsContainer = document.getElementById('collections-content');
+            
+            // 收藏夹数据
+            const collections = [
+                {
+                    id: 1,
+                    name: '编程学习',
+                    count: 28,
+                    cover: 'https://source.unsplash.com/random/300x200?coding'
+                },
+                {
+                    id: 2,
+                    name: 'UI设计灵感',
+                    count: 42,
+                    cover: 'https://source.unsplash.com/random/300x200?design'
+                },
+                {
+                    id: 3,
+                    name: '算法笔记',
+                    count: 15,
+                    cover: 'https://source.unsplash.com/random/300x200?algorithm'
+                },
+                {
+                    id: 4,
+                    name: '前端开发',
+                    count: 36,
+                    cover: 'https://source.unsplash.com/random/300x200?frontend'
+                }
+            ];
+            
+            // 渲染收藏夹列表
+            collectionsContainer.innerHTML = `
+                <div class="collections-list">
+                    ${collections.map(collection => `
+                        <div class="collection-item card p-0 mb-3 overflow-hidden" data-collection-id="${collection.id}">
+                            <div class="flex">
+                                <div class="collection-cover w-24 h-24 overflow-hidden">
+                                    <img src="${collection.cover}" alt="${collection.name}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="collection-info p-3 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h3 class="collection-name font-medium">${collection.name}</h3>
+                                        <p class="text-sm text-gray-500 mt-1">${collection.count}个作品</p>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <!-- 创建新收藏夹按钮 -->
+                <div class="mt-4 text-center">
+                    <button class="btn btn-outline-primary" id="create-collection-btn">
+                        <i class="fas fa-plus mr-1"></i> 创建新收藏夹
+                    </button>
+                </div>
+            `;
+            
+            // 添加收藏夹点击事件
+            collectionsContainer.querySelectorAll('.collection-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    const collectionId = item.getAttribute('data-collection-id');
+                    const collection = collections.find(c => c.id == collectionId);
+                    
+                    // 显示收藏夹详情
+                    showCollectionDetail(collection);
+                });
+            });
+            
+            // 添加创建收藏夹按钮事件
+            const createCollectionBtn = document.getElementById('create-collection-btn');
+            if (createCollectionBtn) {
+                createCollectionBtn.addEventListener('click', () => {
+                    showCreateCollectionModal();
+                });
+            }
+        }
+        
+        // 生成我的点赞列表
+        function generateMyLikes() {
+            const likesContainer = document.getElementById('likes-content');
+            
+            // 点赞作品数据
+            const likedWorks = [
+                {
+                    id: 1,
+                    type: 'video',
+                    title: '人工智能入门：机器学习基础概念解析',
+                    author: {
+                        name: 'AI研究员',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=1'
+                    },
+                    cover: 'https://source.unsplash.com/random/600x400?ai',
+                    views: 8765,
+                    likes: 1243,
+                    comments: 234,
+                    time: '昨天'
+                },
+                {
+                    id: 2,
+                    type: 'markdown',
+                    title: '高效学习方法：如何在短时间内掌握一门新技能',
+                    author: {
+                        name: '学习达人',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=2'
+                    },
+                    cover: 'https://source.unsplash.com/random/600x400?study',
+                    views: 5432,
+                    likes: 876,
+                    comments: 145,
+                    time: '3天前'
+                },
+                {
+                    id: 3,
+                    type: 'carousel',
+                    title: '10个提高工作效率的实用工具推荐',
+                    author: {
+                        name: '效率专家',
+                        avatar: 'https://source.unsplash.com/random/100x100?portrait&sig=3'
+                    },
+                    cover: 'https://source.unsplash.com/random/600x400?productivity',
+                    views: 3214,
+                    likes: 567,
+                    comments: 98,
+                    time: '1周前'
+                }
+            ];
+            
+            // 渲染点赞列表
+            likesContainer.innerHTML = `
+                <div class="liked-works-list">
+                    ${likedWorks.map(work => `
+                        <div class="liked-work-item card p-0 mb-3 overflow-hidden" data-work-id="${work.id}">
+                            <div class="flex">
+                                <div class="work-cover w-24 h-24 overflow-hidden relative">
+                                    <img src="${work.cover}" alt="${work.title}" class="w-full h-full object-cover">
+                                    ${work.type === 'video' ? `
+                                        <div class="video-icon absolute right-1 bottom-1 bg-black bg-opacity-50 rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-play text-white text-xs"></i>
+                                        </div>
+                                    ` : work.type === 'carousel' ? `
+                                        <div class="carousel-icon absolute right-1 bottom-1 bg-black bg-opacity-50 rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-images text-white text-xs"></i>
+                                        </div>
+                                    ` : `
+                                        <div class="markdown-icon absolute right-1 bottom-1 bg-black bg-opacity-50 rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-file-alt text-white text-xs"></i>
+                                        </div>
+                                    `}
+                                </div>
+                                <div class="work-info p-3 flex-1">
+                                    <h3 class="work-title text-sm font-medium line-clamp-2">${work.title}</h3>
+                                    <div class="author-info flex items-center mt-1">
+                                        <div class="avatar w-5 h-5 rounded-full overflow-hidden mr-1">
+                                            <img src="${work.author.avatar}" alt="${work.author.name}" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-xs text-gray-500">${work.author.name}</span>
+                                    </div>
+                                    <div class="work-stats flex items-center justify-between mt-1 text-xs text-gray-500">
+                                        <div class="flex items-center">
+                                            <span class="mr-2"><i class="fas fa-heart mr-1 text-red-500"></i>${work.likes}</span>
+                                            <span><i class="fas fa-comment mr-1"></i>${work.comments}</span>
+                                        </div>
+                                        <span>${work.time}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // 添加点赞作品点击事件
+            likesContainer.querySelectorAll('.liked-work-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    const workId = item.getAttribute('data-work-id');
+                    const work = likedWorks.find(w => w.id == workId);
+                    
+                    // 根据作品类型打开不同的详情页
+                    if (work.type === 'video') {
+                        showVideoDetail(work);
+                    } else if (work.type === 'carousel') {
+                        showCarouselDetail(work);
+                    } else {
+                        showMarkdownDetail(work);
+                    }
+                });
+            });
+        }
+        
+        // 显示创建作品模态框
+        function showCreateWorkModal() {
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3 class="modal-title">创建新作品</h3>
+                        <button class="modal-close"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="create-options grid grid-cols-3 gap-3">
+                            <div class="create-option card p-4 text-center cursor-pointer" data-type="markdown">
+                                <div class="icon-container mx-auto w-12 h-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-2">
+                                    <i class="fas fa-file-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-sm font-medium">文章</h4>
+                            </div>
+                            <div class="create-option card p-4 text-center cursor-pointer" data-type="carousel">
+                                <div class="icon-container mx-auto w-12 h-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-2">
+                                    <i class="fas fa-images text-primary"></i>
+                                </div>
+                                <h4 class="text-sm font-medium">图文</h4>
+                            </div>
+                            <div class="create-option card p-4 text-center cursor-pointer" data-type="video">
+                                <div class="icon-container mx-auto w-12 h-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-2">
+                                    <i class="fas fa-video text-primary"></i>
+                                </div>
+                                <h4 class="text-sm font-medium">视频</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 添加关闭事件
+            modal.querySelector('.modal-close').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.querySelector('.modal-overlay').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // 添加创建选项点击事件
+            modal.querySelectorAll('.create-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const type = option.getAttribute('data-type');
+                    document.body.removeChild(modal);
+                    
+                    // 根据类型打开不同的创建界面
+                    if (type === 'video') {
+                        showCreateVideoInterface();
+                    } else if (type === 'carousel') {
+                        showCreateCarouselInterface();
+                    } else {
+                        showCreateMarkdownInterface();
+                    }
+                });
+            });
+        }
+        
+        // 显示创建收藏夹模态框
+        function showCreateCollectionModal() {
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3 class="modal-title">创建新收藏夹</h3>
+                        <button class="modal-close"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="collection-form">
+                            <div class="form-group mb-4">
+                                <label class="form-label mb-1">收藏夹名称</label>
+                                <input type="text" class="form-control" placeholder="请输入收藏夹名称" required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label mb-1">收藏夹封面</label>
+                                <div class="cover-upload card p-4 text-center cursor-pointer">
+                                    <i class="fas fa-image text-2xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-500">点击上传封面图片</p>
+                                </div>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label mb-1">隐私设置</label>
+                                <div class="flex items-center">
+                                    <label class="inline-flex items-center mr-4">
+                                        <input type="radio" name="privacy" value="public" checked class="mr-1">
+                                        <span class="text-sm">公开</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="privacy" value="private" class="mr-1">
+                                        <span class="text-sm">私密</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary w-full">创建收藏夹</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 添加关闭事件
+            modal.querySelector('.modal-close').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.querySelector('.modal-overlay').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // 添加表单提交事件
+            const form = modal.querySelector('#collection-form');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // 显示创建成功提示
+                document.body.removeChild(modal);
+                showToast('收藏夹创建成功');
+                
+                // 刷新收藏夹列表
+                generateMyCollections();
+            });
+        }
+        
+        // 显示收藏夹详情
+        function showCollectionDetail(collection) {
+            // 创建收藏夹详情页面
+            const collectionDetail = document.createElement('div');
+            collectionDetail.className = 'fragment active right-fragment';
+            collectionDetail.innerHTML = `
+                <div class="fragment-header">
+                    <button class="fragment-back"><i class="fas fa-arrow-left"></i></button>
+                    <h3 class="fragment-title">${collection.name}</h3>
+                    <button class="fragment-more"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+                <div class="fragment-body">
+                    <div class="collection-detail-container">
+                        <!-- 收藏夹信息 -->
+                        <div class="collection-info p-3 border-b">
+                            <div class="flex items-center">
+                                <div class="collection-cover w-16 h-16 rounded overflow-hidden mr-3">
+                                    <img src="${collection.cover}" alt="${collection.name}" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">${collection.name}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">${collection.count}个作品</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 收藏的作品列表 -->
+                        <div class="collection-works p-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                ${Array(collection.count > 6 ? 6 : collection.count).fill().map((_, i) => `
+                                    <div class="work-item card overflow-hidden">
+                                        <div class="work-cover relative">
+                                            <img src="https://source.unsplash.com/random/300x200?${collection.name}&sig=${i}" alt="作品" class="w-full aspect-video object-cover">
+                                            <div class="${['video-icon', 'carousel-icon', 'markdown-icon'][i % 3]} absolute right-2 bottom-2 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center">
+                                                <i class="fas fa-${['play', 'images', 'file-alt'][i % 3]} text-white text-xs"></i>
+                                            </div>
+                                        </div>
+                                        <div class="work-info p-2">
+                                            <h3 class="work-title text-sm font-medium line-clamp-2">收藏的${['视频', '图文', '文章'][i % 3]}作品 ${i + 1}</h3>
+                                            <div class="work-stats flex items-center justify-between mt-1 text-xs text-gray-500">
+                                                <div class="flex items-center">
+                                                    <span class="mr-2"><i class="fas fa-eye mr-1"></i>${Math.floor(Math.random() * 1000) + 100}</span>
+                                                    <span class="mr-2"><i class="fas fa-heart mr-1"></i>${Math.floor(Math.random() * 200) + 50}</span>
+                                                </div>
+                                                <span>${['今天', '昨天', '3天前', '1周前', '2周前'][Math.floor(Math.random() * 5)]}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            ${collection.count > 6 ? `
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-outline-primary btn-sm">查看更多</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(collectionDetail);
+            
+            // 添加返回事件
+            collectionDetail.querySelector('.fragment-back').addEventListener('click', () => {
+                collectionDetail.classList.remove('active');
+                setTimeout(() => {
+                    document.body.removeChild(collectionDetail);
+                }, 300);
+            });
+            
+            // 延迟一下再添加active类，以触发动画
+            setTimeout(() => {
+                collectionDetail.classList.add('active');
+            }, 10);
+        }
+        
+        // 显示创建文章界面（示例）
+        function showCreateMarkdownInterface() {
+            // 创建文章编辑界面
+            const editorFragment = document.createElement('div');
+            editorFragment.className = 'fragment active right-fragment';
+            editorFragment.innerHTML = `
+                <div class="fragment-header">
+                    <button class="fragment-back"><i class="fas fa-arrow-left"></i></button>
+                    <h3 class="fragment-title">创建文章</h3>
+                    <button class="fragment-action">发布</button>
+                </div>
+                <div class="fragment-body">
+                    <div class="editor-container p-3">
+                        <div class="form-group mb-4">
+                            <input type="text" class="form-control text-lg font-medium" placeholder="请输入标题...">
+                        </div>
+                        <div class="form-group mb-4">
+                            <div class="editor-toolbar flex items-center p-2 bg-gray-50 rounded-t border">
+                                <button class="btn btn-icon mr-2"><i class="fas fa-bold"></i></button>
+                                <button class="btn btn-icon mr-2"><i class="fas fa-italic"></i></button>
+                                <button class="btn btn-icon mr-2"><i class="fas fa-list-ul"></i></button>
+                                <button class="btn btn-icon mr-2"><i class="fas fa-list-ol"></i></button>
+                                <button class="btn btn-icon mr-2"><i class="fas fa-link"></i></button>
+                                <button class="btn btn-icon"><i class="fas fa-image"></i></button>
+                            </div>
+                            <textarea class="form-control rounded-t-none" rows="12" placeholder="请输入正文内容..."></textarea>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label mb-1">添加标签</label>
+                            <div class="tags-input flex flex-wrap items-center p-2 border rounded">
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    编程 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    学习 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <input type="text" class="flex-1 border-0 outline-none text-sm" placeholder="添加标签...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label mb-1">隐私设置</label>
+                            <div class="flex items-center">
+                                <label class="inline-flex items-center mr-4">
+                                    <input type="radio" name="privacy" value="public" checked class="mr-1">
+                                    <span class="text-sm">公开</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="privacy" value="private" class="mr-1">
+                                    <span class="text-sm">私密</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(editorFragment);
+            
+            // 添加返回事件
+            editorFragment.querySelector('.fragment-back').addEventListener('click', () => {
+                if (confirm('确定要放弃编辑吗？')) {
+                    editorFragment.classList.remove('active');
+                    setTimeout(() => {
+                        document.body.removeChild(editorFragment);
+                    }, 300);
+                }
+            });
+            
+            // 添加发布事件
+            editorFragment.querySelector('.fragment-action').addEventListener('click', () => {
+                // 显示发布成功提示
+                editorFragment.classList.remove('active');
+                setTimeout(() => {
+                    document.body.removeChild(editorFragment);
+                    showToast('文章发布成功');
+                    
+                    // 刷新作品列表
+                    generateMyWorks();
+                }, 300);
+            });
+            
+            // 延迟一下再添加active类，以触发动画
+            setTimeout(() => {
+                editorFragment.classList.add('active');
+            }, 10);
+        }
+        
+        // 显示创建图文界面（示例）
+        function showCreateCarouselInterface() {
+            // 创建图文编辑界面
+            const editorFragment = document.createElement('div');
+            editorFragment.className = 'fragment active right-fragment';
+            editorFragment.innerHTML = `
+                <div class="fragment-header">
+                    <button class="fragment-back"><i class="fas fa-arrow-left"></i></button>
+                    <h3 class="fragment-title">创建图文</h3>
+                    <button class="fragment-action">发布</button>
+                </div>
+                <div class="fragment-body">
+                    <div class="editor-container p-3">
+                        <div class="form-group mb-4">
+                            <div class="images-upload card p-4 text-center cursor-pointer">
+                                <i class="fas fa-images text-2xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-500">点击上传图片（最多9张）</p>
+                                <div class="image-preview-container mt-3 grid grid-cols-3 gap-2">
+                                    <div class="image-preview relative rounded overflow-hidden aspect-square">
+                                        <img src="https://source.unsplash.com/random/300x300?sig=1" alt="预览图" class="w-full h-full object-cover">
+                                        <button class="delete-btn absolute top-1 right-1 bg-black bg-opacity-50 rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-times text-white text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="image-preview relative rounded overflow-hidden aspect-square">
+                                        <img src="https://source.unsplash.com/random/300x300?sig=2" alt="预览图" class="w-full h-full object-cover">
+                                        <button class="delete-btn absolute top-1 right-1 bg-black bg-opacity-50 rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-times text-white text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="add-image flex items-center justify-center border border-dashed rounded aspect-square">
+                                        <i class="fas fa-plus text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input type="text" class="form-control text-lg font-medium" placeholder="请输入标题...">
+                        </div>
+                        <div class="form-group mb-4">
+                            <textarea class="form-control" rows="6" placeholder="请输入描述内容..."></textarea>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label mb-1">添加标签</label>
+                            <div class="tags-input flex flex-wrap items-center p-2 border rounded">
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    设计 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    灵感 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <input type="text" class="flex-1 border-0 outline-none text-sm" placeholder="添加标签...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label mb-1">隐私设置</label>
+                            <div class="flex items-center">
+                                <label class="inline-flex items-center mr-4">
+                                    <input type="radio" name="privacy" value="public" checked class="mr-1">
+                                    <span class="text-sm">公开</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="privacy" value="private" class="mr-1">
+                                    <span class="text-sm">私密</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(editorFragment);
+            
+            // 添加返回事件
+            editorFragment.querySelector('.fragment-back').addEventListener('click', () => {
+                if (confirm('确定要放弃编辑吗？')) {
+                    editorFragment.classList.remove('active');
+                    setTimeout(() => {
+                        document.body.removeChild(editorFragment);
+                    }, 300);
+                }
+            });
+            
+            // 添加发布事件
+            editorFragment.querySelector('.fragment-action').addEventListener('click', () => {
+                // 显示发布成功提示
+                editorFragment.classList.remove('active');
+                setTimeout(() => {
+                    document.body.removeChild(editorFragment);
+                    showToast('图文发布成功');
+                    
+                    // 刷新作品列表
+                    generateMyWorks();
+                }, 300);
+            });
+            
+            // 延迟一下再添加active类，以触发动画
+            setTimeout(() => {
+                editorFragment.classList.add('active');
+            }, 10);
+        }
+        
+        // 显示创建视频界面（示例）
+        function showCreateVideoInterface() {
+            // 创建视频上传界面
+            const editorFragment = document.createElement('div');
+            editorFragment.className = 'fragment active right-fragment';
+            editorFragment.innerHTML = `
+                <div class="fragment-header">
+                    <button class="fragment-back"><i class="fas fa-arrow-left"></i></button>
+                    <h3 class="fragment-title">创建视频</h3>
+                    <button class="fragment-action">发布</button>
+                </div>
+                <div class="fragment-body">
+                    <div class="editor-container p-3">
+                        <div class="form-group mb-4">
+                            <div class="video-upload card p-4 text-center cursor-pointer">
+                                <i class="fas fa-video text-2xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-500">点击上传视频</p>
+                                <div class="video-preview-container mt-3 relative rounded overflow-hidden aspect-video">
+                                    <img src="https://source.unsplash.com/random/600x400?video" alt="视频封面" class="w-full h-full object-cover">
+                                    <div class="play-icon absolute inset-0 flex items-center justify-center">
+                                        <div class="bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">
+                                            <i class="fas fa-play text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="video-duration absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">03:45</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input type="text" class="form-control text-lg font-medium" placeholder="请输入标题...">
+                        </div>
+                        <div class="form-group mb-4">
+                            <textarea class="form-control" rows="4" placeholder="请输入视频描述..."></textarea>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label mb-1">选择封面</label>
+                            <div class="cover-options grid grid-cols-4 gap-2">
+                                <div class="cover-option relative rounded overflow-hidden aspect-video border-2 border-primary">
+                                    <img src="https://source.unsplash.com/random/300x200?video&sig=1" alt="封面选项" class="w-full h-full object-cover">
+                                </div>
+                                <div class="cover-option relative rounded overflow-hidden aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?video&sig=2" alt="封面选项" class="w-full h-full object-cover">
+                                </div>
+                                <div class="cover-option relative rounded overflow-hidden aspect-video">
+                                    <img src="https://source.unsplash.com/random/300x200?video&sig=3" alt="封面选项" class="w-full h-full object-cover">
+                                </div>
+                                <div class="cover-option relative rounded overflow-hidden aspect-video flex items-center justify-center bg-gray-100">
+                                    <i class="fas fa-plus text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label mb-1">添加标签</label>
+                            <div class="tags-input flex flex-wrap items-center p-2 border rounded">
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    教程 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <div class="tag bg-primary bg-opacity-10 text-primary text-xs rounded-full px-2 py-1 mr-2 mb-1">
+                                    编程 <i class="fas fa-times ml-1 cursor-pointer"></i>
+                                </div>
+                                <input type="text" class="flex-1 border-0 outline-none text-sm" placeholder="添加标签...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label mb-1">隐私设置</label>
+                            <div class="flex items-center">
+                                <label class="inline-flex items-center mr-4">
+                                    <input type="radio" name="privacy" value="public" checked class="mr-1">
+                                    <span class="text-sm">公开</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="privacy" value="private" class="mr-1">
+                                    <span class="text-sm">私密</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(editorFragment);
+            
+            // 添加返回事件
+            editorFragment.querySelector('.fragment-back').addEventListener('click', () => {
+                if (confirm('确定要放弃编辑吗？')) {
+                    editorFragment.classList.remove('active');
+                    setTimeout(() => {
+                        document.body.removeChild(editorFragment);
+                    }, 300);
+                }
+            });
+            
+            // 添加发布事件
+            editorFragment.querySelector('.fragment-action').addEventListener('click', () => {
+                // 显示发布成功提示
+                editorFragment.classList.remove('active');
+                setTimeout(() => {
+                    document.body.removeChild(editorFragment);
+                    showToast('视频发布成功');
+                    
+                    // 刷新作品列表
+                    generateMyWorks();
+                }, 300);
+            });
+            
+            // 延迟一下再添加active类，以触发动画
+            setTimeout(() => {
+                editorFragment.classList.add('active');
+            }, 10);
+        }
+
+        // 初始化应用
+        function initApp() {
+            generateVirtualData();
+        }
+
+        // 页面加载完成后初始化应用
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
