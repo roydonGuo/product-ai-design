@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口腔门店营销裂变系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+            box-shadow: var(--shadow);
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .nav-icons i {
+            margin-left: 15px;
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+            color: var(--dark);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 10px;
+            margin: 0 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-light {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .invite-methods {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .method {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .method-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .reward-list {
+            list-style: none;
+        }
+        
+        .reward-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .reward-item:last-child {
+            border-bottom: none;
+        }
+        
+        .reward-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--secondary);
+        }
+        
+        .reward-details {
+            flex: 1;
+        }
+        
+        .reward-title {
+            font-weight: bold;
+        }
+        
+        .reward-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .reward-amount {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .amount-options {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        
+        .amount-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        
+        .amount-option.active {
+            border-color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .payment-options {
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .payment-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        
+        .payment-option.active {
+            border-color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .notification {
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #f0f0f0;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+        
+        .invite-code {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+        
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-item {
+            text-align: center;
+            flex: 1;
+            padding: 8px 0;
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--gray);
+        }
+        
+        .nav-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .nav-item.active .nav-icon,
+        .nav-item.active .nav-text {
+            color: var(--primary);
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .back-btn {
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 邀请中心首页 -->
+        <div id="home-page" class="page active">
+            <header>
+                <div class="logo">口腔管家</div>
+                <div class="nav-icons">
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-user"></i>
+                </div>
+            </header>
+            
+            <h1>邀请有奖</h1>
+            
+            <div class="card">
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value">¥158</div>
+                        <div class="stat-label">已获奖励</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">¥68</div>
+                        <div class="stat-label">可提现</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">邀请人数</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showPage('invite-page')">立即邀请</button>
+                    <button class="btn btn-secondary" onclick="showPage('reward-page')">我的奖励</button>
+                </div>
+            </div>
+            
+            <h2>邀请方式</h2>
+            <div class="invite-methods">
+                <div class="method">
+                    <div class="method-icon">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <div>微信分享</div>
+                </div>
+                <div class="method">
+                    <div class="method-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div>海报邀请</div>
+                </div>
+                <div class="method">
+                    <div class="method-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <div>短信邀请</div>
+                </div>
+            </div>
+            
+            <h2>奖励规则</h2>
+            <div class="card">
+                <ul class="reward-list">
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">每邀请1位好友</div>
+                            <div class="reward-date">奖励¥10现金</div>
+                        </div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">好友首单立减</div>
+                            <div class="reward-date">赠送¥20优惠券</div>
+                        </div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">满3人额外奖励</div>
+                            <div class="reward-date">赠送9折优惠券</div>
+                        </div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">提现门槛</div>
+                            <div class="reward-date">满¥50可提现</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 邀请页面 -->
+        <div id="invite-page" class="page">
+            <header>
+                <div class="back-btn" onclick="showPage('home-page')">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="logo">生成邀请</div>
+                <div class="nav-icons">
+                    <i class="fas fa-download"></i>
+                </div>
+            </header>
+            
+            <div class="card">
+                <div class="qr-code">
+                    <i class="fas fa-qrcode" style="font-size: 3rem; color: #ccc;"></i>
+                </div>
+                
+                <div class="invite-code">
+                    邀请码：A3B8C2
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-light">
+                        <i class="fas fa-copy"></i> 复制邀请码
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fab fa-weixin"></i> 分享给好友
+                    </button>
+                </div>
+            </div>
+            
+            <h2>邀请说明</h2>
+            <div class="card">
+                <p>1. 分享邀请码或二维码给好友</p>
+                <p>2. 好友通过您的邀请注册并完成首次消费</p>
+                <p>3. 您将获得¥10现金奖励，好友获得¥20优惠券</p>
+                <p>4. 奖励自动发放到您的账户</p>
+            </div>
+        </div>
+        
+        <!-- 我的奖励页面 -->
+        <div id="reward-page" class="page">
+            <header>
+                <div class="back-btn" onclick="showPage('home-page')">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="logo">我的奖励</div>
+                <div class="nav-icons">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+            </header>
+            
+            <div class="card">
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value">¥68</div>
+                        <div class="stat-label">现金余额</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">350</div>
+                        <div class="stat-label">积分</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showPage('withdraw-page')">立即提现</button>
+                    <button class="btn btn-light">积分兑换</button>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                <h2>奖励记录</h2>
+                <span>查看全部</span>
+            </div>
+            
+            <div class="card">
+                <ul class="reward-list">
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">邀请李**</div>
+                            <div class="reward-date">10-25 14:30</div>
+                        </div>
+                        <div class="reward-amount">+¥10</div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">邀请王**</div>
+                            <div class="reward-date">10-20 09:15</div>
+                        </div>
+                        <div class="reward-amount">+¥10</div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="reward-details">
+                            <div class="reward-title">积分兑换</div>
+                            <div class="reward-date">10-18 16:45</div>
+                        </div>
+                        <div class="reward-amount">-200分</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 提现页面 -->
+        <div id="withdraw-page" class="page">
+            <header>
+                <div class="back-btn" onclick="showPage('reward-page')">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="logo">提现申请</div>
+                <div></div>
+            </header>
+            
+            <div class="card">
+                <div class="input-group">
+                    <div class="input-label">可提现金额：¥68</div>
+                    <div class="input-label" style="color: var(--gray); font-size: 0.9rem;">最低提现额度：¥50</div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">提现金额</div>
+                    <input type="text" class="input-field" value="50" placeholder="输入提现金额">
+                </div>
+                
+                <div class="amount-options">
+                    <div class="amount-option active">¥50</div>
+                    <div class="amount-option">¥68</div>
+                    <div class="amount-option">¥100</div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">到账方式</div>
+                    <div class="payment-options">
+                        <div class="payment-option active">
+                            <i class="fab fa-weixin"></i>
+                            <div>微信零钱</div>
+                        </div>
+                        <div class="payment-option">
+                            <i class="fab fa-alipay"></i>
+                            <div>支付宝</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="color: var(--gray); font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> 1-3个工作日到账
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">确认提现</button>
+            </div>
+        </div>
+        
+        <!-- 消息页面 -->
+        <div id="message-page" class="page">
+            <header>
+                <div class="back-btn" onclick="showPage('home-page')">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="logo">消息通知</div>
+                <div class="nav-icons">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+            </header>
+            
+            <div class="section-title">
+                <h2>系统通知</h2>
+            </div>
+            
+            <div class="notification">
+                <div class="notification-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">提现到账通知</div>
+                    <div class="notification-desc">您申请的¥50提现已到账</div>
+                    <div class="notification-time">10-25 12:30</div>
+                </div>
+            </div>
+            
+            <div class="notification">
+                <div class="notification-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">奖励到账通知</div>
+                    <div class="notification-desc">邀请李**消费成功，+¥10</div>
+                    <div class="notification-time">10-24 09:15</div>
+                </div>
+            </div>
+            
+            <div class="notification">
+                <div class="notification-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">奖励过期提醒</div>
+                    <div class="notification-desc">您有¥20奖励即将过期</div>
+                    <div class="notification-time">10-23 14:20</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航 -->
+    <div class="footer-nav">
+        <div class="nav-item active" onclick="showPage('home-page')">
+            <div class="nav-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="nav-text">首页</div>
+        </div>
+        <div class="nav-item" onclick="showPage('reward-page')">
+            <div class="nav-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <div class="nav-text">奖励</div>
+        </div>
+        <div class="nav-item" onclick="showPage('invite-page')">
+            <div class="nav-icon">
+                <i class="fas fa-share-alt"></i>
+            </div>
+            <div class="nav-text">邀请</div>
+        </div>
+        <div class="nav-item" onclick="showPage('message-page')">
+            <div class="nav-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="nav-text">消息</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="nav-text">我的</div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换功能
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新底部导航激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 根据页面ID设置对应的导航项为激活状态
+            if (pageId === 'home-page') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if (pageId === 'reward-page') {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            } else if (pageId === 'invite-page') {
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+            } else if (pageId === 'message-page') {
+                document.querySelectorAll('.nav-item')[3].classList.add('active');
+            }
+        }
+        
+        // 金额选项选择
+        document.querySelectorAll('.amount-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.amount-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+                document.querySelector('.input-field').value = this.textContent.replace('¥', '');
+            });
+        });
+        
+        // 支付方式选择
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
