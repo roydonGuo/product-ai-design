@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="filename" content="aiyakhankan_ui.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 APP UI Design</title>
+  <!-- Tailwind CSS (Via CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* 基础设置 */
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      background-color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    /* 隐藏滚动条但保留功能 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 模拟手机外壳 */
+    .device-frame {
+      width: 375px;
+      height: 812px;
+      background-color: #F9FAFB;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      /* 如果不需要圆角展示，可以去掉下面这行 */
+      border-radius: 40px;
+    }
+
+    /* 状态栏模拟 */
+    .status-bar {
+      height: 44px;
+      width: 100%;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      z-index: 50;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 手机容器 -->
+  <div class="device-frame flex flex-col">
+
+    <!-- 模拟顶部状态栏 -->
+    <div class="status-bar sticky top-0 bg-white shadow-sm z-50">
+      <span>9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="fa-solid fa-signal text-xs"></i>
+        <i class="fa-solid fa-wifi text-xs"></i>
+        <i class="fa-solid fa-battery-full text-xs"></i>
+      </div>
+    </div>
+
+    <!-- 顶部标题栏 -->
+    <div class="px-5 py-3 bg-white flex justify-between items-center sticky top-11 z-40 border-b border-gray-100">
+      <h1 class="text-xl font-bold text-gray-800">爱牙就上爱牙看看</h1>
+      <!-- <i class="fa-regular fa-bell text-gray-600 text-lg"></i> -->
+    </div>
+
+    <!-- 主内容滚动区 -->
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-gray-50 pb-24">
+      <!-- 1. 附近门诊入口卡片 -->
+      <div class="p-4">
+        <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-2xl p-5 shadow-lg border border-blue-400 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
+          <!-- 背景装饰 -->
+          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
+          <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12"></div>
+          
+          <div class="relative z-10">
+            <!-- 顶部信息 -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-location-dot text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-lg mb-1">附近门诊</h3>
+                  <p class="text-blue-100 text-xs">发现身边的专业口腔服务</p>
+                </div>
+              </div>
+              <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                <i class="fa-solid fa-arrow-right text-white text-sm"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. AI评估报告列表 -->
+      <div class="px-4 mb-2">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-gray-800 text-base border-l-4 border-blue-500 pl-2">AI 评估报告</h3>
+          <span class="text-xs text-gray-400">查看全部 <i class="fa-solid fa-angle-right"></i></span>
+        </div>
+
+        <!-- 报告卡片 1 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-xs text-gray-400">2023-10-24 14:30</span>
+          </div>
+          <div class="flex gap-4">
+            <!-- 分数展示 -->
+            <div class="flex flex-col items-center justify-center w-20 flex-shrink-0">
+              <div
+                class="w-14 h-14 rounded-full border-4 border-yellow-400 flex items-center justify-center bg-yellow-50">
+                <span class="text-xl font-bold text-yellow-600">72</span>
+              </div>
+              <span class="text-xs text-gray-500 mt-1">健康分</span>
+            </div>
+
+            <!-- 疾病描述 -->
+            <div class="flex-1">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-red-50 text-red-500 text-xs px-2 py-1 rounded border border-red-100">1. 牙列不齐</span>
+                <span class="bg-orange-50 text-orange-500 text-xs px-2 py-1 rounded border border-orange-100">2. 浅龋齿
+                  (41、42)</span>
+                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">3. 磨损平面</span>
+              </div>
+            </div>
+          </div>
+          <!-- 查看按钮 -->
+          <div class="mt-2 border-t border-gray-50 pt-3 text-center">
+            <div class="text-blue-600 text-sm font-medium w-full block cursor-pointer">
+              查看完整报告 <i class="fa-solid fa-arrow-right-long ml-1"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 报告卡片 2 (示例) -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 relative opacity-80">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs text-gray-400">2023-05-12 09:15</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+              <span class="text-lg font-bold text-emerald-600">88</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm text-gray-600 line-clamp-1">牙齿较健康，未识别出明显疾病...</p>
+            </div>
+            <div class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200">
+              查看
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 咨询列表 -->
+      <div class="px-4 mt-6">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-gray-800 text-base border-l-4 border-blue-500 pl-2">最近咨询</h3>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50">
+
+          <!-- 咨询项 1 -->
+          <div class="p-4 active:bg-gray-50 transition cursor-pointer">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">关于隐形矫正的费用和周期问题</h4>
+              <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+            </div>
+            <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+              我想咨询一下适美乐和隐适美大概的价格区间是多少？我这种情况大概需要戴多久...
+            </p>
+            <div class="flex justify-between items-center text-[10px] text-gray-400">
+              <span>2小时前</span>
+              <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+            </div>
+          </div>
+
+          <!-- 咨询项 2 -->
+          <div class="p-4 active:bg-gray-50 transition cursor-pointer">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">右下角牙齿遇冷酸痛</h4>
+              <span class="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-medium">未回复</span>
+            </div>
+            <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+              最近喝冰水的时候右边的牙齿会特别酸，不喝就好了，这是蛀牙了吗？
+            </p>
+            <div class="flex justify-between items-center text-[10px] text-gray-400">
+              <span>昨天 18:20</span>
+              <!-- <span>等待医生接入...</span> -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 底部占位，防止内容被导航遮挡 -->
+      <div class="h-6"></div>
+    </div>
+
+    <!-- 4. 底部导航栏 -->
+    <div
+      class="h-[83px] bg-white border-t border-gray-200 flex justify-around items-start pt-3 absolute bottom-0 w-full pb-8 z-50">
+      <!-- 首页 (激活状态) -->
+      <div class="flex flex-col items-center gap-1 cursor-pointer w-16">
+        <i class="fa-solid fa-house text-xl text-blue-600"></i>
+        <span class="text-[10px] font-medium text-blue-600">首页</span>
+      </div>
+
+      <!-- 预约 -->
+      <div class="flex flex-col items-center gap-1 cursor-pointer w-16 group">
+        <i class="fa-solid fa-calendar-days text-xl text-gray-400 group-hover:text-blue-500 transition"></i>
+        <span class="text-[10px] font-medium text-gray-500 group-hover:text-blue-500 transition">报告</span>
+      </div>
+
+      <!-- 咨询 -->
+      <div class="flex flex-col items-center gap-1 cursor-pointer w-16 group">
+        <i class="fa-regular fa-comment-dots text-xl text-gray-400 group-hover:text-blue-500 transition"></i>
+        <span class="text-[10px] font-medium text-gray-500 group-hover:text-blue-500 transition">咨询</span>
+      </div>
+
+      <!-- 我的 -->
+      <div class="flex flex-col items-center gap-1 cursor-pointer w-16 group">
+        <i class="fa-regular fa-user text-xl text-gray-400 group-hover:text-blue-500 transition"></i>
+        <span class="text-[10px] font-medium text-gray-500 group-hover:text-blue-500 transition">我的</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="filename" content="aiyakhankan_ui.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 APP UI Design</title>
+  <!-- Tailwind CSS (Via CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* 基础设置 */
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      background-color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    /* 隐藏滚动条但保留功能 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 模拟手机外壳 */
+    .device-frame {
+      width: 375px;
+      height: 812px;
+      background-color: #F9FAFB;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      /* 如果不需要圆角展示，可以去掉下面这行 */
+      border-radius: 40px;
+    }
+
+    /* 状态栏模拟 */
+    .status-bar {
+      height: 44px;
+      width: 100%;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      z-index: 50;
+    }
+
+    /* 页面切换 */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 手机容器 -->
+  <div class="device-frame flex flex-col">
+
+    <!-- 模拟顶部状态栏 -->
+    <div class="status-bar sticky top-0 bg-white shadow-sm z-50">
+      <span>9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="fa-solid fa-signal text-xs"></i>
+        <i class="fa-solid fa-wifi text-xs"></i>
+        <i class="fa-solid fa-battery-full text-xs"></i>
+      </div>
+    </div>
+
+    <!-- 顶部标题栏 -->
+    <div id="headerBar"
+      class="px-5 py-3 bg-white flex justify-between items-center sticky top-11 z-40 border-b border-gray-100">
+      <h1 class="text-xl font-bold text-gray-800">爱牙就上爱牙看看</h1>
+      <!-- <i class="fa-regular fa-bell text-gray-600 text-lg"></i> -->
+    </div>
+
+    <!-- 主内容滚动区 -->
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-gray-50 pb-24">
+
+      <!-- 首页内容 -->
+      <div id="homePage" class="page active">
+
+        <!-- 1. 我的门诊板块 -->
+        <div class="p-4">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="flex items-start gap-3 mb-3">
+              <!-- 门诊 Logo -->
+              <div
+                class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-blue-100 border-2 border-white shadow-sm">
+                <img
+                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                  alt="Clinic Logo" class="w-full h-full object-cover">
+              </div>
+              <!-- 门诊信息 -->
+              <div class="flex-1">
+                <h2 class="font-bold text-gray-800 text-lg">珠海长安口腔医院</h2>
+                <p class="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
+                  专注口腔健康20年，拥有国际顶尖的数字化诊疗设备，为您提供专业的正畸、种植及美学修复服务。
+                </p>
+              </div>
+            </div>
+            <!-- 按钮组 -->
+            <div class="flex gap-3 mt-2">
+              <div
+                class="flex-1 bg-blue-50 text-blue-600 py-2.5 rounded-lg text-center text-sm font-semibold active:bg-blue-100 cursor-pointer transition">
+                <i class="fa-regular fa-comments mr-1"></i> 在线咨询
+              </div>
+              <div
+                class="flex-1 bg-blue-600 text-white py-2.5 rounded-lg text-center text-sm font-semibold shadow-md shadow-blue-200 active:bg-blue-700 cursor-pointer transition">
+                <i class="fa-regular fa-calendar-check mr-1"></i> 立即预约
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. AI评估报告列表 -->
+        <div class="px-4 mb-2">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-800 text-base border-l-4 border-blue-500 pl-2">AI 评估报告</h3>
+            <span class="text-xs text-gray-400">查看全部 <i class="fa-solid fa-angle-right"></i></span>
+          </div>
+
+          <!-- 报告卡片 1 -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs text-gray-400">2023-10-24 14:30</span>
+            </div>
+            <div class="flex gap-4">
+              <!-- 分数展示 -->
+              <div class="flex flex-col items-center justify-center w-20 flex-shrink-0">
+                <div
+                  class="w-14 h-14 rounded-full border-4 border-yellow-400 flex items-center justify-center bg-yellow-50">
+                  <span class="text-xl font-bold text-yellow-600">72</span>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">健康分</span>
+              </div>
+
+              <!-- 疾病描述 -->
+              <div class="flex-1">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="bg-red-50 text-red-500 text-xs px-2 py-1 rounded border border-red-100">1. 牙列不齐</span>
+                  <span class="bg-orange-50 text-orange-500 text-xs px-2 py-1 rounded border border-orange-100">2.
+                    浅龋齿(41、42)</span>
+                  <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">3.
+                    磨损平面</span>
+                </div>
+              </div>
+            </div>
+            <!-- 查看按钮 -->
+            <div class="mt-2 border-t border-gray-50 pt-3 text-center">
+              <div class="text-blue-600 text-sm font-medium w-full block cursor-pointer">
+                查看完整报告 <i class="fa-solid fa-arrow-right-long ml-1"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- 报告卡片 2 (示例) -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 relative opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-05-12 09:15</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">88</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿较健康，未识别出明显疾病...</p>
+              </div>
+              <div class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200">
+                查看
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 咨询列表 -->
+        <div class="px-4 mt-6">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-800 text-base border-l-4 border-blue-500 pl-2">最近咨询</h3>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50">
+
+            <!-- 咨询项 1 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">关于隐形矫正的费用和周期问题</h4>
+                <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                我想咨询一下适美乐和隐适美大概的价格区间是多少？我这种情况大概需要戴多久...
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>2小时前</span>
+                <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 2 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">右下角牙齿遇冷酸痛</h4>
+                <span class="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-medium">未回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                最近喝冰水的时候右边的牙齿会特别酸，不喝就好了，这是蛀牙了吗？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>昨天 18:20</span>
+                <!-- <span>等待医生接入...</span> -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4. 我的卡券 -->
+        <div class="px-4 mt-6">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-800 text-base border-l-4 border-blue-500 pl-2">我的卡券</h3>
+            <span class="text-xs text-gray-400">查看全部 <i class="fa-solid fa-angle-right"></i></span>
+          </div>
+
+          <!-- 卡券卡片 1 - 待使用 -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden">
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-ticket text-blue-600 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-gray-800 text-base mb-1">洁牙护理券</h4>
+                  <p class="text-xs text-gray-500">领取时间: 2023-09-15</p>
+                </div>
+              </div>
+              <div class="px-2 py-1 rounded-md font-medium">
+                <div class="flex items-baseline justify-center">
+                  <span class="text-xs text-blue-600 font-medium mr-1">¥</span>
+                  <span class="text-xl font-bold text-blue-600">120</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 券面金额展示 -->
+            <!-- <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4 mb-4 border border-blue-200">
+              <div class="flex items-baseline justify-center">
+                <span class="text-xs text-blue-600 font-medium mr-1">¥</span>
+                <span class="text-3xl font-bold text-blue-600">120</span>
+              </div>
+            </div> -->
+
+            <!-- 使用信息 -->
+            <div class="space-y-2.5">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">使用期限</span>
+                <span class="text-xs font-medium text-gray-800">2023-10-01 至 2023-12-31</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">使用时段</span>
+                <span class="text-xs font-medium text-gray-800">每天 10:00-20:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡券卡片 2 - 已使用 -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 relative opacity-80">
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-ticket text-blue-600 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-gray-800 text-base mb-1">通用优惠券</h4>
+                  <p class="text-xs text-gray-500">领取时间: 2023-08-20</p>
+                </div>
+              </div>
+              <div class="px-2 py-1 rounded-md font-medium">
+                <div class="flex items-baseline justify-center">
+                  <span class="text-xs text-gray-500 font-medium mr-1">¥</span>
+                  <span class="text-xl font-bold text-gray-500">50</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 券面金额展示 -->
+            <!-- <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 mb-4 border border-gray-200">
+              <div class="flex items-baseline justify-center">
+                <span class="text-xs text-gray-500 font-medium mr-1">¥</span>
+                <span class="text-3xl font-bold text-gray-500">50</span>
+              </div>
+            </div> -->
+
+            <!-- 使用信息 -->
+            <div class="space-y-2.5 mb-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">使用期限</span>
+                <span class="text-xs font-medium text-gray-800">2023-08-25 至 2023-09-25</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">使用时间</span>
+                <span class="text-xs font-medium text-gray-800">2023-09-10 14:30</span>
+              </div>
+            </div>
+
+            <!-- 已使用标识 -->
+            <div class="border-t border-gray-50 pt-3 text-center">
+              <i class="fa-solid fa-circle-check text-2xl text-green-500 mb-1"></i>
+              <p class="text-xs font-medium text-gray-700 mt-1">已使用</p>
+              <p class="text-xs text-gray-400 mt-0.5">2023-09-10 14:30</p>
+            </div>
+          </div>
+        </div>
+        <!-- 底部占位，防止内容被导航遮挡 -->
+        <div class="h-6"></div>
+      </div>
+
+      <!-- 我的页面内容 -->
+      <div id="minePage" class="page">
+        <!-- 用户信息区域 -->
+        <div class="pt-4 pb-4 px-5">
+          <div class="flex items-center gap-4">
+            <!-- 用户头像 -->
+            <div class="w-16 h-16 rounded-full overflow-hidden bg-white border-4 border-white shadow-lg flex-shrink-0">
+              <img
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                alt="User Avatar" class="w-full h-full object-cover">
+            </div>
+            <!-- 用户信息 -->
+            <div class="flex-1">
+              <h2 class="font-bold text-black text-lg">郭意诚</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- 功能列表 -->
+        <div class="px-4 mt-4">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50">
+            <!-- 账号与安全 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-shield-halved text-blue-600"></i>
+                </div>
+                <span class="text-sm font-medium text-gray-800">账号与安全</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+
+            <!-- 我的预约 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-regular fa-calendar-check text-green-600"></i>
+                </div>
+                <span class="text-sm font-medium text-gray-800">我的预约</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+
+            <!-- 问题反馈 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-regular fa-comment-dots text-orange-600"></i>
+                </div>
+                <span class="text-sm font-medium text-gray-800">问题反馈</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+
+            <!-- 隐私 -->
+            <div class="p-4 active:bg-gray-50 transition cursor-pointer flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-lock text-purple-600"></i>
+                </div>
+                <span class="text-sm font-medium text-gray-800">隐私</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 退出登录按钮 -->
+        <div class="px-4 mt-6 mb-8">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-2 text-center active:bg-red-50 transition cursor-pointer">
+              <span class="text-red-600 font-medium text-sm">退出登录</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部占位 -->
+        <div class="h-6"></div>
+      </div>
+
+      <!-- 报告页面内容 -->
+      <div id="reportPage" class="page">
+        <!-- 页面标题 -->
+        <div class="px-4 pt-2 pb-2">
+          <p class="text-xs text-gray-500">共 15 份报告</p>
+        </div>
+
+        <!-- 报告列表 -->
+        <div class="px-4 pb-4" id="reportList">
+          <!-- 报告卡片 1 -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs text-gray-400">2023-10-24 14:30</span>
+            </div>
+            <div class="flex gap-4">
+              <!-- 分数展示 -->
+              <div class="flex flex-col items-center justify-center w-20 flex-shrink-0">
+                <div
+                  class="w-14 h-14 rounded-full border-4 border-yellow-400 flex items-center justify-center bg-yellow-50">
+                  <span class="text-xl font-bold text-yellow-600">72</span>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">健康分</span>
+              </div>
+
+              <!-- 疾病描述 -->
+              <div class="flex-1">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="bg-red-50 text-red-500 text-xs px-2 py-1 rounded border border-red-100">1. 牙列不齐</span>
+                  <span class="bg-orange-50 text-orange-500 text-xs px-2 py-1 rounded border border-orange-100">2.
+                    浅龋齿(41、42)</span>
+                  <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">3.
+                    磨损平面</span>
+                </div>
+              </div>
+            </div>
+            <!-- 查看按钮 -->
+            <div class="mt-2 border-t border-gray-50 pt-3 text-center">
+              <div class="text-blue-600 text-sm font-medium w-full block cursor-pointer">
+                查看完整报告 <i class="fa-solid fa-arrow-right-long ml-1"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- 报告卡片 2 -->
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs text-gray-400">2023-09-18 10:20</span>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex flex-col items-center justify-center w-20 flex-shrink-0">
+                <div
+                  class="w-14 h-14 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                  <span class="text-xl font-bold text-emerald-600">88</span>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">健康分</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="bg-orange-50 text-orange-500 text-xs px-2 py-1 rounded border border-orange-100">1.
+                    牙结石</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 border-t border-gray-50 pt-3 text-center">
+              <div class="text-blue-600 text-sm font-medium w-full block cursor-pointer">
+                查看完整报告 <i class="fa-solid fa-arrow-right-long ml-1"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- 报告卡片 4 -->
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-07-22 09:15</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">85</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿较健康，未识别出明显疾病...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+
+          <!-- 报告卡片 6-10 (第2页) -->
+          <!-- <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-05-28 11:20</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">82</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿健康状况良好...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-04-15 15:45</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-orange-400 flex items-center justify-center bg-orange-50">
+                <span class="text-lg font-bold text-orange-600">68</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">检测到多项问题，建议及时治疗...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-03-22 09:30</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">90</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿非常健康，继续保持...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-02-18 13:15</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-yellow-400 flex items-center justify-center bg-yellow-50">
+                <span class="text-lg font-bold text-yellow-600">78</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">检测到轻微问题，建议注意口腔卫生...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2023-01-10 16:20</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full border-4 border-red-400 flex items-center justify-center bg-red-50">
+                <span class="text-lg font-bold text-red-600">62</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">检测到严重问题，建议尽快就医...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div> -->
+
+          <!-- 报告卡片 11-15 (第3页) -->
+          <!-- <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2022-12-25 10:45</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">86</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿健康状况良好...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2022-11-20 14:10</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-yellow-400 flex items-center justify-center bg-yellow-50">
+                <span class="text-lg font-bold text-yellow-600">74</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">检测到轻微问题，建议定期检查...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2022-10-15 11:30</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">89</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿非常健康，继续保持...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2022-09-08 15:20</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-orange-400 flex items-center justify-center bg-orange-50">
+                <span class="text-lg font-bold text-orange-600">71</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">检测到多项问题，建议及时治疗...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 relative overflow-hidden opacity-80">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs text-gray-400">2022-08-05 09:15</span>
+              <div class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-md font-medium">历史记录</div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full border-4 border-emerald-400 flex items-center justify-center bg-emerald-50">
+                <span class="text-lg font-bold text-emerald-600">84</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-600 line-clamp-1">牙齿健康状况良好...</p>
+              </div>
+              <div
+                class="bg-gray-50 px-3 py-1.5 rounded-full text-xs text-gray-600 border border-gray-200 cursor-pointer">
+                查看
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+          <!-- 分页控件 -->
+          <!-- <div class="px-4 pb-6">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between">
+              <button id="prevPage"
+                class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed active:bg-gray-200 transition">
+                <i class="fa-solid fa-chevron-left mr-1"></i> 上一页
+              </button>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">第</span>
+                <span id="currentPage" class="text-sm font-bold text-blue-600">1</span>
+                <span class="text-sm text-gray-600">/</span>
+                <span id="totalPages" class="text-sm text-gray-600">3</span>
+                <span class="text-sm text-gray-600">页</span>
+              </div>
+              <button id="nextPage"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed active:bg-blue-700 transition">
+                下一页 <i class="fa-solid fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div> -->
+
+          <!-- 底部占位 -->
+          <div class="h-6"></div>
+        </div>
+
+      </div>
+      <!-- 咨询页面内容 -->
+      <div id="consultPage" class="page">
+        <!-- 页面标题 -->
+        <div class="px-4 pt-2 pb-2">
+          <p class="text-xs text-gray-500">共 12 条咨询</p>
+        </div>
+
+        <!-- 咨询列表 -->
+        <div class="px-4 pb-4">
+          <div class="  ">
+
+            <!-- 咨询项 1 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">关于隐形矫正的费用和周期问题</h4>
+                <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                我想咨询一下适美乐和隐适美大概的价格区间是多少？我这种情况大概需要戴多久...
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>2小时前</span>
+                <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 2 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">右下角牙齿遇冷酸痛</h4>
+                <span class="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-medium">未回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                最近喝冰水的时候右边的牙齿会特别酸，不喝就好了，这是蛀牙了吗？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>昨天 18:20</span>
+                <!-- <span>等待医生接入...</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 3 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">种植牙的恢复期和注意事项</h4>
+                <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                我准备做种植牙手术，想了解一下术后恢复期大概需要多长时间，以及需要注意哪些事项？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>3天前</span>
+                <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 4 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">牙齿美白的效果能维持多久</h4>
+                <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                做了冷光美白后，效果能维持多长时间？需要定期维护吗？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>5天前</span>
+                <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 5 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">智齿是否需要拔除</h4>
+                <span class="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-medium">未回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                我的智齿长出来了，但是不疼，需要拔掉吗？不拔会有什么影响？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>1周前</span>
+                <!-- <span>等待医生接入...</span> -->
+              </div>
+            </div>
+
+            <!-- 咨询项 6 -->
+            <div
+              class="p-4 active:bg-gray-50 transition cursor-pointer rounded-xl shadow-sm border border-gray-100 bg-white mb-2">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 w-2/3">儿童牙齿矫正的最佳年龄</h4>
+                <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded-full font-medium">已回复</span>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-2">
+                孩子今年8岁，牙齿有点不整齐，什么时候开始矫正比较好？
+              </p>
+              <div class="flex justify-between items-center text-[10px] text-gray-400">
+                <span>1周前</span>
+                <!-- <span><i class="fa-solid fa-check-double text-blue-400"></i> 医生已读</span> -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 底部占位 -->
+        <div class="h-6"></div>
+      </div>
+
+      <!-- 4. 底部导航栏 -->
+      <div
+        class="h-[83px] bg-white border-t border-gray-200 flex justify-around items-start pt-3 absolute bottom-0 w-full pb-8 z-50">
+        <!-- 首页 -->
+        <div id="navHome" class="flex flex-col items-center gap-1 cursor-pointer w-16 nav-item active"
+          data-page="homePage">
+          <i class="fa-solid fa-house text-xl text-blue-600"></i>
+          <span class="text-[10px] font-medium text-blue-600">首页</span>
+        </div>
+
+        <!-- 报告 -->
+        <div id="navReport" class="flex flex-col items-center gap-1 cursor-pointer w-16 nav-item"
+          data-page="reportPage">
+          <i class="fa-solid fa-calendar-days text-xl text-gray-400"></i>
+          <span class="text-[10px] font-medium text-gray-500">报告</span>
+        </div>
+
+        <!-- 咨询 -->
+        <div id="navConsult" class="flex flex-col items-center gap-1 cursor-pointer w-16 nav-item"
+          data-page="consultPage">
+          <i class="fa-regular fa-comment-dots text-xl text-gray-400"></i>
+          <span class="text-[10px] font-medium text-gray-500">咨询</span>
+        </div>
+
+        <!-- 我的 -->
+        <div id="navMine" class="flex flex-col items-center gap-1 cursor-pointer w-16 nav-item" data-page="minePage">
+          <i class="fa-regular fa-user text-xl text-gray-400"></i>
+          <span class="text-[10px] font-medium text-gray-500">我的</span>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // 页面切换功能
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = document.querySelectorAll('.page');
+      const headerBar = document.getElementById('headerBar');
+
+      navItems.forEach(item => {
+        item.addEventListener('click', function () {
+          const targetPage = this.getAttribute('data-page');
+
+          // 切换页面显示
+          pages.forEach(page => {
+            page.classList.remove('active');
+          });
+          document.getElementById(targetPage).classList.add('active');
+
+          // 更新导航栏状态
+          navItems.forEach(nav => {
+            const icon = nav.querySelector('i');
+            const text = nav.querySelector('span');
+            nav.classList.remove('active');
+            icon.classList.remove('text-blue-600');
+            icon.classList.add('text-gray-400');
+            text.classList.remove('text-blue-600', 'font-medium');
+            text.classList.add('text-gray-500');
+          });
+
+          // 激活当前导航项
+          this.classList.add('active');
+          const activeIcon = this.querySelector('i');
+          const activeText = this.querySelector('span');
+          activeIcon.classList.remove('text-gray-400');
+          activeIcon.classList.add('text-blue-600');
+          activeText.classList.remove('text-gray-500');
+          activeText.classList.add('text-blue-600', 'font-medium');
+
+          // 更新顶部标题栏
+          if (targetPage === 'minePage') {
+            headerBar.querySelector('h1').hidden = true;
+          } else if (targetPage === 'reportPage') {
+            headerBar.querySelector('h1').hidden = false;
+            headerBar.querySelector('h1').textContent = 'AI 评估报告';
+          } else if (targetPage === 'consultPage') {
+            headerBar.querySelector('h1').hidden = false;
+            headerBar.querySelector('h1').textContent = '我的咨询';
+          } else {
+            headerBar.querySelector('h1').hidden = false;
+            headerBar.querySelector('h1').textContent = '爱牙就上爱牙看看';
+          }
+        });
+      });
+
+      // 分页功能
+      let currentPageNum = 1;
+      const totalPagesNum = 3;
+      const reportsPerPage = 5;
+      const allReports = document.querySelectorAll('#reportList > div');
+      const currentPageEl = document.getElementById('currentPage');
+      const totalPagesEl = document.getElementById('totalPages');
+      const prevPageBtn = document.getElementById('prevPage');
+      const nextPageBtn = document.getElementById('nextPage');
+
+      totalPagesEl.textContent = totalPagesNum;
+
+      function updatePagination() {
+        // 更新页码显示
+        currentPageEl.textContent = currentPageNum;
+
+        // 更新按钮状态
+        prevPageBtn.disabled = currentPageNum === 1;
+        nextPageBtn.disabled = currentPageNum === totalPagesNum;
+
+        // 显示/隐藏报告卡片
+        allReports.forEach((report, index) => {
+          const startIndex = (currentPageNum - 1) * reportsPerPage;
+          const endIndex = startIndex + reportsPerPage;
+          if (index >= startIndex && index < endIndex) {
+            report.style.display = 'block';
+          } else {
+            report.style.display = 'none';
+          }
+        });
+      }
+
+      prevPageBtn.addEventListener('click', function () {
+        if (currentPageNum > 1) {
+          currentPageNum--;
+          updatePagination();
+          // 滚动到顶部
+          document.querySelector('#reportPage').scrollTop = 0;
+        }
+      });
+
+      nextPageBtn.addEventListener('click', function () {
+        if (currentPageNum < totalPagesNum) {
+          currentPageNum++;
+          updatePagination();
+          // 滚动到顶部
+          document.querySelector('#reportPage').scrollTop = 0;
+        }
+      });
+
+      // 初始化分页
+      updatePagination();
+    </script>
+
+</body>
+
+</html>
