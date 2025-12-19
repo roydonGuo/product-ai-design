@@ -6,9 +6,7 @@
   <meta name="filename" content="aiyakhankan_ui.html">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>爱牙看看 APP UI Design</title>
-  <!-- Tailwind CSS (Via CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -259,10 +257,8 @@
 
 <body>
 
-  <!-- 手机容器 -->
   <div class="device-frame flex flex-col">
 
-    <!-- 模拟顶部状态栏 -->
     <div class="status-bar sticky top-0 bg-white shadow-sm z-50">
       <span>9:41</span>
       <div class="flex gap-1.5 items-center">
@@ -272,24 +268,19 @@
       </div>
     </div>
 
-    <!-- 主内容滚动区 -->
     <div class="flex-1  no-scrollbar bg-gray-50 pb-24">
 
-      <!-- 顶部标题栏 -->
       <div id="headerBar"
         class="px-5 py-3 bg-white flex justify-between items-center   top-11 z-40 border-b border-gray-100">
         <h1 class="text-xl font-bold text-gray-800">查看报告</h1>
       </div>
 
-      <!-- 查看报告页面 -->
       <div id="homePage" class="page active">
 
-        <!-- 用户信息 -->
         <div class="card">
           <div class="flex items-start justify-between">
             <div class="w-full">
 
-              <!-- 姓名 -->
               <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
                 <div class="text-base text-gray-900">姓名</div>
                 <button type="button"
@@ -300,7 +291,6 @@
                 </button>
               </div>
 
-              <!-- 性别 -->
               <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
                 <div class="text-base text-gray-900">性别</div>
                 <button type="button"
@@ -311,7 +301,6 @@
                 </button>
               </div>
 
-              <!-- 年龄 -->
               <div class="flex items-center justify-between py-1.5">
                 <div class="text-base text-gray-900">年龄</div>
                 <button type="button"
@@ -325,7 +314,6 @@
           </div>
         </div>
 
-        <!-- 牙齿图像 -->
         <div class="card">
           <div class="section-title">
             <i class="fas fa-images"></i>
@@ -355,7 +343,6 @@
             </div>
           </div>
         </div>
-        <!-- AI检查结果 -->
         <div class="card">
           <div class="section-title">
             <i class="fas fa-search"></i>
@@ -367,16 +354,13 @@
             <span class="tag">3. 磨损平面（81）</span>
           </div>
 
-          <!-- 分割线 -->
           <div class="divider"></div>
-          <!-- AI评估得分 -->
 
           <div class="mt-4">
             <i class="fas fa-star text-yellow-500 mr-1"></i>
             AI评估得分：85分
           </div>
 
-          <!-- 得分排名 -->
           <div class="mt-4">
             <i class="fas fa-medal text-yellow-500 mr-1"></i>
             得分排名：85
@@ -386,7 +370,6 @@
             本报告仅供参考，请及时就医或咨询专业口腔医生。
           </div>
         </div>
-        <!-- 病因及影响 -->
         <div class="card">
           <div class="section-title">
             <i class="fas fa-info-circle"></i>
@@ -402,7 +385,6 @@
             </div>
           </div>
         </div>
-        <!-- AI治疗建议 -->
         <div class="card">
           <div class="section-title">
             <i class="fas fa-stethoscope"></i>
@@ -431,7 +413,6 @@
           </ul>
         </div>
 
-        <!-- 预防措施 -->
         <div class="card">
           <div class="section-title">
             <i class="fas fa-info-circle"></i>
@@ -448,13 +429,11 @@
           </div>
         </div>
 
-        <!-- 底部占位，防止内容被导航遮挡 -->
         <div class="h-6"></div>
       </div>
     </div>
 
     <script>
-      // 简单的内联编辑：姓名 / 性别 / 年龄
       document.addEventListener('DOMContentLoaded', function () {
         const fields = document.querySelectorAll('.editable-field');
 
@@ -462,7 +441,6 @@
           btn.addEventListener('click', function (e) {
             e.stopPropagation();
 
-            // 如果已经处于编辑状态，则不重复创建
             if (btn.dataset.editing === 'true') return;
             btn.dataset.editing = 'true';
 
@@ -471,7 +449,6 @@
             const icon = btn.querySelector('i');
             const currentValue = (textSpan.textContent || '').trim();
 
-            // 编辑结束时恢复展示
             const finishEdit = (newValue) => {
               textSpan.textContent = newValue || currentValue;
               textSpan.style.display = '';
@@ -485,7 +462,6 @@
 
             let input;
             if (field === 'gender') {
-              // 性别：下拉选择
               input = document.createElement('select');
               ['男', '女'].forEach(optVal => {
                 const opt = document.createElement('option');
@@ -495,7 +471,6 @@
                 input.appendChild(opt);
               });
             } else {
-              // 姓名 / 年龄：文本输入
               input = document.createElement('input');
               input.type = (field === 'age') ? 'number' : 'text';
               input.value = field === 'age' ? currentValue.replace(/[^\d]/g, '') : currentValue;
@@ -505,7 +480,6 @@
             input.className = 'border border-blue-500 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white';
             input.style.minWidth = '4rem';
 
-            // 隐藏原文字和图标，插入输入控件
             textSpan.style.display = 'none';
             if (icon) icon.style.display = 'none';
             btn.appendChild(input);
