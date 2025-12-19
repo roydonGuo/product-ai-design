@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="filename" content="aiyakhankan_ui.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 APP UI Design</title>
+  <!-- Tailwind CSS (Via CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* 基础设置 */
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      background-color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    /* 隐藏滚动条但保留功能 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 模拟手机外壳 */
+    .device-frame {
+      width: 375px;
+      height: 812px;
+      background-color: #F9FAFB;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      /* 如果不需要圆角展示，可以去掉下面这行 */
+      border-radius: 40px;
+    }
+
+    /* 状态栏模拟 */
+    .status-bar {
+      height: 44px;
+      width: 100%;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      z-index: 50;
+    }
+
+    /* 页面切换 */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 手机容器 -->
+  <div class="device-frame flex flex-col">
+
+    <!-- 模拟顶部状态栏 -->
+    <div class="status-bar sticky top-0 bg-white shadow-sm z-50">
+      <span>9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="fa-solid fa-signal text-xs"></i>
+        <i class="fa-solid fa-wifi text-xs"></i>
+        <i class="fa-solid fa-battery-full text-xs"></i>
+      </div>
+    </div>
+
+    <!-- 主内容滚动区 -->
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-gray-50 pb-24">
+
+      <!-- 顶部标题栏 -->
+      <div id="headerBar"
+        class="px-5 py-3 bg-white flex justify-between items-center   top-11 z-40 border-b border-gray-100">
+        <h1 class="text-xl font-bold text-gray-800">附近门诊</h1>
+      </div>
+
+      <!-- 附近门诊 -->
+      <div id="homePage" class="page active">
+        <!-- 分类网格 -->
+        <div class="bg-white rounded-xl p-4 m-4 shadow-sm border border-gray-100">
+          <div class="grid grid-cols-4 gap-4">
+            <!-- 全科 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-green-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-arrow-up text-green-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">全科</span>
+            </div>
+            <!-- 口腔检查 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-pink-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-magnifying-glass text-pink-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">口腔检查</span>
+            </div>
+            <!-- 洁牙美白 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-blue-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-droplet text-blue-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">洁牙美白</span>
+            </div>
+            <!-- 牙齿矫正 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-red-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-teeth text-red-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">牙齿矫正</span>
+            </div>
+            <!-- 牙齿治疗 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-orange-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-plus text-orange-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">牙齿治疗</span>
+            </div>
+            <!-- 儿童牙齿 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-green-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-child text-green-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">儿童牙齿</span>
+            </div>
+            <!-- 烤瓷牙 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div class="w-14 h-14 rounded-lg bg-orange-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-tooth text-orange-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">烤瓷牙</span>
+            </div>
+            <!-- 其他 -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer">
+              <div
+                class="w-14 h-14 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-th-large text-purple-500 text-lg"></i>
+              </div>
+              <span class="text-xs text-gray-700 font-medium">其他</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 医院卡片 -->
+        <div class="bg-white rounded-xl p-4 m-4 shadow-sm border border-gray-100 mb-3">
+          <!-- 医院信息区域 -->
+          <div class="flex items-start gap-3 mb-3 pb-3 border-b border-gray-100">
+            <!-- 医院头像 -->
+            <div class="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 shadow-md">
+              <i class="fa-solid fa-user text-white text-3xl"></i>
+            </div>
+            <!-- 医院信息 -->
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-bold text-gray-800 mb-1.5">珠海长安口腔医院</h3>
+              <div class="text-xs text-gray-500 mb-1">
+                <span>距您:12579.0km</span>
+                <span class="mx-1">·</span>
+                <span>珠海市唐家湾</span>
+              </div>
+              <div class="text-xs text-gray-500">13720058888</div>
+            </div>
+            <!-- 操作按钮 -->
+            <div class="flex flex-col gap-2 flex-shrink-0">
+              <button
+                class="px-5 py-2 border-2 border-blue-500 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-50 transition-colors whitespace-nowrap">
+                咨询
+              </button>
+              <button
+                class="px-5 py-2 bg-teal-500 text-white rounded-lg text-xs font-medium hover:bg-teal-600 transition-colors whitespace-nowrap">
+                预约
+              </button>
+            </div>
+          </div>
+
+          <!-- 可展开区域 -->
+          <div class="space-y-0">
+            <!-- 门诊介绍 -->
+            <div
+              class="flex items-center justify-between py-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors">
+              <span class="text-sm text-gray-800 font-medium">门诊介绍</span>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+            <!-- 优惠活动内容 -->
+            <div
+              class="flex items-center justify-between py-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors">
+              <span class="text-sm text-gray-800 font-medium">优惠活动内容</span>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 加载更多 -->
+        <div class="text-center py-4">
+          <span class="text-sm text-gray-400">点击加载更多</span>
+        </div>
+
+        <!-- 底部占位，防止内容被导航遮挡 -->
+        <div class="h-6"></div>
+      </div>
+
+    </div>
+
+</body>
+
+</html>
