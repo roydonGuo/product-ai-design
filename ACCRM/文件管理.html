@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件管理系统Web版UI设计</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 自定义样式以匹配设计规范 */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .browser-frame {
+      width: 100%;
+      max-width: 1400px;
+      height: 800px;
+      background: white;
+      border-radius: 12px;
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        0 5px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .browser-header {
+      height: 48px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .browser-controls {
+      display: flex;
+      gap: 8px;
+      margin-right: 16px;
+    }
+
+    .browser-control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-control.close {
+      background: #ff5f57;
+    }
+
+    .browser-control.minimize {
+      background: #ffbd2e;
+    }
+
+    .browser-control.maximize {
+      background: #28ca42;
+    }
+
+    .browser-url-bar {
+      flex: 1;
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 14px;
+      color: #495057;
+      display: flex;
+      align-items: center;
+    }
+
+    .browser-url-bar i {
+      margin-right: 8px;
+      color: #6c757d;
+    }
+
+    .app-content {
+      height: calc(100% - 48px);
+      overflow: hidden;
+    }
+
+    /* 渐变背景 */
+    .gradient-bg {
+      background: linear-gradient(135deg, #6a8cff 0%, #3d6ef7 100%);
+    }
+
+    /* 卡片设计 */
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* 按钮样式 */
+    .btn-primary {
+      background: linear-gradient(135deg, #3d6ef7 0%, #6a8cff 100%);
+      color: white;
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 10px 16px;
+      border: none;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(61, 110, 247, 0.2);
+    }
+
+    .btn-outline {
+      background: white;
+      color: #3d6ef7;
+      border: 1.5px solid #3d6ef7;
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 10px 16px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-outline:hover {
+      background: rgba(61, 110, 247, 0.05);
+      transform: translateY(-1px);
+    }
+
+    /* 列表单元格 */
+    .list-cell {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .list-cell:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    /* 文件夹树样式 */
+    .tree-item {
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      border-radius: 4px;
+      margin: 2px 8px;
+    }
+
+    .tree-item:hover,
+    .tree-item.active {
+      background-color: rgba(61, 110, 247, 0.05);
+      border-left-color: #3d6ef7;
+    }
+
+    .tree-item-level-1 {
+      padding-left: 32px;
+    }
+
+    .tree-item-level-2 {
+      padding-left: 48px;
+    }
+
+    .tree-item-level-3 {
+      padding-left: 64px;
+    }
+
+    .tree-item-level-4 {
+      padding-left: 80px;
+    }
+
+    /* 标签样式 */
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* 输入框样式 */
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #3d6ef7;
+      box-shadow: 0 0 0 3px rgba(61, 110, 247, 0.1);
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    /* 文件预览样式 */
+    .file-preview {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      background: #f9fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* 分割布局 */
+    .split-layout {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      width: 280px;
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      background: #f9fafc;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 文件图标样式 */
+    .file-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+    }
+
+    .file-icon.folder {
+      background: linear-gradient(135deg, #ffd166 0%, #ffb347 100%);
+    }
+
+    .file-icon.pdf {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+    }
+
+    .file-icon.image {
+      background: linear-gradient(135deg, #6bcf7f 0%, #8ed9a1 100%);
+    }
+
+    .file-icon.document {
+      background: linear-gradient(135deg, #6a8cff 0%, #8cabff 100%);
+    }
+
+    .file-icon.video {
+      background: linear-gradient(135deg, #c56cf0 0%, #d88cff 100%);
+    }
+
+    .file-icon.audio {
+      background: linear-gradient(135deg, #17c0eb 0%, #45d4ff 100%);
+    }
+
+    /* 文件表格视图 */
+    .file-table-container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .file-table {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .file-table thead {
+      background: #f9fafc;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .file-table th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .file-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      font-size: 14px;
+      color: #212529;
+    }
+
+    .file-table tbody tr {
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .file-table tbody tr:hover {
+      background-color: rgba(61, 110, 247, 0.02);
+    }
+
+    .file-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .file-table .file-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .file-table .file-icon-small {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-table .file-name {
+      font-weight: 500;
+      color: #212529;
+    }
+
+    .file-table .file-type-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .file-table .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      margin: 0 2px;
+    }
+
+    .file-table .action-btn:hover {
+      background: rgba(61, 110, 247, 0.1);
+      color: #3d6ef7;
+    }
+
+    /* 分页样式 */
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: white;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 0 0 12px 12px;
+    }
+
+    .pagination-info {
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pagination-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: white;
+      color: #495057;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .pagination-btn:hover:not(.disabled) {
+      background: rgba(61, 110, 247, 0.05);
+      border-color: #3d6ef7;
+      color: #3d6ef7;
+    }
+
+    .pagination-btn.active {
+      background: linear-gradient(135deg, #3d6ef7 0%, #6a8cff 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .pagination-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .pagination-select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      color: #495057;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s ease;
+    }
+
+    .pagination-select:focus {
+      outline: none;
+      border-color: #3d6ef7;
+      box-shadow: 0 0 0 3px rgba(61, 110, 247, 0.1);
+    }
+
+    /* 复选框样式 */
+    .checkbox-cell {
+      width: 40px;
+      text-align: center;
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3d6ef7;
+    }
+
+    /* 顶部工具栏 */
+    .toolbar {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 面包屑导航 */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .breadcrumb-item.active {
+      color: #3d6ef7;
+      font-weight: 600;
+    }
+
+    /* 操作按钮组 */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* 文件列表视图切换 */
+    .view-toggle {
+      display: flex;
+      background: #f1f3f5;
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .view-toggle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      cursor: pointer;
+    }
+
+    .view-toggle-btn.active {
+      background: white;
+      color: #3d6ef7;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 搜索框 */
+    .search-box {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #3d6ef7;
+      box-shadow: 0 0 0 3px rgba(61, 110, 247, 0.1);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+    }
+
+    /* 详情页布局 */
+    .detail-layout {
+      display: flex;
+      height: 100%;
+    }
+
+    .detail-sidebar {
+      width: 350px;
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      background: #f9fafc;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .detail-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* 容器包装器 */
+    .container-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-wrapper">
+    <!-- 主界面 - 文件管理 -->
+    <div class="browser-frame fade-in">
+      <div class="browser-header">
+        <div class="browser-controls">
+          <div class="browser-control close"></div>
+          <div class="browser-control minimize"></div>
+          <div class="browser-control maximize"></div>
+        </div>
+        <div class="browser-url-bar">
+          <i class="fas fa-lock"></i>
+          <span>https://crm.com</span>
+        </div>
+      </div>
+
+      <div class="app-content">
+        <div class="split-layout">
+          <!-- 左侧文件夹树形列表 -->
+          <div class="sidebar">
+
+            <!-- 快速访问区域 -->
+            <!-- <div class="p-6 border-b border-gray-100">
+              <h3 class="text-sm font-semibold text-gray-700 mb-4">快速访问</h3>
+              <div class="space-y-2">
+                <div class="tree-item">
+                  <i class="fas fa-star text-yellow-500 mr-3"></i>
+                  <span class="text-black">收藏夹</span>
+                </div>
+                <div class="tree-item">
+                  <i class="fas fa-clock text-blue-500 mr-3"></i>
+                  <span class="text-black">最近使用</span>
+                </div>
+                <div class="tree-item">
+                  <i class="fas fa-cloud-upload-alt text-green-500 mr-3"></i>
+                  <span class="text-black">上传的文件</span>
+                </div>
+                <div class="tree-item">
+                  <i class="fas fa-share-alt text-purple-500 mr-3"></i>
+                  <span class="text-black">与我共享</span>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- 文件夹树形列表 -->
+            <div class="p-6 flex-1 overflow-y-auto">
+              <h3 class="text-sm font-semibold text-gray-700 mb-4">文件夹</h3>
+              <div class="space-y-1">
+                <!-- 树形列表项 -->
+                <!-- <div class="tree-item active">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black font-medium">全部文件</span> 
+                </div> -->
+
+                <div class="tree-item active">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">我的文档</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">42</span> -->
+                </div>
+
+                <div class="tree-item tree-item-level-1">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">工作文件</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">28</span> -->
+                </div>
+
+                <div class="tree-item tree-item-level-2">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">项目A</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">15</span> -->
+                </div>
+
+                <div class="tree-item tree-item-level-2">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">项目B</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">13</span> -->
+                </div>
+
+                <div class="tree-item tree-item-level-1">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">个人资料</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">14</span> -->
+                </div>
+
+                <div class="tree-item">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">图片</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">36</span> -->
+                </div>
+
+                <div class="tree-item tree-item-level-1">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">自拍</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">22</span> -->
+                </div>
+
+                <!-- <div class="tree-item">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">视频</span>
+                  <span class="ml-auto text-gray-500 text-sm">18</span>
+                </div> -->
+
+                <!-- <div class="tree-item">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">音乐</span>
+                  <span class="ml-auto text-gray-500 text-sm">24</span>
+                </div> -->
+
+                <div class="tree-item">
+                  <i class="fas fa-folder text-yellow-500 mr-3"></i>
+                  <span class="text-black">下载</span>
+                  <!-- <span class="ml-auto text-gray-500 text-sm">8</span> -->
+                </div>
+
+                <!-- <div class="tree-item">
+                  <i class="fas fa-trash text-gray-500 mr-3"></i>
+                  <span class="text-black">回收站</span>
+                  <span class="ml-auto text-gray-500 text-sm">12</span>
+                </div> -->
+              </div>
+            </div>
+
+            <!-- 存储空间使用情况 -->
+            <!-- <div class="p-6 border-t border-gray-100">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-600">存储空间</span>
+                <span class="text-sm font-medium text-black">64.2 GB / 128 GB</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style="width: 50%"></div>
+              </div>
+              <div class="text-xs text-gray-500 mt-2">已使用 50% 的存储空间</div>
+            </div> -->
+          </div>
+
+          <!-- 右侧主内容区域 -->
+          <div class="main-content">
+            <!-- 顶部工具栏 -->
+            <div class="toolbar">
+              <!-- 面包屑导航 -->
+              <!-- <div class="breadcrumb">
+                <div class="breadcrumb-item">
+                  <span>全部文件</span>
+                  <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
+                </div>
+                <div class="breadcrumb-item">
+                  <span>我的文档</span>
+                  <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
+                </div>
+                <div class="breadcrumb-item active">
+                  <span>工作文件</span>
+                </div>
+              </div> -->
+
+              <!-- 右侧操作按钮组 -->
+              <div class="flex items-center gap-4">
+                <!-- 搜索框 -->
+                <div class="search-box">
+                  <i class="fas fa-search"></i>
+                  <input type="text" placeholder="搜索文件...">
+                </div>
+
+                <!-- 每页显示数量 -->
+                <!-- <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 14px; color: #6c757d;">每页显示</span>
+                  <select class="pagination-select" id="pageSizeSelect">
+                    <option value="10">10条</option>
+                    <option value="20" selected>20条</option>
+                    <option value="50">50条</option>
+                    <option value="100">100条</option>
+                  </select>
+                </div> -->
+
+                <!-- 操作按钮 -->
+                <div class="btn-group">
+                  <button class="btn-primary flex items-center">
+                    上传
+                  </button>
+                  <button class="btn-outline flex items-center">
+                    新建文件夹
+                  </button>
+                  <button class="btn-outline flex items-center">
+                    重命名文件夹
+                  </button>
+                  <button class="btn-outline flex items-center">
+                    删除文件夹
+                  </button>
+                  <button class="btn-outline flex items-center">
+                    授权角色
+                  </button>
+                  <button class="btn-outline flex items-center">
+                    授权部门
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 文件表格列表视图 -->
+            <div class="flex-1 overflow-y-auto">
+              <div class="file-table-container">
+                <div class="file-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <!-- <th class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox" id="selectAll">
+                        </th> -->
+                        <th style="width: 35%">名称</th>
+                        <th style="width: 12%">类型</th>
+                        <th style="width: 12%">大小</th>
+                        <th style="width: 18%">日期</th>
+                        <th style="width: 12%">人</th>
+                        <th style="width: 11%; text-align: center;">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fileTableBody">
+                      <!-- 文件夹 -->
+
+
+                      <!-- PDF文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-red-500 to-pink-500">
+                              <i class="fas fa-file-pdf text-white"></i>
+                            </div> -->
+                            <span class="file-name">季度报告.pdf</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cfe2ff; color: #084298;">文档</span>
+                        </td>
+                        <td>2.4 MB</td>
+                        <td>昨天 16:20</td>
+                        <td>李四</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 图片文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-green-500 to-emerald-500">
+                              <i class="fas fa-file-image text-white"></i>
+                            </div> -->
+                            <span class="file-name">设计稿.jpg</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #d4edda; color: #155724;">图片</span>
+                        </td>
+                        <td>4.8 MB</td>
+                        <td>昨天 14:30</td>
+                        <td>王五</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 文档文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-blue-500 to-indigo-500">
+                              <i class="fas fa-file-word text-white"></i>
+                            </div> -->
+                            <span class="file-name">会议记录.docx</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cfe2ff; color: #084298;">文档</span>
+                        </td>
+                        <td>1.2 MB</td>
+                        <td>昨天 11:15</td>
+                        <td>赵六</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 表格文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-blue-400 to-cyan-500">
+                              <i class="fas fa-file-excel text-white"></i>
+                            </div> -->
+                            <span class="file-name">数据统计.xlsx</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cfe2ff; color: #084298;">文档</span>
+                        </td>
+                        <td>3.1 MB</td>
+                        <td>前天 09:30</td>
+                        <td>孙七</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 视频文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-purple-500 to-pink-500">
+                              <i class="fas fa-file-video text-white"></i>
+                            </div> -->
+                            <span class="file-name">产品演示.mp4</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #e2d9f3; color: #59359a;">视频</span>
+                        </td>
+                        <td>45.2 MB</td>
+                        <td>2023-11-10</td>
+                        <td>周八</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 音频文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-cyan-500 to-teal-500">
+                              <i class="fas fa-file-audio text-white"></i>
+                            </div> -->
+                            <span class="file-name">会议录音.mp3</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cff4fc; color: #055160;">音频</span>
+                        </td>
+                        <td>12.8 MB</td>
+                        <td>2023-11-08</td>
+                        <td>吴九</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 压缩文件 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-orange-500 to-amber-500">
+                              <i class="fas fa-file-archive text-white"></i>
+                            </div> -->
+                            <span class="file-name">备份文件.zip</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #ffe5d0; color: #984c0c;">压缩包</span>
+                        </td>
+                        <td>58.6 MB</td>
+                        <td>2023-11-05</td>
+                        <td>郑十</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 演示文稿 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-red-400 to-orange-500">
+                              <i class="fas fa-file-powerpoint text-white"></i>
+                            </div> -->
+                            <span class="file-name">项目汇报.pptx</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cfe2ff; color: #084298;">文档</span>
+                        </td>
+                        <td>8.3 MB</td>
+                        <td>2023-11-01</td>
+                        <td>钱十一</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+
+                      <!-- 更多文件行用于演示分页 -->
+                      <tr>
+                        <!-- <td class="checkbox-cell">
+                          <input type="checkbox" class="custom-checkbox">
+                        </td> -->
+                        <td>
+                          <div class="file-name-cell">
+                            <!-- <div class="file-icon-small bg-gradient-to-r from-blue-500 to-indigo-500">
+                              <i class="fas fa-file-word text-white"></i>
+                            </div> -->
+                            <span class="file-name">需求文档.docx</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="file-type-badge" style="background: #cfe2ff; color: #084298;">文档</span>
+                        </td>
+                        <td>3.5 MB</td>
+                        <td>2023-10-28</td>
+                        <td>张三</td>
+                        <td style="text-align: center;">
+                          <button class="action-btn" title="下载">
+                            下载
+                          </button>
+                          <!-- <button class="action-btn" title="分享">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          <button class="action-btn" title="更多">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </button> -->
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- 分页控件 -->
+                <div class="pagination-container">
+                  <div class="pagination-info">
+                    共 <span id="totalItems">45</span> 条
+                  </div>
+                  <div class="pagination">
+                    <button class="pagination-btn disabled" id="prevPage">
+                      <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">4</button>
+                    <button class="pagination-btn">5</button>
+                    <button class="pagination-btn" id="nextPage">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <script>
+    // 交互效果
+    document.addEventListener('DOMContentLoaded', function () {
+      // 为树形列表项添加点击效果
+      const treeItems = document.querySelectorAll('.tree-item');
+      treeItems.forEach(item => {
+        item.addEventListener('click', function () {
+          // 移除所有active类
+          treeItems.forEach(i => i.classList.remove('active'));
+          // 为当前项添加active类
+          this.classList.add('active');
+        });
+      });
+
+      // 全选功能
+      const selectAllCheckbox = document.getElementById('selectAll');
+      const rowCheckboxes = document.querySelectorAll('#fileTableBody .custom-checkbox');
+
+      selectAllCheckbox.addEventListener('change', function () {
+        rowCheckboxes.forEach(checkbox => {
+          checkbox.checked = this.checked;
+        });
+      });
+
+      // 单个复选框变化时检查是否全选
+      rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
+          selectAllCheckbox.checked = allChecked;
+        });
+      });
+
+      // 分页按钮交互
+      const paginationBtns = document.querySelectorAll('.pagination-btn:not(#prevPage):not(#nextPage)');
+      paginationBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          if (!this.classList.contains('active')) {
+            paginationBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            console.log('切换到第' + this.textContent + '页');
+          }
+        });
+      });
+
+      // 上一页/下一页按钮
+      const prevBtn = document.getElementById('prevPage');
+      const nextBtn = document.getElementById('nextPage');
+
+      prevBtn.addEventListener('click', function () {
+        if (!this.classList.contains('disabled')) {
+          console.log('上一页');
+        }
+      });
+
+      nextBtn.addEventListener('click', function () {
+        if (!this.classList.contains('disabled')) {
+          console.log('下一页');
+        }
+      });
+
+      // 每页显示数量变化
+      const pageSizeSelect = document.getElementById('pageSizeSelect');
+      pageSizeSelect.addEventListener('change', function () {
+        console.log('每页显示' + this.value + '条');
+      });
+
+      // 表格行点击效果
+      const tableRows = document.querySelectorAll('#fileTableBody tr');
+      tableRows.forEach(row => {
+        row.addEventListener('click', function (e) {
+          // 如果点击的是复选框或操作按钮，不触发行选择
+          if (e.target.type === 'checkbox' || e.target.closest('.action-btn')) {
+            return;
+          }
+          console.log('选中文件:', this.querySelector('.file-name').textContent);
+        });
+      });
+
+      // 操作按钮交互
+      const actionBtns = document.querySelectorAll('.action-btn');
+      actionBtns.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const action = this.getAttribute('title');
+          const fileName = this.closest('tr').querySelector('.file-name').textContent;
+          console.log(action + '文件:', fileName);
+        });
+      });
+
+      // 模拟浏览器控制按钮交互
+      const browserControls = document.querySelectorAll('.browser-control');
+      browserControls.forEach(control => {
+        control.addEventListener('click', function () {
+          if (this.classList.contains('close')) {
+            console.log('关闭窗口');
+          } else if (this.classList.contains('minimize')) {
+            console.log('最小化窗口');
+          } else if (this.classList.contains('maximize')) {
+            console.log('最大化窗口');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
