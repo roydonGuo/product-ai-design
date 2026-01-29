@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCast - 程序员AI有声学习伴侣</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Heroicons for icons -->
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+        
+        .phone-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 
+                0 0 0 12px #1a1a1a,
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 25px;
+            background: #1a1a1a;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 10;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ios-status-bar {
+            height: 44px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .time {
+            font-weight: 700;
+        }
+        
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .content-container {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 自定义卡片阴影 */
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        
+        .card-shadow-hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* 播放进度条 */
+        .progress-bar {
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        /* 播放按钮 */
+        .play-button {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .play-button:hover, .play-button:active {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+        
+        /* 波形动画 */
+        @keyframes wave {
+            0%, 100% { height: 12px; }
+            50% { height: 24px; }
+        }
+        
+        .wave-bar {
+            animation: wave 1.2s ease-in-out infinite;
+        }
+        
+        .wave-bar:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .wave-bar:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .wave-bar:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        .wave-bar:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+        
+        /* 页面标题样式 */
+        .page-title {
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- 待播放首页 -->
+        <div class="phone-frame">
+            <div class="screen">
+                <!-- iOS状态栏 -->
+                <div class="ios-status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                        </svg>
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3"></path>
+                        </svg>
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19a9 9 0 100-18 9 9 0 000 18z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- 首页内容 -->
+                <div class="content-container">
+                    <!-- 头部 -->
+                    <div class="px-6 pt-8 pb-6">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900">CodeCast</h1>
+                                <p class="text-sm text-gray-500 mt-1">AI有声学习伴侣</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 0115 8V3H5a2 2 0 00-2 2v11a2 2 0 002 2h.121zM22 12a10 10 0 11-20 0 10 10 0 0120 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- 欢迎区域 -->
+                        <div class="mb-10 animate-fade-in">
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">将代码知识转化为<br>听觉体验</h2>
+                            <p class="text-gray-600 text-base">把您的技术笔记、文章转换为适合通勤、运动时收听的高质量音频，实现"听学一体"。</p>
+                        </div>
+                        
+                        <!-- 核心功能卡片 -->
+                        <div class="space-y-4">
+                            <div class="card-shadow bg-white rounded-2xl p-5 animate-fade-in delay-1">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">AI语音合成</h3>
+                                        <p class="text-sm text-gray-600 mt-1">将技术内容转换为清晰、自然的人声，支持多音色选择</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-shadow bg-white rounded-2xl p-5 animate-fade-in delay-2">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">知识库同步</h3>
+                                        <p class="text-sm text-gray-600 mt-1">自动同步GitHub、Notion、语雀等平台的技术文档</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-shadow bg-white rounded-2xl p-5 animate-fade-in delay-3">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">碎片时间学习</h3>
+                                        <p class="text-sm text-gray-600 mt-1">通勤、运动、休息时轻松吸收技术知识，最大化利用碎片时间</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 开始播放区域 -->
+                        <div class="mt-12 pt-8 border-t border-gray-100 animate-fade-in">
+                            <div class="text-center mb-8">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">还没有选择音频？</h3>
+                                <p class="text-gray-600">从知识库中选择内容或导入新的技术文档开始体验</p>
+                            </div>
+                            
+                            <div class="flex justify-center">
+                                <button class="play-button">
+                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="text-center mt-8">
+                                <p class="text-sm text-gray-500">或 <span class="text-blue-600 font-medium">浏览知识库</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 正在播放详情页 -->
+        <div class="phone-frame">
+            <div class="screen">
+                <!-- iOS状态栏 -->
+                <div class="ios-status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                        </svg>
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3"></path>
+                        </svg>
+                        <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19a9 9 0 100-18 9 9 0 000 18z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- 播放详情页内容 -->
+                <div class="content-container">
+                    <!-- 专辑封面和标题 -->
+                    <div class="px-6 pt-8">
+                        <div class="flex justify-center mb-8">
+                            <div class="w-64 h-64 rounded-3xl card-shadow overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" 
+                                     alt="专辑封面" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">React Hooks深度解析</h1>
+                            <p class="text-gray-600 text-center">从useState到自定义Hook的完整指南</p>
+                        </div>
+                        
+                        <!-- 进度条和时间 -->
+                        <div class="mb-8">
+                            <div class="progress-bar bg-gray-200 mb-2">
+                                <div class="progress-fill bg-gradient-to-r from-blue-500 to-indigo-600" style="width: 65%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>21:40</span>
+                                <span>-12:15</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 播放控件 -->
+                    <div class="px-6 mb-10">
+                        <div class="flex items-center justify-between">
+                            <button class="w-10 h-10 flex items-center justify-center text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"></path>
+                                </svg>
+                            </button>
+                            
+                            <button class="w-10 h-10 flex items-center justify-center text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <button class="play-button">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </button>
+                            
+                            <button class="w-10 h-10 flex items-center justify-center text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                            
+                            <button class="w-10 h-10 flex items-center justify-center text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 音频波形图 -->
+                    <div class="px-6 mb-10">
+                        <div class="flex justify-center items-end h-16 gap-1 mb-6">
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                            <div class="w-1 wave-bar bg-gradient-to-t from-blue-400 to-blue-600 rounded-full"></div>
+                        </div>
+                        
+                        <p class="text-center text-sm text-gray-500">AI语音合成中 - 清晰度优化已启用</p>
+                    </div>
+                    
+                    <!-- 音频信息卡片 -->
+                    <div class="px-6 mb-8">
+                        <div class="card-shadow bg-white rounded-2xl p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-gray-900">音频信息</h3>
+                                <span class="text-xs bg-blue-50 text-blue-700 font-medium px-2 py-1 rounded-full">技术文章</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">来源</span>
+                                    <span class="text-sm font-medium text-gray-900">个人知识库</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">转换时间</span>
+                                    <span class="text-sm font-medium text-gray-900">2023-10-15</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">AI语音模型</span>
+                                    <span class="text-sm font-medium text-gray-900">ClearTech Pro</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">播放速度</span>
+                                    <span class="text-sm font-medium text-gray-900">1.2x</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-5 pt-4 border-t border-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-900 font-medium">技术要点摘要已生成</p>
+                                        <p class="text-xs text-gray-500">播放结束后可查看关键知识点</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 底部操作栏 -->
+                    <div class="px-6 pb-8 mt-auto">
+                        <div class="flex items-center justify-between">
+                            <button class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                </svg>
+                                <span class="text-sm font-medium">收藏</span>
+                            </button>
+                            
+                            <button class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                </svg>
+                                <span class="text-sm font-medium">分享</span>
+                            </button>
+                            
+                            <button class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                </svg>
+                                <span class="text-sm font-medium">更多</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 交互脚本 -->
+    <script>
+        // 播放/暂停切换
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const icon = this.querySelector('svg');
+                const isPlaying = icon.getAttribute('d').includes('M10 9v6m4-6v6');
+                
+                if (isPlaying) {
+                    // 切换到播放图标
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+                    
+                    // 开始波形动画
+                    document.querySelectorAll('.wave-bar').forEach(bar => {
+                        bar.style.animationPlayState = 'running';
+                    });
+                } else {
+                    // 切换到暂停图标
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+                    
+                    // 暂停波形动画
+                    document.querySelectorAll('.wave-bar').forEach(bar => {
+                        bar.style.animationPlayState = 'paused';
+                    });
+                }
+            });
+        });
+        
+        // 模拟进度条更新
+        setInterval(() => {
+            const progressFill = document.querySelector('.progress-fill');
+            const currentWidth = parseInt(progressFill.style.width) || 65;
+            const newWidth = currentWidth >= 100 ? 0 : currentWidth + 0.1;
+            progressFill.style.width = `${newWidth}%`;
+        }, 1000);
+        
+        // 卡片悬停效果
+        document.querySelectorAll('.card-shadow').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('card-shadow-hover');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('card-shadow-hover');
+            });
+        });
+        
+        // 模拟时间更新
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.querySelectorAll('.time').forEach(timeElement => {
+                timeElement.textContent = `${hours}:${minutes}`;
+            });
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+    </script>
+</body>
+</html>

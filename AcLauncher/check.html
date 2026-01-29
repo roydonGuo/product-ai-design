@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>门诊系统桌面 - 意诚门诊</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      overflow: hidden;
+    }
+
+    .h-1030 {
+      height: 800px;
+    }
+
+    .browser-frame {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      transition: all 0.3s ease;
+    }
+
+    .browser-header {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .browser-controls span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .time-display {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-weight: 300;
+    }
+
+    .app-icon {
+      transition: all 0.25s ease;
+      border-radius: 20px;
+    }
+
+    .app-icon:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.12), 0 4px 8px rgba(59, 130, 246, 0.06);
+    }
+
+    .app-icon:active {
+      transform: translateY(-2px);
+    }
+
+    .icon-wrapper {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .clinic-info-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .detail-page {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-left: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .back-btn {
+      transition: all 0.2s ease;
+      border-radius: 12px;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(59, 130, 246, 0.08);
+      transform: translateX(-4px);
+    }
+
+    .app-detail-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .app-detail-card:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-item {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .feature-item:hover {
+      background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+      transform: translateY(-2px);
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    /* 隐藏滚动条 */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-rail {
+      width: fit-content;
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      z-index: 10;
+    }
+
+    .nav-item {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin: 16px 8px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .nav-item:hover {
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(42, 92, 170, 0.2);
+    }
+
+    .nav-item:hover::before {
+      opacity: 1;
+    }
+
+    .nav-icon {
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .nav-text {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-8">
+  <div class="container flex w-full overflow-hidden flex-col">
+    <!-- 首页：桌面界面 -->
+    <div class="browser-frame flex-shrink-0">
+      <!-- 浏览器顶部栏 -->
+      <div class="browser-header h-10 flex items-center justify-between px-4">
+        <div class="browser-controls flex items-center">
+          <span class="bg-red-400"></span>
+          <span class="bg-yellow-400"></span>
+          <span class="bg-green-400"></span>
+        </div>
+        <div class="text-sm text-gray-500">门诊系统桌面</div>
+        <div class="w-20"></div>
+      </div>
+
+      <!-- 桌面主内容 -->
+      <div class="h-1030 p-10" style="background-image: url('./icon_main_page.png');
+      background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;">
+        <!-- 顶部信息栏 -->
+        <div class="flex justify-between items-start mb-16">
+
+          <!-- 门诊信息卡片 -->
+          <div class="clinic-info-card px-6 py-4">
+            <div class="flex items-center">
+              <h2 class="text-xl font-semibold text-gray-800">检查人：郭意诚</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-rail">
+          <div class="nav-item active" data-tab="ai-check">
+            <div class="nav-icon"><i class="fas fa-image"></i></div>
+            <div class="nav-text">照片</div>
+          </div>
+          <div class="nav-item" data-tab="consultation">
+            <div class="nav-icon"><i class="fas fa-file-medical"></i></div>
+            <div class="nav-text">报告</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 更新时间显示
+    function updateDateTime() {
+      const now = new Date();
+
+      // 格式化时间
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+
+      // 格式化日期
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      const weekday = weekdays[now.getDay()];
+      document.getElementById('current-date').textContent = `${year}年${month}月${day}日 ${weekday}`;
+    }
+
+    // 应用数据
+    const appData = {
+      'ai-check': {
+        title: 'AI检查',
+        icon: 'fa-robot',
+        category: '智能诊断工具',
+        description: '智能辅助诊断与影像分析系统，利用人工智能技术辅助医生进行疾病诊断和医学影像分析。提供X光、CT、MRI等多种医学影像的智能识别与分析，大幅提升诊断准确性与效率。',
+        usageToday: '8次',
+        avgTime: '12.3秒',
+        accuracy: '96.7%',
+        features: [
+          { icon: 'fa-brain', title: '智能影像识别', desc: '自动识别医学影像中的异常区域' },
+          { icon: 'fa-chart-line', title: '数据分析报告', desc: '生成详细的数据分析与诊断建议' },
+          { icon: 'fa-database', title: '病例库对比', desc: '与海量病例数据库进行对比分析' },
+          { icon: 'fa-shield-alt', title: '隐私保护', desc: '符合医疗数据安全标准的加密处理' },
+          { icon: 'fa-history', title: '历史追踪', desc: '完整记录每次分析的历史数据' },
+          { icon: 'fa-cloud-upload-alt', title: '云端同步', desc: '多设备间数据实时同步' }
+        ]
+      },
+      'consultation': {
+        title: '接诊洽谈',
+        icon: 'fa-comments',
+        category: '患者沟通工具',
+        description: '专业的医患沟通平台，集成电子病历管理、问诊记录、处方开具等功能。支持语音输入、病历模板、患者随访等全流程管理。',
+        usageToday: '23次',
+        avgTime: '6.2分钟',
+        accuracy: '100%',
+        features: [
+          { icon: 'fa-file-medical', title: '电子病历', desc: '结构化电子病历记录与管理系统' },
+          { icon: 'fa-prescription', title: '处方管理', desc: '电子处方开具与药品库存联动' },
+          { icon: 'fa-video', title: '视频问诊', desc: '支持远程视频问诊与沟通' },
+          { icon: 'fa-calendar-check', title: '预约管理', desc: '患者预约与就诊时间安排' },
+          { icon: 'fa-user-friends', title: '患者管理', desc: '患者档案与就诊历史管理' },
+          { icon: 'fa-notes-medical', title: '问诊模板', desc: '多种常见病问诊模板快速调用' }
+        ]
+      },
+      'clinic-apps': {
+        title: '门诊应用',
+        icon: 'fa-stethoscope',
+        category: '综合诊疗工具',
+        description: '门诊日常工作综合管理平台，包含患者管理、药品库存、医疗器械管理、财务统计等模块。一体化解决门诊运营中的各类需求。',
+        usageToday: '15次',
+        avgTime: '3.4分钟',
+        accuracy: '100%',
+        features: [
+          { icon: 'fa-pills', title: '药品管理', desc: '药品库存、有效期与供应商管理' },
+          { icon: 'fa-tools', title: '器械管理', desc: '医疗设备与器械使用记录维护' },
+          { icon: 'fa-chart-pie', title: '经营统计', desc: '门诊运营数据统计与分析' },
+          { icon: 'fa-file-invoice-dollar', title: '收费管理', desc: '门诊收费与医保结算系统' },
+          { icon: 'fa-clipboard-list', title: '值班管理', desc: '医生排班与值班安排系统' },
+          { icon: 'fa-warehouse', title: '物资管理', desc: '医疗物资采购与库存管理' }
+        ]
+      },
+      'wireless-screen': {
+        title: '无线投屏',
+        icon: 'fa-wifi',
+        category: '多媒体工具',
+        description: '无线屏幕共享与内容投送系统，支持将平板内容投射到会议室大屏、患者宣教电视等显示设备。适用于会诊、病例讨论、健康宣教等多种场景。',
+        usageToday: '5次',
+        avgTime: '1.8分钟',
+        accuracy: '98.2%',
+        features: [
+          { icon: 'fa-desktop', title: '多屏互动', desc: '支持同时连接多个显示设备' },
+          { icon: 'fa-sync-alt', title: '实时同步', desc: '内容实时同步，延迟低于0.1秒' },
+          { icon: 'fa-expand-arrows-alt', title: '自适应分辨率', desc: '自动适配不同显示设备分辨率' },
+          { icon: 'fa-lock', title: '安全连接', desc: '加密传输确保内容安全' },
+          { icon: 'fa-photo-video', title: '媒体共享', desc: '支持图片、视频、文档等多种格式' },
+          { icon: 'fa-hand-pointer', title: '远程控制', desc: '通过平板远程控制投屏内容' }
+        ]
+      },
+      'entertainment': {
+        title: '影音娱乐',
+        icon: 'fa-film',
+        category: '休闲娱乐',
+        description: '门诊影音娱乐系统，提供舒缓音乐、健康视频、休闲游戏等内容，帮助患者放松心情，缓解就诊压力。也可用于医生休息时段放松。',
+        usageToday: '12次',
+        avgTime: '15.7分钟',
+        accuracy: '100%',
+        features: [
+          { icon: 'fa-music', title: '舒缓音乐', desc: '专门为医疗环境设计的舒缓音乐库' },
+          { icon: 'fa-tv', title: '健康频道', desc: '健康知识科普与医疗纪录片' },
+          { icon: 'fa-gamepad', title: '休闲游戏', desc: '简单轻松的休闲小游戏' },
+          { icon: 'fa-book-open', title: '电子书库', desc: '医学与健康类电子书阅读' },
+          { icon: 'fa-newspaper', title: '新闻资讯', desc: '医疗健康行业新闻动态' },
+          { icon: 'fa-volume-up', title: '语音助手', desc: '语音控制播放内容' }
+        ]
+      },
+      'education': {
+        title: '科普宣教',
+        icon: 'fa-book-medical',
+        category: '健康教育',
+        description: '患者健康教育与科普宣传平台，提供丰富的疾病预防、健康管理、用药指导等宣教材料。支持个性化推送，提升患者健康素养。',
+        usageToday: '18次',
+        avgTime: '8.5分钟',
+        accuracy: '100%',
+        features: [
+          { icon: 'fa-video', title: '宣教视频', desc: '各类疾病预防与健康管理视频' },
+          { icon: 'fa-images', title: '图文手册', desc: '可视化健康知识图文手册' },
+          { icon: 'fa-broadcast-tower', title: '推送系统', desc: '根据患者情况个性化推送内容' },
+          { icon: 'fa-print', title: '打印输出', desc: '支持宣教材料打印输出' },
+          { icon: 'fa-qrcode', title: '二维码分享', desc: '生成二维码方便患者手机查看' },
+          { icon: 'fa-chalkboard-teacher', title: '互动问答', desc: '健康知识互动问答系统' }
+        ]
+      }
+    };
+
+    // 显示应用详情
+    function showDetail(appId) {
+      const app = appData[appId];
+      if (!app) return;
+
+      // 更新详情页内容
+      document.getElementById('detail-title').textContent = app.title;
+      document.getElementById('detail-icon').className = `fas ${app.icon} text-white text-5xl`;
+      document.getElementById('detail-app-name').textContent = app.title;
+      document.getElementById('detail-app-category').textContent = app.category;
+      document.getElementById('detail-description').textContent = app.description;
+      document.getElementById('detail-usage-today').textContent = app.usageToday;
+      document.getElementById('detail-avg-time').textContent = app.avgTime;
+      document.getElementById('detail-accuracy').textContent = app.accuracy;
+
+      // 更新功能模块
+      const featuresContainer = document.getElementById('detail-features');
+      featuresContainer.innerHTML = '';
+
+      app.features.forEach(feature => {
+        const featureElement = document.createElement('div');
+        featureElement.className = 'feature-item p-5';
+        featureElement.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                            <i class="fas ${feature.icon} text-blue-500"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-800">${feature.title}</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">${feature.desc}</p>
+                `;
+        featuresContainer.appendChild(featureElement);
+      });
+
+      // 滚动到详情页（模拟横向切换）
+      document.querySelector('.container').scrollLeft = 1920;
+    }
+
+    // 返回桌面
+    function goBackToDesktop() {
+      document.querySelector('.container').scrollLeft = 0;
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function () {
+      // 设置初始时间
+      updateDateTime();
+
+      // 每秒更新时间
+      setInterval(updateDateTime, 1000);
+
+      // 初始显示AI检查的详情
+      showDetail('ai-check');
+
+      // 添加图标悬停效果
+      const appIcons = document.querySelectorAll('.app-icon');
+      appIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', function () {
+          this.style.transform = 'translateY(-6px)';
+        });
+
+        icon.addEventListener('mouseleave', function () {
+          this.style.transform = 'translateY(0)';
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
