@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 - 登录注册系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .page-container {
+      display: flex;
+      gap: 2rem;
+      padding: 2rem;
+      height: 100vh;
+      min-width: fit-content;
+    }
+
+    .browser-frame {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .browser-header {
+      height: 48px;
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+
+    .browser-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .browser-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red {
+      background: #ff5f57;
+    }
+
+    .dot-yellow {
+      background: #ffbd2e;
+    }
+
+    .dot-green {
+      background: #28ca42;
+    }
+
+    .browser-title {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* 登录页面样式 */
+    .login-container {
+      height: calc(1080px - 48px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .login-container::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .brand-header {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 1;
+    }
+
+    .brand-logo {
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .brand-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+
+    .brand-subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .form-card {
+      position: relative;
+      z-index: 2;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .form-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .form-subtitle {
+      font-size: 15px;
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    .tab-switch {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 40px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 10px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #1e293b;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 18px;
+    }
+
+    .input-with-icon .form-input {
+      padding-left: 56px;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .code-btn {
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .code-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .code-btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 32px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .form-footer a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper select {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .select-wrapper::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .captcha-container {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .captcha-image {
+      height: 54px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #3b82f6;
+      letter-spacing: 8px;
+      cursor: pointer;
+      user-select: none;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .captcha-image:hover {
+      border-color: #3b82f6;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-container">
+    <!-- 登录页面 -->
+    <div class="browser-frame">
+      <div class="browser-header">
+        <div class="browser-controls">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-title">爱牙看看 - 登录</div>
+        <div style="width: 60px;"></div>
+      </div>
+
+      <div class="login-container">
+        <!-- 品牌头部 -->
+        <div class="brand-header">
+          <div class="brand-logo">
+            <img src="./logo.png" width="56" height="56" />
+          </div>
+        </div>
+
+        <!-- 登录注册表单卡片 -->
+        <div class="form-card">
+          <div class="form-container">
+            <div class="form-header">
+              <p class="form-title">欢迎回来</h4>
+              <p class="form-subtitle">登录您的账户，继续管理口腔健康</p>
+            </div>
+
+            <!-- 登录表单 -->
+            <form class="form-section active" id="loginForm">
+              <div class="form-group">
+                <div class="input-with-icon">
+                  <i class="fas fa-mobile-alt input-icon"></i>
+                  <input type="tel" class="form-input" placeholder="请输入手机号" maxlength="11">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="input-with-icon">
+                  <i class="fas fa-lock input-icon"></i>
+                  <input type="password" class="form-input" placeholder="请输入密码">
+                  <div class="input-suffix">
+                    <i class="fas fa-eye" style="color: #94a3b8; cursor: pointer;"></i>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="submit-btn">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                立即登录
+              </button>
+
+              <div class="form-footer">
+                还没账号？<a href="#">立即注册</a>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const forms = document.querySelectorAll('.form-section');
+
+      tabs.forEach(t => t.classList.remove('active'));
+      forms.forEach(f => f.classList.remove('active'));
+
+      if (tab === 'login') {
+        tabs[0].classList.add('active');
+        document.getElementById('loginForm').classList.add('active');
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('registerForm').classList.add('active');
+      }
+    }
+
+    function sendCode(btn) {
+      let countdown = 60;
+      btn.disabled = true;
+      btn.textContent = countdown + '秒后重新获取';
+
+      const timer = setInterval(() => {
+        countdown--;
+        btn.textContent = countdown + '秒后重新获取';
+
+        if (countdown <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.textContent = '获取验证码';
+        }
+      }, 1000);
+    }
+
+    function refreshCaptcha(element) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 4; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      element.textContent = code;
+    }
+
+    // 密码显示/隐藏切换
+    document.querySelectorAll('.fa-eye').forEach(icon => {
+      icon.addEventListener('click', function () {
+        const input = this.closest('.input-with-icon').querySelector('input');
+        if (input.type === 'password') {
+          input.type = 'text';
+          this.classList.remove('fa-eye');
+          this.classList.add('fa-eye-slash');
+        } else {
+          input.type = 'password';
+          this.classList.remove('fa-eye-slash');
+          this.classList.add('fa-eye');
+        }
+      });
+    });
+
+    // 表单提交
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        console.log('表单提交');
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>门诊系统-接诊洽谈 - 意诚门诊</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      overflow: hidden;
+    }
+
+    .h-1030 {
+      height: 800px;
+    }
+
+    .browser-frame {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      transition: all 0.3s ease;
+    }
+
+    .browser-header {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .browser-controls span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .time-display {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-weight: 300;
+    }
+
+    .app-icon {
+      transition: all 0.25s ease;
+      border-radius: 20px;
+    }
+
+    .app-icon:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.12), 0 4px 8px rgba(59, 130, 246, 0.06);
+    }
+
+    .app-icon:active {
+      transform: translateY(-2px);
+    }
+
+    .icon-wrapper {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .clinic-info-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .detail-page {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-left: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .back-btn {
+      transition: all 0.2s ease;
+      border-radius: 12px;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(59, 130, 246, 0.08);
+      transform: translateX(-4px);
+    }
+
+    .app-detail-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .app-detail-card:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-item {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .feature-item:hover {
+      background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+      transform: translateY(-2px);
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    /* 隐藏滚动条 */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-rail {
+      width: fit-content;
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      z-index: 10;
+    }
+
+    .nav-item {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin: 16px 8px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .nav-item:hover {
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(42, 92, 170, 0.2);
+    }
+
+    .nav-item:hover::before {
+      opacity: 1;
+    }
+
+    .nav-icon {
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .nav-text {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    /* Tab样式 */
+    .tab-container {
+      background: white;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab-list {
+      display: flex;
+      padding: 0 24px;
+    }
+
+    .tab-item {
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-item:hover {
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .tab-item.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 24px;
+      height: calc(800px - 60px);
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 图片轮播样式 */
+    .carousel-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .main-image-container {
+      width: 100%;
+      height: 500px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f8fafc;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .carousel-arrow:hover {
+      background: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-arrow.left {
+      left: 20px;
+    }
+
+    .carousel-arrow.right {
+      right: 20px;
+    }
+
+    .thumbnail-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    .thumbnail {
+      width: 120px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .thumbnail:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .thumbnail.active {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 视频轮播样式 */
+    .video-carousel-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .main-video-container {
+      width: 100%;
+      height: 500px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .main-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .video-thumbnail-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    .video-thumbnail {
+      width: 160px;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      position: relative;
+      background: #000;
+    }
+
+    .video-thumbnail:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .video-thumbnail.active {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .video-thumbnail video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-play-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .video-play-icon i {
+      color: #3b82f6;
+      font-size: 16px;
+      margin-left: 3px;
+    }
+
+    .image-info {
+      text-align: center;
+      margin-top: 16px;
+      color: #64748b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-8">
+  <div class="container flex w-full overflow-hidden flex-col">
+    <!-- 首页：桌面界面 -->
+    <div class="browser-frame flex-shrink-0">
+      <!-- 浏览器顶部栏 -->
+      <div class="browser-header h-10 flex items-center justify-between px-4">
+        <div class="browser-controls flex items-center">
+          <span class="bg-red-400"></span>
+          <span class="bg-yellow-400"></span>
+          <span class="bg-green-400"></span>
+        </div>
+        <div class="text-sm text-gray-500">门诊系统-接诊洽谈</div>
+        <div class="w-20"></div>
+      </div>
+
+      <!-- 桌面主内容 -->
+      <div class="h-1030">
+
+        <!-- Tab导航 -->
+        <div class="tab-container">
+          <div class="tab-list">
+            <div class="tab-item" style="border-bottom: 0px !important;color: blue;">
+              种植
+            </div>
+            <div class="tab-item active" data-tab="photos">
+              <i class="fas fa-images mr-2"></i>
+              照片
+            </div>
+            <div class="tab-item" data-tab="videos">
+              <i class="fas fa-video mr-2"></i>
+              视频
+            </div>
+          </div>
+
+          <!-- 照片Tab内容 -->
+          <div class="tab-content active" id="photos">
+            <div class="carousel-container">
+
+              <!-- 主图显示区 -->
+              <div class="main-image-container">
+                <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800" alt="患者照片"
+                  class="main-image" id="mainImage">
+
+                <!-- 左右箭头 -->
+                <!-- <div class="carousel-arrow left" id="prevImage">
+                  <i class="fas fa-chevron-left text-gray-700 text-xl"></i>
+                </div>
+                <div class="carousel-arrow right" id="nextImage">
+                  <i class="fas fa-chevron-right text-gray-700 text-xl"></i>
+                </div> -->
+              </div>
+
+              <!-- 缩略图指示器 -->
+              <div class="thumbnail-container" id="thumbnailContainer">
+                <div class="thumbnail active" data-index="0">
+                  <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=200" alt="照片1">
+                </div>
+                <div class="thumbnail" data-index="1">
+                  <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=200" alt="照片2">
+                </div>
+                <div class="thumbnail" data-index="2">
+                  <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=200" alt="照片3">
+                </div>
+                <div class="thumbnail" data-index="3">
+                  <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=200" alt="照片4">
+                </div>
+                <div class="thumbnail" data-index="4">
+                  <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=200" alt="照片5">
+                </div>
+                <div class="thumbnail" data-index="5">
+                  <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200" alt="照片6">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 视频Tab内容 -->
+          <div class="tab-content" id="videos">
+            <div class="video-carousel-container">
+
+              <!-- 主视频显示区 -->
+              <div class="main-video-container">
+                <video class="main-video" id="mainVideo" controls
+                  poster="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800">
+                  <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                  您的浏览器不支持视频播放
+                </video>
+              </div>
+
+              <!-- 视频缩略图 -->
+              <div class="video-thumbnail-container" id="videoThumbnailContainer">
+                <div class="video-thumbnail active" data-video-index="0">
+                  <video muted>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-play-icon">
+                    <i class="fas fa-play"></i>
+                  </div>
+                </div>
+                <div class="video-thumbnail" data-video-index="1">
+                  <video muted>
+                    <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-play-icon">
+                    <i class="fas fa-play"></i>
+                  </div>
+                </div>
+                <div class="video-thumbnail" data-video-index="2">
+                  <video muted>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-play-icon">
+                    <i class="fas fa-play"></i>
+                  </div>
+                </div>
+                <div class="video-thumbnail" data-video-index="3">
+                  <video muted>
+                    <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-play-icon">
+                    <i class="fas fa-play"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="image-info">
+                <span id="videoCounter">1 / 4</span> - 点击视频缩略图切换播放
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Tab切换功能
+      const tabItems = document.querySelectorAll('.tab-item');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabItems.forEach(item => {
+        item.addEventListener('click', function () {
+          const tabName = this.getAttribute('data-tab');
+
+          // 移除所有active类
+          tabItems.forEach(tab => tab.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+
+          // 添加active类到当前tab
+          this.classList.add('active');
+          document.getElementById(tabName).classList.add('active');
+        });
+      });
+
+      // 图片轮播功能
+      const images = [
+        'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800',
+        'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800',
+        'https://images.unsplash.com/photo-1609840114035-3c981407e31f?w=800',
+        'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800',
+        'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=800',
+        'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800'
+      ];
+
+      let currentImageIndex = 0;
+      const mainImage = document.getElementById('mainImage');
+      const imageCounter = document.getElementById('imageCounter');
+      const thumbnails = document.querySelectorAll('.thumbnail');
+
+      function updateImage(index) {
+        currentImageIndex = index;
+        mainImage.src = images[index];
+        imageCounter.textContent = `${index + 1} / ${images.length}`;
+
+        // 更新缩略图active状态
+        thumbnails.forEach((thumb, i) => {
+          if (i === index) {
+            thumb.classList.add('active');
+          } else {
+            thumb.classList.remove('active');
+          }
+        });
+      }
+
+      // 缩略图点击
+      thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', function () {
+          updateImage(index);
+        });
+      });
+
+      // 上一张
+      document.getElementById('prevImage').addEventListener('click', function () {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        updateImage(currentImageIndex);
+      });
+
+      // 下一张
+      document.getElementById('nextImage').addEventListener('click', function () {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateImage(currentImageIndex);
+      });
+
+      // 键盘左右键控制
+      document.addEventListener('keydown', function (e) {
+        if (document.getElementById('photos').classList.contains('active')) {
+          if (e.key === 'ArrowLeft') {
+            document.getElementById('prevImage').click();
+          } else if (e.key === 'ArrowRight') {
+            document.getElementById('nextImage').click();
+          }
+        }
+      });
+
+      // 视频轮播功能
+      const videos = [
+        'https://www.w3schools.com/html/mov_bbb.mp4',
+        'https://www.w3schools.com/html/movie.mp4',
+        'https://www.w3schools.com/html/mov_bbb.mp4',
+        'https://www.w3schools.com/html/movie.mp4'
+      ];
+
+      let currentVideoIndex = 0;
+      const mainVideo = document.getElementById('mainVideo');
+      const videoCounter = document.getElementById('videoCounter');
+      const videoThumbnails = document.querySelectorAll('.video-thumbnail');
+
+      function updateVideo(index) {
+        currentVideoIndex = index;
+        mainVideo.src = videos[index];
+        mainVideo.load();
+        videoCounter.textContent = `${index + 1} / ${videos.length}`;
+
+        // 更新视频缩略图active状态
+        videoThumbnails.forEach((thumb, i) => {
+          if (i === index) {
+            thumb.classList.add('active');
+          } else {
+            thumb.classList.remove('active');
+          }
+        });
+      }
+
+      // 视频缩略图点击
+      videoThumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', function () {
+          updateVideo(index);
+          mainVideo.play();
+        });
+
+        // 缩略图视频悬停预览
+        const thumbVideo = thumb.querySelector('video');
+        thumb.addEventListener('mouseenter', function () {
+          thumbVideo.play();
+        });
+        thumb.addEventListener('mouseleave', function () {
+          thumbVideo.pause();
+          thumbVideo.currentTime = 0;
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>
