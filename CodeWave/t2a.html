@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>笔记转语音 - 智能朗读助手</title>
+    <!-- 引入 Tailwind CSS (样式框架) -->
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/0915/3.4.17.js"></script>
+    <!-- 引入 Font Awesome (图标库) -->
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/fontawesome-free-7.1.0-web/js/all.min.js"></script>
+    <link href="https://image.uc.cn/s/uae/g/3n/mos-production/fontawesome-free-7.1.0-web/css/fontawesome.min.css"
+        rel="stylesheet" />
+    <!-- 自定义样式 -->
+    <style>
+        /* 基础设置 */
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 范围滑块自定义样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #d1d5db;
+        }
+
+        /* 状态指示动画 */
+        .speaking-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Toast 消息提示样式 */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            border-left: 4px solid #4f46e5;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.info {
+            border-left-color: #3b82f6;
+        }
+
+        /* 禁用状态下的按钮样式 */
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">笔记转语音助手</h1>
+            </div>
+            <div class="hidden sm:flex items-center px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-500"
+                id="status-badge">
+                <span class="w-2 h-2 rounded-full bg-gray-400 mr-2" id="status-dot"></span>
+                <span id="status-text">就绪</span>
+            </div>
+        </div>
+    </header>
+    <!-- 主内容区域 -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：输入区域 -->
+            <section class="lg:col-span-2 flex flex-col gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-700">
+                            <i class="fa-regular fa-file-lines mr-2 text-indigo-500"></i>笔记内容
+                        </h2>
+                        <button class="text-sm text-gray-400 hover:text-red-500 transition-colors" id="clear-btn"
+                            title="清空内容">
+                            <i class="fa-solid fa-trash-can mr-1"></i>清空
+                        </button>
+                    </div>
+                    <textarea
+                        class="flex-grow w-full p-4 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none transition-all text-gray-700 leading-relaxed"
+                        id="text-input" placeholder="请输入要朗读的笔记内容...
+支持中文、英文及多种语言混合输入。"></textarea>
+                    <div class="mt-4 text-right text-sm text-gray-400">
+                        字数统计: <span id="char-count">0</span>
+                    </div>
+                </div>
+            </section>
+            <!-- 右侧：控制面板 -->
+            <section class="lg:col-span-1 flex flex-col gap-6">
+                <!-- 语音设置卡片 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-5">
+                        <i class="fa-solid fa-sliders mr-2 text-indigo-500"></i>语音设置
+                    </h2>
+                    <!-- 语音选择 -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">选择发音人</label>
+                        <div class="relative">
+                            <select
+                                class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border bg-gray-50 cursor-pointer"
+                                id="voice-select">
+                                <option disabled="" selected="" value="">正在加载语音列表...</option>
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 语速控制 -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-600">语速</label>
+                            <span class="text-xs font-mono bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded"
+                                id="rate-value">1.0</span>
+                        </div>
+                        <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="rate"
+                            max="2.0" min="0.5" step="0.1" type="range" value="1.0" />
+                        <div class="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>慢</span>
+                            <span>快</span>
+                        </div>
+                    </div>
+                    <!-- 音调控制 -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-600">音调</label>
+                            <span class="text-xs font-mono bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded"
+                                id="pitch-value">1.0</span>
+                        </div>
+                        <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="pitch"
+                            max="2.0" min="0" step="0.1" type="range" value="1.0" />
+                        <div class="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>低</span>
+                            <span>高</span>
+                        </div>
+                    </div>
+                    <!-- 音量控制 -->
+                    <div class="mb-2">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-600">音量</label>
+                            <span class="text-xs font-mono bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded"
+                                id="volume-value">1.0</span>
+                        </div>
+                        <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="volume"
+                            max="1.0" min="0" step="0.1" type="range" value="1.0" />
+                        <div class="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>静音</span>
+                            <span>最大</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 播放控制卡片 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-5">
+                        <i class="fa-solid fa-circle-play mr-2 text-indigo-500"></i>播放控制
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- 播放按钮 -->
+                        <button
+                            class="col-span-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition-all shadow-md active:scale-95"
+                            id="play-btn">
+                            <i class="fa-solid fa-play"></i> 开始朗读
+                        </button>
+                        <!-- 暂停按钮 -->
+                        <button
+                            class="flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-all active:scale-95"
+                            disabled="" id="pause-btn">
+                            <i class="fa-solid fa-pause"></i> 暂停
+                        </button>
+                        <!-- 继续按钮 -->
+                        <button
+                            class="flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-all active:scale-95"
+                            disabled="" id="resume-btn">
+                            <i class="fa-solid fa-play"></i> 继续
+                        </button>
+                        <!-- 停止按钮 -->
+                        <button
+                            class="col-span-2 flex items-center justify-center gap-2 bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 font-medium py-3 px-4 rounded-lg transition-all active:scale-95"
+                            disabled="" id="stop-btn">
+                            <i class="fa-solid fa-stop"></i> 停止播放
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+            <p>© 2026 笔记转语音助手. All rights reserved.</p>
+            <p class="mt-2 md:mt-0">Powered by Web Speech API</p>
+        </div>
+    </footer>
+    <!-- Toast 容器 -->
+    <div id="toast-container"></div>
+    <!-- 核心逻辑脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM 元素获取 ---
+            const textInput = document.getElementById('text-input');
+            const charCount = document.getElementById('char-count');
+            const voiceSelect = document.getElementById('voice-select');
+            const rateInput = document.getElementById('rate');
+            const pitchInput = document.getElementById('pitch');
+            const volumeInput = document.getElementById('volume');
+            const rateValue = document.getElementById('rate-value');
+            const pitchValue = document.getElementById('pitch-value');
+            const volumeValue = document.getElementById('volume-value');
+
+            const playBtn = document.getElementById('play-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resumeBtn = document.getElementById('resume-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const clearBtn = document.getElementById('clear-btn');
+
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const statusBadge = document.getElementById('status-badge');
+
+            // --- 状态变量 ---
+            const synth = window.speechSynthesis;
+            let voices = [];
+            let currentUtterance = null;
+            let isPaused = false;
+
+            // --- 初始化检查 ---
+            if (!('speechSynthesis' in window)) {
+                showToast('您的浏览器不支持 Web Speech API，请使用 Chrome、Edge 或 Safari。', 'error');
+                disableControls();
+                return;
+            }
+
+            // --- 语音加载逻辑 ---
+            function loadVoices() {
+                voices = synth.getVoices();
+
+                // 清空现有选项
+                voiceSelect.innerHTML = '';
+
+                if (voices.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = '未检测到可用语音';
+                    voiceSelect.appendChild(option);
+                    return;
+                }
+
+                // 排序逻辑：中文优先，然后按名称排序
+                voices.sort((a, b) => {
+                    const aZh = a.lang.includes('zh') || a.name.includes('Chinese');
+                    const bZh = b.lang.includes('zh') || b.name.includes('Chinese');
+                    if (aZh && !bZh) return -1;
+                    if (!aZh && bZh) return 1;
+                    return a.name.localeCompare(b.name);
+                });
+
+                // 填充下拉菜单
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.value = index;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+
+                    // 默认选中第一个中文语音，如果没有则选中第一个
+                    if (index === 0 || (voice.lang.includes('zh') && !voiceSelect.querySelector('option[data-lang*="zh"]'))) {
+                        option.selected = true;
+                    }
+
+                    voiceSelect.appendChild(option);
+                });
+            }
+
+            // 处理语音列表异步加载
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+
+            // --- 事件监听：UI 更新 ---
+
+            // 字数统计
+            textInput.addEventListener('input', () => {
+                charCount.textContent = textInput.value.length;
+            });
+
+            // 滑块数值实时显示
+            rateInput.addEventListener('input', (e) => rateValue.textContent = e.target.value);
+            pitchInput.addEventListener('input', (e) => pitchValue.textContent = e.target.value);
+            volumeInput.addEventListener('input', (e) => volumeValue.textContent = e.target.value);
+
+            // 清空按钮
+            clearBtn.addEventListener('click', () => {
+                textInput.value = '';
+                charCount.textContent = '0';
+                showToast('内容已清空', 'info');
+            });
+
+            // --- 核心播放控制逻辑 ---
+
+            function updateStatus(state) {
+                // 重置样式
+                statusDot.className = 'w-2 h-2 rounded-full mr-2 transition-colors duration-300';
+
+                switch (state) {
+                    case 'playing':
+                        statusText.textContent = '正在朗读...';
+                        statusDot.classList.add('bg-green-500', 'speaking-indicator');
+                        playBtn.disabled = true;
+                        pauseBtn.disabled = false;
+                        resumeBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        break;
+                    case 'paused':
+                        statusText.textContent = '已暂停';
+                        statusDot.classList.add('bg-yellow-500');
+                        playBtn.disabled = true;
+                        pauseBtn.disabled = true;
+                        resumeBtn.disabled = false;
+                        stopBtn.disabled = false;
+                        break;
+                    case 'idle':
+                    default:
+                        statusText.textContent = '就绪';
+                        statusDot.classList.add('bg-gray-400');
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                        resumeBtn.disabled = true;
+                        stopBtn.disabled = true;
+                        break;
+                }
+            }
+
+            function speak() {
+                // 如果已经在播放，先取消
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+
+                const text = textInput.value.trim();
+                if (!text) {
+                    showToast('请输入需要朗读的文本内容', 'error');
+                    textInput.focus();
+                    return;
+                }
+
+                // 创建语音实例
+                currentUtterance = new SpeechSynthesisUtterance(text);
+
+                // 设置参数
+                const selectedVoiceIndex = voiceSelect.value;
+                if (voices[selectedVoiceIndex]) {
+                    currentUtterance.voice = voices[selectedVoiceIndex];
+                }
+                currentUtterance.rate = parseFloat(rateInput.value);
+                currentUtterance.pitch = parseFloat(pitchInput.value);
+                currentUtterance.volume = parseFloat(volumeInput.value);
+
+                // 事件处理
+                currentUtterance.onstart = () => {
+                    isPaused = false;
+                    updateStatus('playing');
+                };
+
+                currentUtterance.onend = () => {
+                    isPaused = false;
+                    updateStatus('idle');
+                    showToast('朗读结束', 'success');
+                };
+
+                currentUtterance.onerror = (event) => {
+                    isPaused = false;
+                    updateStatus('idle');
+                    console.error('Speech synthesis error:', event);
+                    let errorMsg = '朗读发生错误';
+                    if (event.error === 'canceled') {
+                        errorMsg = '朗读已取消';
+                    } else if (event.error === 'interrupted') {
+                        errorMsg = '朗读被中断';
+                    }
+                    showToast(errorMsg, 'error');
+                };
+
+                currentUtterance.onpause = () => {
+                    updateStatus('paused');
+                };
+
+                currentUtterance.onresume = () => {
+                    updateStatus('playing');
+                };
+
+                // 开始播放
+                synth.speak(currentUtterance);
+            }
+
+            // 按钮事件绑定
+            playBtn.addEventListener('click', () => {
+                // 如果是暂停状态，点击播放应该视为重新开始或继续，这里设计为重新开始
+                speak();
+            });
+
+            pauseBtn.addEventListener('click', () => {
+                if (synth.speaking && !synth.paused) {
+                    synth.pause();
+                    // 状态更新由 onpause 处理
+                }
+            });
+
+            resumeBtn.addEventListener('click', () => {
+                if (synth.paused) {
+                    synth.resume();
+                    // 状态更新由 onresume 处理
+                }
+            });
+
+            stopBtn.addEventListener('click', () => {
+                if (synth.speaking || synth.paused) {
+                    synth.cancel();
+                    isPaused = false;
+                    updateStatus('idle');
+                    showToast('已停止播放', 'info');
+                }
+            });
+
+            // 页面卸载时停止播放
+            window.addEventListener('beforeunload', () => {
+                synth.cancel();
+            });
+
+            // --- 工具函数：Toast 消息 ---
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+
+                // 设置图标
+                let iconClass = 'fa-circle-info';
+                if (type === 'success') iconClass = 'fa-circle-check';
+                if (type === 'error') iconClass = 'fa-circle-exclamation';
+
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <i class="fa-solid ${iconClass} text-lg ${type === 'error' ? 'text-red-500' : (type === 'success' ? 'text-green-500' : 'text-blue-500')}"></i>
+                    <span class="text-sm font-medium text-gray-700">${message}</span>
+                `;
+
+                container.appendChild(toast);
+
+                // 动画入场
+                requestAnimationFrame(() => {
+                    toast.classList.add('show');
+                });
+
+                // 自动移除
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => {
+                        toast.remove();
+                    });
+                }, 3000);
+            }
+
+            function disableControls() {
+                playBtn.disabled = true;
+                pauseBtn.disabled = true;
+                resumeBtn.disabled = true;
+                stopBtn.disabled = true;
+                textInput.disabled = true;
+                rateInput.disabled = true;
+                pitchInput.disabled = true;
+                volumeInput.disabled = true;
+                voiceSelect.disabled = true;
+            }
+        });
+    </script>
+</body>
+
+</html>
