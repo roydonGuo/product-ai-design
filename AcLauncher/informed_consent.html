@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>医患知情同意书 | 智慧医疗</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 6 (免费图标库，无背景) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- 自定义微调样式 -->
+  <style>
+    html {
+      height: 100%;
+      width: 100%;
+    }
+
+    /* 隐藏滚动条但保持滚动功能 */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 自定义圆角卡片与阴影过渡 */
+    .card-hover {
+      transition: all 0.2s ease;
+    }
+
+    .card-hover:active {
+      transform: scale(0.97);
+    }
+
+    /* 牙位按钮样式 */
+    .tooth-btn {
+      transition: all 0.15s ease;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .tooth-btn.selected {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+    }
+
+    /* 签名画布 */
+    .sign-canvas {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #fefefe;
+      cursor: crosshair;
+    }
+
+    /* 自定义tab指示器 */
+    .tab-active {
+      color: #3b82f6;
+      border-bottom: 2px solid #3b82f6;
+    }
+
+    /* 圆角全局优化 */
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    }
+
+    /* 模拟平板外框 */
+    .ipad-frame {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 8px #e2e8f0, 0 0 0 12px #cbd5e1;
+      border-radius: 32px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="w-full h-full">
+
+  <!-- 主视图容器: 分类视图 + 详情视图 (动态切换) -->
+  <div id="appContainer" class="flex-1 relative overflow-hidden hide-scrollbar w-full h-full">
+    <!-- 分类视图 (首页) -->
+    <div id="categoryView"
+      class="absolute w-full h-full inset-0 bg-gradient-to-br from-white/80 to-blue-50/60 backdrop-blur-sm overflow-y-auto hide-scrollbar p-6 transition-all duration-300 flex flex-row gap-6 items-start ">
+      <div class="w-3/4 h-full object-cover rounded-xl shadow-lg relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600" alt="照片1"
+          class="w-full h-full object-cover rounded-xl shadow-lg relative  overflow-hidden">
+        <h1 class="absolute top-0 py-12 px-16 bg-yellow-300 left-24 text-center text-5xl font-bold text-white">知情同意书
+        </h1>
+        <h1 class="absolute bottom-0 py-12 px-16 bg-yellow-300 right-0 text-center text-3xl font-bold text-white">
+          根据相关法律法规，为确保您的知情权，最大的保证您的相关权益，减小医疗风险，保证治疗效果，现对您做如下告知--
+        </h1>
+      </div>
+      <!-- 竖向排列分类列表容器 -->
+      <div class="w-1/4 flex flex-col gap-4 overflow-y-auto">
+        <div id="categoriesList" class="flex flex-col gap-3 overflow-y-auto hide-scrollbar"></div>
+      </div>
+    </div>
+
+    <!-- 详情视图 (同意书页面，初始隐藏) -->
+    <div id="detailView" class="absolute inset-0 bg-white/95 backdrop-blur-sm hidden flex-col overflow-hidden flex">
+      <!-- 头部导航栏: 返回+标题+右侧查看相册 -->
+      <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white/70">
+        <button id="backToCategoryBtn"
+          class="text-gray-600 hover:text-blue-500 text-xl w-8 h-8 flex items-center justify-center rounded-full transition">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="flex-1 text-center">
+          <span id="detailTitle" class="text-base font-semibold text-gray-800">根管治疗知情同意书</span>
+        </div>
+        <button id="viewAlbumBtn"
+          class="text-blue-500 hover:text-blue-700 text-lg flex items-center gap-1 bg-transparent px-2 py-1 rounded-full">
+          <i class="fas fa-images"></i>
+          <span class="text-xs font-medium">相册</span>
+        </button>
+      </div>
+
+      <!-- Tab 切换栏 -->
+      <div class="flex border-b border-gray-200 bg-white/50 px-3 gap-1 overflow-x-auto hide-scrollbar">
+        <button data-tab="intro"
+          class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">介绍</button>
+        <button data-tab="site"
+          class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">治疗部位</button>
+        <button data-tab="allergy"
+          class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">过敏史</button>
+        <button data-tab="remark"
+          class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">治疗备注</button>
+        <button data-tab="preview"
+          class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">查看</button>
+        <button data-tab="sign" class="tab-btn flex-1 py-3 text-sm font-medium text-gray-600 transition-all">签字</button>
+      </div>
+
+      <!-- Fragment 容器 -->
+      <div class="flex-1 overflow-y-auto hide-scrollbar p-5 bg-gray-50/40 flex-1">
+        <!-- 介绍子页面 -->
+        <div id="introFragment" class="fragment hidden">
+          <div id="introInnerTabs" class="flex gap-2 border-b pb-2 mb-4 overflow-x-auto hide-scrollbar"></div>
+          <div id="introContent" class="flex flex-col gap-4 items-center">
+            <img id="introImg" class="w-full max-h-60 object-cover rounded-xl shadow-sm"
+              src="https://picsum.photos/id/104/400/200" alt="介绍图">
+            <p id="introText" class="text-gray-700 leading-relaxed text-xl">加载中...</p>
+          </div>
+        </div>
+        <!-- 治疗部位子页面 -->
+        <div id="siteFragment" class="fragment hidden space-y-5">
+          <div class="flex gap-4 border-b pb-2">
+            <button id="permanentBtn"
+              class="px-5 py-2 rounded-full bg-blue-50 text-blue-600 font-medium text-sm">恒牙</button>
+            <button id="deciduousBtn"
+              class="px-5 py-2 rounded-full bg-gray-100 text-gray-600 font-medium text-sm">乳牙</button>
+          </div>
+          <div id="teethQuadrant" class="grid grid-cols-2 gap-6"></div>
+          <div class="bg-blue-50/40 p-3 rounded-2xl">
+            <p class="text-sm font-medium text-gray-700">已选择的牙位：</p>
+            <p id="selectedTeethDisplay" class="text-sm text-blue-600 break-all mt-1">无</p>
+          </div>
+        </div>
+        <!-- 过敏史子页面 -->
+        <div id="allergyFragment" class="fragment hidden space-y-3">
+          <div id="allergyList" class="space-y-2"></div>
+        </div>
+        <!-- 治疗备注子页面 -->
+        <div id="remarkFragment" class="fragment hidden">
+          <textarea id="remarkInput" rows="6" maxlength="500" placeholder="请输入治疗备注，例如既往病史、用药提醒等 (最多500字)"
+            class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-300 outline-none resize-none text-gray-700 text-sm"></textarea>
+          <div class="text-right text-xs text-gray-400 mt-1"><span id="remarkCount">0</span>/500</div>
+        </div>
+        <!-- 查看子页面 (汇总所有) -->
+        <div id="previewFragment" class="fragment hidden space-y-4">
+          <div id="previewContainer" class="space-y-4"></div>
+        </div>
+        <!-- 签字子页面 -->
+        <div id="signFragment" class="fragment hidden space-y-6">
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-2">患者签字</label>
+            <canvas id="patientCanvas" width="380" height="120"
+              class="sign-canvas w-full h-auto bg-white shadow-sm"></canvas>
+            <button id="clearPatientSign" class="text-xs text-gray-500 mt-1 underline">清除</button>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-2">医生签字</label>
+            <canvas id="doctorCanvas" width="380" height="120"
+              class="sign-canvas w-full h-auto bg-white shadow-sm"></canvas>
+            <button id="clearDoctorSign" class="text-xs text-gray-500 mt-1 underline">清除</button>
+          </div>
+          <button id="confirmSignBtn"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-full transition shadow-md">确认签字并保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // ---------- 数据结构 ----------
+    // 大分类及二级映射
+    const categories = [
+      { name: "口腔内科", icon: "fas fa-tooth", sub: ["根管治疗", "根管再治疗", "树脂填充"] },
+      { name: "口腔外科", icon: "fas fa-fast-backward", sub: ["牙拔除术", "牙种植术", "智齿拔除"] },
+      { name: "正畸科", icon: "fas fa-stethoscope", sub: ["固定矫治", "隐形矫治"] },
+      { name: "牙周", icon: "fas fa-heart", sub: ["牙先洁治", "牙周刮治"] },
+      { name: "美学", icon: "fas fa-star", sub: ["贴面", "牙齿美白"] },
+      { name: "儿牙", icon: "fas fa-child", sub: ["乳牙填充"] },
+      { name: "修复", icon: "fas fa-teeth", sub: ["活动义齿修复", "固定义齿修复", "嵌体修复"] }
+    ];
+
+    // 介绍内容映射 (基于二级分类)
+    const introDataMap = {
+      "根管治疗": [{ name: "什么是根管治疗", text: "根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。根管治疗是一种保存患牙的治疗流程，清除感染物质后严密填充根管，避免拔除。", imgPath: "https://picsum.photos/id/145/400/200" }, { name: "根管治疗后的牙齿", text: "根管治疗后牙齿脆性增加，建议进行冠修复保护。", imgPath: "https://picsum.photos/id/155/400/200" }],
+      "根管再治疗": [{ name: "再治疗概述", text: "对失败根管治疗进行二次清理、消毒与充填，提高保存率。", imgPath: "https://picsum.photos/id/164/400/200" }],
+      "牙拔除术": [{ name: "拔牙须知", text: "拔牙后咬棉球30分钟，24h内不漱口，避免干槽症。", imgPath: "https://picsum.photos/id/176/400/200" }],
+      "牙种植术": [{ name: "种植流程", text: "一期植入种植体，二期修复牙冠，恢复咀嚼功能。", imgPath: "https://picsum.photos/id/180/400/200" }],
+      "固定矫治": [{ name: "固定矫治器", text: "托槽和弓丝施加轻力，排齐牙齿，注意口腔卫生。", imgPath: "https://picsum.photos/id/20/400/200" }],
+      "隐形矫治": [{ name: "隐形牙套", text: "每日佩戴20-22小时，定期更换矫治器。", imgPath: "https://picsum.photos/id/29/400/200" }],
+      "牙周刮治": [{ name: "刮治深度清洁", text: "去除龈下结石，控制牙周炎症。", imgPath: "https://picsum.photos/id/38/400/200" }],
+      "牙齿美白": [{ name: "冷光美白", text: "使用过氧化氢凝胶，牙齿敏感期避免冷热刺激。", imgPath: "https://picsum.photos/id/47/400/200" }],
+      "乳牙填充": [{ name: "乳牙充填", text: "及时修补乳牙龋坏，维持间隙利于恒牙萌出。", imgPath: "https://picsum.photos/id/56/400/200" }],
+    };
+    function getIntroData(subName) {
+      return introDataMap[subName] || [{ name: "诊疗介绍", text: "医生将为您详细解释治疗步骤及注意事项，请仔细阅读。", imgPath: "https://picsum.photos/id/99/400/200" }];
+    }
+
+    // 过敏史选项列表
+    const allergyQuestions = [
+      "是否药物过敏史", "是否高血压等心脑血管疾病", "是否在备孕期或怀孕", "是否在生理期",
+      "是否患有或曾患有传染性疾病", "是否有口腔黏膜疾病", "是否患有高血压心脏病糖尿病血液病等",
+      "是否眼睛对各种光源过敏", "是否皮肤容易晒伤或对光源过敏", "是否其他疾病或长期服用或正在服用药物"
+    ];
+
+    // 全局状态
+    let currentSubCategory = "根管治疗";         // 当前选中的二级分类
+    let currentToothType = "permanent";          // permanent / deciduous
+    let selectedTeeth = [];                       // 存储选中的牙位编号字符串
+    let allergyStatus = {};                       // key:问题, value: "是"/"否"
+    let remarkText = "";
+    let patientSignature = null;                   // base64 数据
+    let doctorSignature = null;
+    // 患者基本信息
+    let patientInfo = { name: "张敏", age: "32", gender: "女", phone: "138****1234" };
+
+    // 恒牙牙位数组 (四象限展示)
+    const permanentTeeth = {
+      upperRight: ["18", "17", "16", "15", "14", "13", "12", "11"],
+      upperLeft: ["21", "22", "23", "24", "25", "26", "27", "28"],
+      lowerRight: ["48", "47", "46", "45", "44", "43", "42", "41"],
+      lowerLeft: ["31", "32", "33", "34", "35", "36", "37", "38"]
+    };
+    const deciduousTeeth = {
+      upperRight: ["55", "54", "53", "52", "51"],
+      upperLeft: ["61", "62", "63", "64", "65"],
+      lowerRight: ["85", "84", "83", "82", "81"],
+      lowerLeft: ["71", "72", "73", "74", "75"]
+    };
+
+    // 辅助: 渲染大分类列表
+    function renderCategories() {
+      // <i class="${cat.icon} text-3xl text-blue-500 mb-2"></i>
+      const container = document.getElementById("categoriesList");
+      container.innerHTML = categories.map(cat => `
+                <div data-cat="${cat.name}" class="category-card w-full flex flex-col items-center justify-center h-20 bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer card-hover p-2">
+                    
+                    <span class="text-sm font-medium text-gray-700">${cat.name}</span>
+                </div>
+            `).join('');
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const catName = card.dataset.cat;
+          const category = categories.find(c => c.name === catName);
+          showSubDialog(category.sub);
+        });
+      });
+    }
+
+    // 弹窗展示二级分类 (简单列表弹窗)
+    function showSubDialog(subList) {
+      const modalDiv = document.createElement('div');
+      modalDiv.className = "fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50";
+      modalDiv.innerHTML = `
+                <div class="bg-white rounded-3xl w-72 p-5 shadow-2xl animate-fade-in-up">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">选择治疗项目</h3>
+                    <ul class="space-y-2">
+                        ${subList.map(sub => `<li data-sub="${sub}" class="sub-option p-3 bg-gray-50 hover:bg-blue-50 rounded-xl cursor-pointer transition text-gray-700">${sub}</li>`).join('')}
+                    </ul>
+                    <button id="closeModalBtn" class="mt-4 w-full py-2 text-gray-500 text-sm">取消</button>
+                </div>
+            `;
+      document.body.appendChild(modalDiv);
+      modalDiv.querySelectorAll('.sub-option').forEach(li => {
+        li.addEventListener('click', () => {
+          const subName = li.dataset.sub;
+          currentSubCategory = subName;
+          switchToDetailView(subName);
+          modalDiv.remove();
+        });
+      });
+      modalDiv.querySelector('#closeModalBtn').addEventListener('click', () => modalDiv.remove());
+    }
+
+    // 切换到详情页并初始化数据
+    function switchToDetailView(subName) {
+      document.getElementById("categoryView").classList.add("hidden");
+      document.getElementById("detailView").classList.remove("hidden");
+      document.getElementById("detailTitle").innerText = `${subName}知情同意书`;
+      currentSubCategory = subName;
+      // 重置状态 (保留患者信息，重置治疗部位，过敏史默认否，备注清空，签名清空)
+      selectedTeeth = [];
+      currentToothType = "permanent";
+      allergyStatus = {};
+      allergyQuestions.forEach(q => { allergyStatus[q] = "否"; });
+      remarkText = "";
+      patientSignature = null;
+      doctorSignature = null;
+      // 重置备注输入框
+      document.getElementById("remarkInput").value = "";
+      document.getElementById("remarkCount").innerText = "0";
+      // 重新渲染各个子页面
+      renderIntroTab();
+      renderTeethQuadrant();
+      renderAllergyTable();
+      updateSelectedTeethDisplay();
+      // 激活介绍tab
+      activateTab("intro");
+      // 重置签名canvas
+      resetSignCanvas();
+    }
+
+    // 介绍子页面渲染 (带内部name tab切换)
+    let currentIntroIndex = 0;
+    let currentIntroData = [];
+    function renderIntroTab() {
+      currentIntroData = getIntroData(currentSubCategory);
+      const tabContainer = document.getElementById("introInnerTabs");
+      tabContainer.innerHTML = currentIntroData.map((item, idx) => `
+                <button data-intro-idx="${idx}" class="intro-tab-btn px-4 py-1.5 rounded-full text-sm font-medium transition ${idx === 0 ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}">${item.name}</button>
+            `).join('');
+      document.querySelectorAll('.intro-tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(btn.dataset.introIdx);
+          currentIntroIndex = idx;
+          updateIntroContent(idx);
+          // 更新按钮样式
+          document.querySelectorAll('.intro-tab-btn').forEach(b => b.classList.remove('bg-blue-500', 'text-white'));
+          btn.classList.add('bg-blue-500', 'text-white');
+        });
+      });
+      if (currentIntroData.length) updateIntroContent(0);
+    }
+    function updateIntroContent(idx) {
+      const item = currentIntroData[idx];
+      document.getElementById("introImg").src = item.imgPath;
+      document.getElementById("introText").innerText = item.text;
+    }
+
+    // 治疗部位: 四象限渲染
+    function renderTeethQuadrant() {
+      const teethMap = currentToothType === "permanent" ? permanentTeeth : deciduousTeeth;
+      const quadrants = [
+        { title: "右上", teeth: teethMap.upperRight },
+        { title: "左上", teeth: teethMap.upperLeft },
+        { title: "右下", teeth: teethMap.lowerRight },
+        { title: "左下", teeth: teethMap.lowerLeft }
+      ];
+      const container = document.getElementById("teethQuadrant");
+      container.innerHTML = quadrants.map(quad => `
+                <div class="bg-white/70 rounded-xl p-3 shadow-sm">
+                    <div class="text-xs font-bold text-gray-500 mb-2">${quad.title}</div>
+                    <div class="flex flex-wrap gap-2">
+                        ${quad.teeth.map(tooth => `<button data-tooth="${tooth}" class="tooth-btn w-10 h-10 rounded-full text-sm font-medium border border-gray-200 transition ${selectedTeeth.includes(tooth) ? 'selected' : ''}">${tooth}</button>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+      container.querySelectorAll('.tooth-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const toothVal = btn.dataset.tooth;
+          if (selectedTeeth.includes(toothVal)) {
+            selectedTeeth = selectedTeeth.filter(t => t !== toothVal);
+          } else {
+            selectedTeeth.push(toothVal);
+          }
+          renderTeethQuadrant();   // 刷新高亮
+          updateSelectedTeethDisplay();
+        });
+      });
+    }
+    function updateSelectedTeethDisplay() {
+      const display = selectedTeeth.length ? selectedTeeth.join(', ') : "未选择任何牙位";
+      document.getElementById("selectedTeethDisplay").innerText = display;
+    }
+
+    // 过敏史表格
+    function renderAllergyTable() {
+      const container = document.getElementById("allergyList");
+      container.innerHTML = allergyQuestions.map(q => `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm">
+                    <span class="text-sm text-gray-700">${q}</span>
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-1 text-sm"><input type="radio" name="allergy_${q}" value="否" ${allergyStatus[q] === '否' ? 'checked' : ''}> 否</label>
+                        <label class="flex items-center gap-1 text-sm"><input type="radio" name="allergy_${q}" value="是" ${allergyStatus[q] === '是' ? 'checked' : ''}> 是</label>
+                    </div>
+                </div>
+            `).join('');
+      allergyQuestions.forEach(q => {
+        const radios = document.querySelectorAll(`input[name="allergy_${q}"]`);
+        radios.forEach(r => r.addEventListener('change', (e) => {
+          allergyStatus[q] = e.target.value;
+        }));
+      });
+    }
+
+    // 查看页面动态渲染所有汇总信息
+    function renderPreviewFragment() {
+      const container = document.getElementById("previewContainer");
+      // 过敏史表格html
+      const allergyHtml = `<div class="border rounded-xl overflow-hidden"><table class="w-full text-sm"><tbody>${allergyQuestions.map(q => `<tr class="border-b"><td class="p-2 font-medium">${q}</td><td class="p-2">${allergyStatus[q] || '否'}</td></tr>`).join('')}</tbody></table></div>`;
+      const teethStr = selectedTeeth.length ? selectedTeeth.join(", ") : "未选择";
+      const signHtml = `
+                <div class="flex gap-4 mt-2">
+                    <div><span class="font-semibold">患者签字：</span>${patientSignature ? '<img src="' + patientSignature + '" class="h-10 w-auto border rounded" />' : '<span class="text-gray-400">未签字</span>'}</div>
+                    <div><span class="font-semibold">医生签字：</span>${doctorSignature ? '<img src="' + doctorSignature + '" class="h-10 w-auto border rounded" />' : '<span class="text-gray-400">未签字</span>'}</div>
+                </div>
+            `;
+      container.innerHTML = `
+                <div class="bg-white rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="text-2xl font-light text-gray-400 border-b pb-1">${currentSubCategory} 知情同意书</div>
+                    <div class="grid grid-cols-3 gap-3 text-sm"><div>姓名: ${patientInfo.name}</div><div>年龄: ${patientInfo.age}</div><div>性别: ${patientInfo.gender}</div><div>手机号: ${patientInfo.phone}</div><div>治疗项目: ${currentSubCategory}</div><div>治疗牙位: ${teethStr}</div></div>
+                    <p class="text-sm text-gray-600">在进行相应的治疗前，医生会和您进行良好的沟通...跟诊疗项目可能存在以下风险：1、治疗过程中的不适；2、术后反应；3、罕见并发症等。医生已详细告知。</p>
+                    <div><span class="font-semibold">过敏史详情：</span>${allergyHtml}</div>
+                    <div><span class="font-semibold">治疗备注：</span><p class="text-sm bg-gray-50 p-2 rounded">${remarkText || "无备注"}</p></div>
+                    <p class="text-xs text-gray-500">医生依旧我要进行的治疗进行了充分讲解……(1)如实回答了健康问题；(2)医疗行为无法保证100%成功；(3)完全同意治疗方案。</p>
+                    <div class="border-t pt-3"><span class="font-semibold">签字展示区域：</span>${signHtml}</div>
+                </div>
+            `;
+    }
+
+    // 签名画布逻辑 (绘制)
+    let signingCanvas = null, signingCtx = null, isDrawing = false, lastX = 0, lastY = 0;
+    function initCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const startDrawing = (e) => {
+        isDrawing = true;
+        const pos = getCanvasCoords(e, canvas, scaleX, scaleY);
+        lastX = pos.x; lastY = pos.y;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(lastX, lastY);
+        ctx.stroke();
+      };
+      const draw = (e) => {
+        if (!isDrawing) return;
+        const pos = getCanvasCoords(e, canvas, scaleX, scaleY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        lastX = pos.x; lastY = pos.y;
+      };
+      const endDrawing = () => { isDrawing = false; ctx.beginPath(); };
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', endDrawing);
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e.touches[0]); });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+      canvas.addEventListener('touchend', endDrawing);
+      return canvas;
+    }
+    function getCanvasCoords(e, canvas, scaleX, scaleY) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+      if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+      else { clientX = e.clientX; clientY = e.clientY; }
+      let x = (clientX - rect.left) * scaleX;
+      let y = (clientY - rect.top) * scaleY;
+      x = Math.min(Math.max(0, x), canvas.width);
+      y = Math.min(Math.max(0, y), canvas.height);
+      return { x, y };
+    }
+    function clearCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    function getCanvasData(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      return canvas.toDataURL();
+    }
+    function resetSignCanvas() {
+      clearCanvas('patientCanvas');
+      clearCanvas('doctorCanvas');
+      patientSignature = null;
+      doctorSignature = null;
+      if (document.getElementById('previewContainer')) renderPreviewFragment();
+    }
+
+    // Tab切换核心
+    function activateTab(tabId) {
+      document.querySelectorAll('.fragment').forEach(f => f.classList.add('hidden'));
+      document.getElementById(`${tabId}Fragment`).classList.remove('hidden');
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600'));
+      const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      if (activeBtn) activeBtn.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+      if (tabId === 'preview') renderPreviewFragment();
+      if (tabId === 'site') renderTeethQuadrant();
+      if (tabId === 'allergy') renderAllergyTable();
+      if (tabId === 'intro') renderIntroTab();
+    }
+
+    // 绑定tab事件
+    function bindTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+      });
+    }
+
+    // 页面启动及事件绑定
+    function init() {
+      renderCategories();
+      document.getElementById("backToCategoryBtn").addEventListener("click", () => {
+        document.getElementById("categoryView").classList.remove("hidden");
+        document.getElementById("detailView").classList.add("hidden");
+      });
+      document.getElementById("viewAlbumBtn").addEventListener("click", () => alert("相册功能：展示治疗过程照片 (演示)"));
+      // 治疗部位切换按钮
+      document.getElementById("permanentBtn").addEventListener("click", () => { currentToothType = "permanent"; selectedTeeth = []; renderTeethQuadrant(); updateSelectedTeethDisplay(); });
+      document.getElementById("deciduousBtn").addEventListener("click", () => { currentToothType = "deciduous"; selectedTeeth = []; renderTeethQuadrant(); updateSelectedTeethDisplay(); });
+      // 治疗备注实时
+      const remarkArea = document.getElementById("remarkInput");
+      remarkArea.addEventListener("input", (e) => {
+        remarkText = e.target.value;
+        document.getElementById("remarkCount").innerText = remarkText.length;
+      });
+      // 签字确认
+      document.getElementById("confirmSignBtn").addEventListener("click", () => {
+        patientSignature = getCanvasData('patientCanvas');
+        doctorSignature = getCanvasData('doctorCanvas');
+        alert("签名已保存！可在「查看」页面预览签字。");
+        renderPreviewFragment();
+      });
+      document.getElementById("clearPatientSign").addEventListener("click", () => clearCanvas('patientCanvas'));
+      document.getElementById("clearDoctorSign").addEventListener("click", () => clearCanvas('doctorCanvas'));
+      initCanvas('patientCanvas');
+      initCanvas('doctorCanvas');
+      bindTabs();
+      // 默认激活介绍，初始空白状态后默认显示根管治疗的详情状态（先隐藏详情）但首次打开为分类视图
+      activateTab("intro");
+    }
+    init();
+  </script>
+</body>
+
+</html>
