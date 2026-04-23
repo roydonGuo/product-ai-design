@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" class="h-full">
+<html lang="zh-CN" class="h-full dark">
 
 <head>
   <meta charset="UTF-8" />
@@ -50,7 +50,7 @@
   </style>
 </head>
 
-<body class="h-full text-black dark:text-white selection:bg-brand-500 selection:text-white">
+<body class="h-full w-full text-black dark:text-white selection:bg-brand-500 selection:text-white">
   <div class="group fixed inset-x-0 top-0 z-50 flex justify-center pt-2">
     <button aria-label="展开导航"
       class="flex h-8 w-8 items-center justify-center rounded-full bg-white/35 backdrop-blur-xl shadow-glass border border-white/40 transition duration-200 hover:bg-white/50 dark:bg-white/10 dark:border-white/20 dark:hover:bg-white/20"
@@ -60,7 +60,7 @@
     <nav
       class="pointer-events-none absolute top-3 scale-95 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:top-5 group-hover:scale-100 group-hover:opacity-100">
       <div
-        class="glass-panel w-[560px] rounded-2xl border border-white/40 px-6 py-3 backdrop-blur-2xl shadow-glass dark:border-white/20">
+        class="glass-panel w-[560px] rounded-full border border-white/40 px-6 py-3 backdrop-blur-xl shadow-glass dark:border-white/20">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500/85">
@@ -82,50 +82,70 @@
     </nav>
   </div>
 
-  <div class="h-full p-6">
-    <main class="mx-auto grid h-full max-w-[1500px] grid-cols-[280px_1fr] gap-5">
-      <aside
-        class="glass-panel rounded-3xl border border-white/40 p-5 backdrop-blur-2xl shadow-glass dark:border-white/20">
-        <div class="mb-6 flex items-center gap-3">
+  <div class="h-full w-full p-6">
+    <main
+      class="glass-panel h-full w-full overflow-hidden flex rounded-3xl border border-white/40 backdrop-blur-2xl shadow-glass dark:border-white/20">
+      <aside class="p-4">
+        <div class="mb-6 flex items-center ">
           <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-500/90">
             <i data-lucide="heart-handshake" class="h-5 w-5 text-white"></i>
           </div>
+          <!-- <div> -->
+          <!-- <p class="text-base font-semibold text-black dark:text-white">dear agent</p> -->
+          <!-- <p class="text-xs font-medium text-black/70 dark:text-white/75">有记忆与情感的智能体</p> -->
+          <!-- </div> -->
+        </div>
+        <div class="space-y-4">
           <div>
-            <p class="text-base font-semibold text-black dark:text-white">dear agent</p>
-            <p class="text-xs font-medium text-black/70 dark:text-white/75">有记忆与情感的智能体</p>
+            <div data-route="home" style="flex-direction: column;"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="message-circle" class="h-6 w-6"></i>
+              <div>对话</div>
+            </div>
+          </div>
+          <div>
+            <div data-route="skills" style="flex-direction: column;"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-brand-500 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="wrench" class="h-6 w-6"></i>
+              <div>Skills</div>
+            </div>
+          </div>
+          <div>
+            <div data-route="knowledge" style="flex-direction: column;"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="book" class="h-6 w-6"></i>
+              <div>知识</div>
+            </div>
+          </div>
+          <div>
+            <div data-route="memory" style="flex-direction: column;"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="database" class="h-6 w-6"></i>
+              <div>记忆</div>
+            </div>
+          </div>
+          <div>
+            <div data-route="creation" style="flex-direction: column;"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="palette" class="h-6 w-6"></i>
+              <div>创作</div>
+            </div>
           </div>
         </div>
-        <ul class="space-y-2">
-          <li><button data-route="home"
-              class="route-link flex w-full items-center gap-3 rounded-2xl bg-white/45 px-4 py-3 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20"><i
-                data-lucide="house" class="h-4 w-4"></i>首页</button></li>
-          <li><button data-route="skills"
-              class="route-link flex w-full items-center gap-3 rounded-2xl bg-brand-500 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-brand-600 cursor-pointer"><i
-                data-lucide="wrench" class="h-4 w-4"></i>Skill 技能管理</button></li>
-          <li><button data-route="knowledge"
-              class="route-link flex w-full items-center gap-3 rounded-2xl bg-white/45 px-4 py-3 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20"><i
-                data-lucide="database" class="h-4 w-4"></i>知识库管理</button></li>
-          <li><button data-route="creation"
-              class="route-link flex w-full items-center gap-3 rounded-2xl bg-white/45 px-4 py-3 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20"><i
-                data-lucide="palette" class="h-4 w-4"></i>创作中心</button></li>
-        </ul>
       </aside>
 
       <section data-page="home"
-        class="route-page  glass-panel rounded-3xl border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
-        <div class="grid h-full grid-cols-[1fr_340px] gap-5">
+        class="route-page flex-1 hidden border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
+        <div class="grid h-full grid-cols-[7fr_3fr] gap-5">
           <div class="flex h-full flex-col gap-5">
-            <header class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20">
-              <h1 class="flex items-center gap-2 text-2xl font-semibold text-black dark:text-white"><i
-                  data-lucide="messages-square" class="h-6 w-6 text-brand-500"></i>首页 · 对话工作区</h1>
-              <p class="mt-2 text-sm text-black/80 dark:text-white/80">与有记忆和情感的智能体实时对话，获得连续陪伴体验。</p>
-            </header>
+
             <div class="glass-panel flex-1 rounded-2xl border border-white/40 p-5 dark:border-white/20 flex flex-col">
               <div class="space-y-3 flex-1">
                 <div
                   class="max-w-[78%] rounded-2xl bg-white/70 p-3 text-sm text-black dark:bg-white/10 dark:text-white">
                   <span class="mb-1.5 flex items-center gap-2 text-xs font-semibold"><i data-lucide="user-round"
-                      class="h-3.5 w-3.5"></i>你</span>我最近有点焦虑，事情太多了。</div>
+                      class="h-3.5 w-3.5"></i>你</span>我最近有点焦虑，事情太多了。
+                </div>
                 <div class="ml-auto max-w-[78%] rounded-2xl bg-brand-500 p-3 text-sm text-white"><span
                     class="mb-1.5 flex items-center gap-2 text-xs font-semibold"><i data-lucide="bot"
                       class="h-3.5 w-3.5"></i>dear agent</span>我理解你的状态。我们先把任务分成三块，我陪你一步步完成。</div>
@@ -140,11 +160,11 @@
               </div>
             </div>
           </div>
-          <aside class="space-y-5">
-            <div class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20">
+          <aside class="space-y-5 flex flex-col">
+            <div class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20 flex-1 flex flex-col">
               <h2 class="flex items-center gap-2 text-base font-semibold text-black dark:text-white"><i
                   data-lucide="monitor-play" class="h-4 w-4 text-brand-500"></i>Live2D 实体视图</h2>
-              <div class="mt-3 h-44 rounded-2xl bg-gradient-to-br from-brand-500/35 to-brand-600/25 p-3">
+              <div class="mt-3 rounded-2xl bg-gradient-to-br from-brand-500/35 to-brand-600/25 p-3 flex-1">
                 <div
                   class="flex h-full items-end justify-center rounded-2xl border border-white/35 bg-white/20 text-sm font-medium text-white">
                   Live2D Model Canvas</div>
@@ -164,8 +184,8 @@
       </section>
 
       <section data-page="skills"
-        class="route-page hidden glass-panel rounded-3xl border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
-        <div class="grid h-full grid-cols-[1fr_340px] gap-5">
+        class="route-page flex-1 hidden border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
+        <div class="grid h-full grid-cols-[7fr_3fr] gap-5">
           <div class="flex h-full flex-col gap-5">
             <header class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20">
               <div class="flex items-center justify-between gap-3">
@@ -299,19 +319,23 @@
                 <p
                   class="flex items-center justify-between rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
                   <span class="flex items-center gap-2"><i data-lucide="hash" class="h-4 w-4"></i>Skill ID</span><span
-                    class="font-semibold">SKL-EMO-024</span></p>
+                    class="font-semibold">SKL-EMO-024</span>
+                </p>
                 <p
                   class="flex items-center justify-between rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
                   <span class="flex items-center gap-2"><i data-lucide="clock-3" class="h-4 w-4"></i>最近更新</span><span
-                    class="font-semibold">2h 前</span></p>
+                    class="font-semibold">2h 前</span>
+                </p>
                 <p
                   class="flex items-center justify-between rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
                   <span class="flex items-center gap-2"><i data-lucide="activity" class="h-4 w-4"></i>日调用量</span><span
-                    class="font-semibold">12,480</span></p>
+                    class="font-semibold">12,480</span>
+                </p>
                 <p
                   class="flex items-center justify-between rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
                   <span class="flex items-center gap-2"><i data-lucide="link-2" class="h-4 w-4"></i>关联知识库</span><span
-                    class="font-semibold">3 个</span></p>
+                    class="font-semibold">3 个</span>
+                </p>
               </div>
             </div>
 
@@ -321,16 +345,20 @@
               <ul class="mt-3 space-y-2 text-sm">
                 <li
                   class="flex items-center gap-2 rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
-                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>提示词安全策略通过</li>
+                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>提示词安全策略通过
+                </li>
                 <li
                   class="flex items-center gap-2 rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
-                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>知识库引用权限校验通过</li>
+                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>知识库引用权限校验通过
+                </li>
                 <li
                   class="flex items-center gap-2 rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
-                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>回归用例通过率 98%</li>
+                  <i data-lucide="check-circle-2" class="h-4 w-4"></i>回归用例通过率 98%
+                </li>
                 <li
                   class="flex items-center gap-2 rounded-xl bg-white/60 px-3 py-2 text-black dark:bg-white/10 dark:text-white">
-                  <i data-lucide="alert-circle" class="h-4 w-4"></i>多轮上下文耗时需优化</li>
+                  <i data-lucide="alert-circle" class="h-4 w-4"></i>多轮上下文耗时需优化
+                </li>
               </ul>
             </div>
 
@@ -351,8 +379,8 @@
       </section>
 
       <section data-page="knowledge"
-        class="route-page hidden glass-panel rounded-3xl border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
-        <div class="grid h-full grid-cols-[1fr_340px] gap-5">
+        class="route-page  flex-1 hidden  border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
+        <div class="grid h-full grid-cols-[7fr_3fr] gap-5">
           <div class="space-y-5">
             <header class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20">
               <h1 class="flex items-center gap-2 text-2xl font-semibold"><i data-lucide="database"
@@ -396,8 +424,8 @@
       </section>
 
       <section data-page="creation"
-        class="route-page hidden glass-panel rounded-3xl border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
-        <div class="grid h-full grid-cols-[1fr_340px] gap-5">
+        class="route-page  flex-1 hidden  border border-white/40 p-6 backdrop-blur-2xl shadow-glass dark:border-white/20">
+        <div class="grid h-full grid-cols-[7fr_3fr] gap-5">
           <div class="space-y-5">
             <header class="glass-panel rounded-2xl border border-white/40 p-5 dark:border-white/20">
               <h1 class="flex items-center gap-2 text-2xl font-semibold"><i data-lucide="palette"
