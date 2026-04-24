@@ -86,7 +86,7 @@
     <main
       class="glass-panel h-full w-full overflow-hidden flex rounded-3xl border border-white/40 backdrop-blur-2xl shadow-glass dark:border-white/20">
       <aside class="p-4">
-        <div class="mb-6 flex items-center ">
+        <div class="mb-6 mt-2 flex items-center justify-center">
           <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-500/90">
             <i data-lucide="heart-handshake" class="h-5 w-5 text-white"></i>
           </div>
@@ -97,35 +97,35 @@
         </div>
         <div class="space-y-4">
           <div>
-            <div data-route="home" style="flex-direction: column;"
+            <div data-route="home"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="message-circle" class="h-6 w-6"></i>
               <div>对话</div>
             </div>
           </div>
           <div>
-            <div data-route="skills" style="flex-direction: column;"
+            <div data-route="skills"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-brand-500 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="wrench" class="h-6 w-6"></i>
               <div>Skills</div>
             </div>
           </div>
           <div>
-            <div data-route="knowledge" style="flex-direction: column;"
+            <div data-route="knowledge"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="book" class="h-6 w-6"></i>
               <div>知识</div>
             </div>
           </div>
           <div>
-            <div data-route="memory" style="flex-direction: column;"
+            <div data-route="memory"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="database" class="h-6 w-6"></i>
               <div>记忆</div>
             </div>
           </div>
           <div>
-            <div data-route="creation" style="flex-direction: column;"
+            <div data-route="creation"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="palette" class="h-6 w-6"></i>
               <div>创作</div>
@@ -470,7 +470,7 @@
     const btn = document.getElementById("themeBtn");
     const routeLinks = Array.from(document.querySelectorAll(".route-link"));
     const routePages = Array.from(document.querySelectorAll(".route-page"));
-    const baseNavClass = "flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition cursor-pointer";
+    const baseNavClass = "flex flex-col w-full items-center rounded-2xl py-3 px-4 gap-1 ext-left text-sm font-semibold transition cursor-pointer";
     const inactiveNavClass = "bg-white/45 text-black hover:bg-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20";
     const activeNavClass = "bg-brand-500 text-white hover:bg-brand-600";
 
