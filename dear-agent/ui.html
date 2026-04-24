@@ -85,7 +85,7 @@
   <div class="h-full w-full p-6">
     <main
       class="glass-panel h-full w-full overflow-hidden flex rounded-3xl border border-white/40 backdrop-blur-2xl shadow-glass dark:border-white/20">
-      <aside class="p-4">
+      <aside class="p-4 flex flex-col">
         <div class="mb-6 mt-2 flex items-center justify-center">
           <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-500/90">
             <i data-lucide="heart-handshake" class="h-5 w-5 text-white"></i>
@@ -95,12 +95,19 @@
           <!-- <p class="text-xs font-medium text-black/70 dark:text-white/75">有记忆与情感的智能体</p> -->
           <!-- </div> -->
         </div>
-        <div class="space-y-4">
+        <div class="space-y-4 flex-1">
           <div>
             <div data-route="home"
               class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
               <i data-lucide="message-circle" class="h-6 w-6"></i>
               <div>对话</div>
+            </div>
+          </div>
+          <div>
+            <div data-route="llm"
+              class="route-link flex flex-col items-center gap-1 rounded-2xl bg-white/45 p-4 text-left text-sm font-semibold text-black transition hover:bg-white/70 cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
+              <i data-lucide="brain" class="h-6 w-6"></i>
+              <div>模型</div>
             </div>
           </div>
           <div>
@@ -131,6 +138,10 @@
               <div>创作</div>
             </div>
           </div>
+        </div>
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <i data-lucide="circle-question-mark" class="h-6 w-6"></i>
+          <i data-lucide="settings" class="h-6 w-6"></i>
         </div>
       </aside>
 
