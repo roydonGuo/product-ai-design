@@ -1,662 +1,1196 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KnowFlow — 知识库</title>
-<style>
-/* ===== RESET & BASE ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;-webkit-font-smoothing:antialiased}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  background:oklch(96.8% 0.006 75);
-  color:oklch(17% 0.012 55);
-  min-height:100vh;
-  line-height:1.5;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KnowFlow — 知识库</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* ===== DESIGN TOKENS ===== */
-:root{
-  --bg:oklch(96.8% 0.006 75);
-  --surface:oklch(99.3% 0.003 78);
-  --fg:oklch(17% 0.012 55);
-  --muted:oklch(48% 0.008 55);
-  --border:oklch(89% 0.005 70);
-  --accent:oklch(54% 0.14 30);
-  --accent-soft:oklch(75% 0.06 30);
-  --accent-hover:oklch(48% 0.14 30);
-  --accent2:oklch(52% 0.10 245);
-  --accent2-soft:oklch(75% 0.06 245);
-  --green:oklch(55% 0.12 150);
-  --tag-bg:oklch(93% 0.006 70);
-  --hover:oklch(94% 0.005 65);
-  --shadow:0 1px 3px oklch(0% 0 0 / 0.04),0 4px 12px oklch(0% 0 0 / 0.06);
-  --shadow-lg:0 8px 30px oklch(0% 0 0 / 0.1);
-  --radius-card:14px;
-  --radius-btn:10px;
-  --radius-tag:100px;
-  --header-h:56px;
-  --cover-h:56px;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-}
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased
+    }
 
-/* ===== HEADER ===== */
-.header{
-  position:sticky;top:0;z-index:100;
-  height:var(--header-h);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;
-  background:color-mix(in oklch, var(--surface) 85%, transparent);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-}
-.header-left{display:flex;align-items:center;gap:10px}
-.logo{font-size:18px;font-weight:700;letter-spacing:-0.01em;color:var(--fg)}
-.logo span{color:var(--accent)}
-.header-actions{display:flex;align-items:center;gap:10px}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  height:36px;padding:0 18px;
-  font-size:14px;font-weight:500;
-  border-radius:var(--radius-btn);
-  border:1.5px solid var(--border);
-  background:var(--surface);
-  color:var(--fg);
-  cursor:pointer;
-  transition:all 0.15s;
-  white-space:nowrap;
-}
-.btn:hover{background:var(--hover);border-color:color-mix(in oklch, var(--border) 70%, var(--fg))}
-.btn-primary{
-  background:var(--accent);border-color:var(--accent);
-  color:white;
-}
-.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
-.btn-ghost{border-color:transparent;background:transparent}
-.btn-ghost:hover{background:var(--hover)}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: oklch(96.8% 0.006 75);
+      color: oklch(17% 0.012 55);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
 
-/* ===== EMPTY STATE ===== */
-#app{min-height:100vh}
-.section{display:none}
-.section.active{display:block}
-.empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;
-  padding:80px 24px;
-  max-width:480px;margin:0 auto;
-  min-height:calc(100vh - var(--header-h));
-}
-.empty-illustration{margin-bottom:32px;width:200px;height:200px}
-.empty-state h2{font-size:24px;font-weight:700;margin-bottom:10px;color:var(--fg)}
-.empty-state p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px;max-width:380px}
-.empty-state .btn-primary{height:42px;padding:0 28px;font-size:15px}
-.empty-state .demo-link{
-  margin-top:16px;font-size:13px;color:var(--muted);
-  background:none;border:none;cursor:pointer;text-decoration:underline;
-  text-underline-offset:3px;
-}
-.empty-state .demo-link:hover{color:var(--accent)}
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --bg: oklch(96.8% 0.006 75);
+      --surface: oklch(99.3% 0.003 78);
+      --fg: oklch(17% 0.012 55);
+      --muted: oklch(48% 0.008 55);
+      --border: oklch(89% 0.005 70);
+      --accent: oklch(54% 0.14 30);
+      --accent-soft: oklch(75% 0.06 30);
+      --accent-hover: oklch(48% 0.14 30);
+      --accent2: oklch(52% 0.10 245);
+      --accent2-soft: oklch(75% 0.06 245);
+      --green: oklch(55% 0.12 150);
+      --tag-bg: oklch(93% 0.006 70);
+      --hover: oklch(94% 0.005 65);
+      --shadow: 0 1px 3px oklch(0% 0 0 / 0.04), 0 4px 12px oklch(0% 0 0 / 0.06);
+      --shadow-lg: 0 8px 30px oklch(0% 0 0 / 0.1);
+      --radius-card: 14px;
+      --radius-btn: 10px;
+      --radius-tag: 100px;
+      --header-h: 56px;
+      --cover-h: 154px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
 
-/* ===== CATEGORY TABS ===== */
-.toolbar-section{
-  padding:16px 24px 0;
-  display:flex;flex-direction:column;gap:12px;
-}
-.categories{
-  display:flex;gap:6px;overflow-x:auto;
-  padding-bottom:4px;
-  -webkit-overflow-scrolling:touch;
-}
-.categories::-webkit-scrollbar{height:0}
-.cat-chip{
-  flex-shrink:0;
-  padding:6px 16px;
-  font-size:13px;font-weight:500;
-  border-radius:var(--radius-tag);
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--muted);
-  cursor:pointer;
-  transition:all 0.15s;
-  white-space:nowrap;
-}
-.cat-chip:hover{border-color:color-mix(in oklch, var(--border) 60%, var(--fg));color:var(--fg)}
-.cat-chip.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+    /* ===== HEADER ===== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: color-mix(in oklch, var(--surface) 85%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ===== SEARCH + VIEW TOGGLE ===== */
-.toolbar-row{
-  display:flex;align-items:center;gap:12px;
-}
-.search-box{
-  flex:1;position:relative;
-}
-.search-box svg{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  width:16px;height:16px;color:var(--muted);
-  pointer-events:none;
-}
-.search-box input{
-  width:100%;height:40px;
-  padding:0 14px 0 40px;
-  font-size:14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-btn);
-  background:var(--surface);
-  color:var(--fg);
-  outline:none;
-  transition:border-color 0.15s;
-}
-.search-box input::placeholder{color:var(--muted)}
-.search-box input:focus{border-color:var(--accent)}
-.view-toggle{display:flex;border:1.5px solid var(--border);border-radius:var(--radius-btn);overflow:hidden}
-.view-toggle button{
-  width:36px;height:36px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--surface);border:none;
-  color:var(--muted);cursor:pointer;font-size:16px;
-  transition:all 0.15s;
-}
-.view-toggle button:hover{background:var(--hover);color:var(--fg)}
-.view-toggle button.active{background:var(--accent);color:white}
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
 
-/* ===== DIVIDER ===== */
-.divider{height:1px;background:var(--border);margin:16px 24px 0}
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--fg)
+    }
 
-/* ===== CARD GRID ===== */
-#kb-grid{
-  padding:20px 24px 40px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:16px;
-}
-#kb-grid.list-view{grid-template-columns:1fr;max-width:720px}
+    .logo span {
+      color: var(--accent)
+    }
 
-/* ===== KB CARD ===== */
-.kb-card{
-  background:var(--surface);
-  border-radius:var(--radius-card);
-  border:1px solid var(--border);
-  overflow:hidden;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.kb-card:hover{
-  box-shadow:var(--shadow-lg);
-  transform:translateY(-2px);
-}
-.kb-card .cover{
-  height:var(--cover-h);
-  position:relative;
-  overflow:hidden;
-}
-.kb-card .cover-pattern{
-  position:absolute;inset:0;
-  opacity:0.15;
-  background-image:
-    repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,.3) 8px, rgba(255,255,255,.3) 16px);
-}
-.kb-card .cover-icon{
-  position:absolute;left:16px;bottom:-14px;
-  width:36px;height:36px;
-  border-radius:10px;
-  background:var(--surface);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  box-shadow:0 1px 4px oklch(0% 0 0 / 0.08);
-}
-.kb-card .card-body{padding:20px 16px 14px}
-.kb-card .card-header{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
-  margin-bottom:6px;
-}
-.kb-card .card-title{
-  font-size:16px;font-weight:640;color:var(--fg);
-  flex:1;line-height:1.3;
-}
-.kb-card .card-menu{
-  flex-shrink:0;width:28px;height:28px;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:6px;border:none;background:none;
-  color:var(--muted);cursor:pointer;font-size:16px;
-  transition:all 0.1s;opacity:0;
-}
-.kb-card:hover .card-menu{opacity:1}
-.kb-card .card-menu:hover{background:var(--hover);color:var(--fg)}
-.kb-card .card-desc{
-  font-size:13px;color:var(--muted);line-height:1.5;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  margin-bottom:10px;
-}
-.kb-card .card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
-.kb-card .card-tag{
-  padding:2px 10px;font-size:11px;font-weight:500;
-  border-radius:var(--radius-tag);
-  background:var(--tag-bg);color:var(--muted);
-}
-.kb-card .card-footer{
-  display:flex;align-items:center;gap:12px;
-  font-size:12px;color:var(--muted);
-  border-top:1px solid var(--border);padding-top:10px;
-}
-.kb-card .card-footer .dot{width:3px;height:3px;border-radius:50%;background:var(--border)}
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
 
-/* List view */
-.list-view .kb-card{display:flex;gap:0}
-.list-view .kb-card .cover{width:64px;height:auto;flex-shrink:0}
-.list-view .kb-card .cover-icon{display:none}
-.list-view .kb-card .card-body{flex:1;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.list-view .kb-card .card-header{margin-bottom:0}
-.list-view .kb-card .card-desc{display:none}
-.list-view .kb-card .card-tags{margin-bottom:0}
-.list-view .kb-card .card-footer{border-top:none;padding-top:0;margin-left:auto;flex-shrink:0}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-btn);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
 
-/* ===== INFINITE SCROLL ===== */
-#scroll-loader{
-  display:flex;align-items:center;justify-content:center;
-  padding:20px 24px 60px;
-  font-size:13px;color:var(--muted);
-}
-.spinner{
-  width:20px;height:20px;
-  border:2px solid var(--border);
-  border-top-color:var(--accent);
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-  margin-right:8px;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-done{color:var(--muted);padding:20px 0 60px;text-align:center;font-size:13px}
+    .btn:hover {
+      background: var(--hover);
+      border-color: color-mix(in oklch, var(--border) 70%, var(--fg))
+    }
 
-/* ===== SKELETON ===== */
-.skeleton-card{
-  background:var(--surface);
-  border-radius:var(--radius-card);
-  border:1px solid var(--border);
-  overflow:hidden;
-}
-.skeleton-cover{height:var(--cover-h);background:var(--border);animation:pulse 1.5s infinite}
-.skeleton-body{padding:16px}
-.skeleton-line{height:14px;background:var(--border);border-radius:4px;margin-bottom:10px;animation:pulse 1.5s infinite}
-.skeleton-line.short{width:60%}
-.skeleton-line.tag{width:50px;height:22px;display:inline-block;margin-right:4px}
-@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
 
-/* ===== MODAL ===== */
-.modal-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:oklch(0% 0 0 / 0.35);
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(4px);
-  animation:fadeIn 0.2s;
-}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.modal{
-  background:var(--surface);
-  border-radius:16px;
-  width:440px;max-width:90vw;
-  padding:28px;
-  box-shadow:var(--shadow-lg);
-  animation:slideUp 0.25s;
-}
-.modal-title{font-size:18px;font-weight:680;margin-bottom:20px}
-.form-group{margin-bottom:16px}
-.form-label{display:block;font-size:13px;font-weight:600;color:var(--fg);margin-bottom:6px}
-.form-label .required{color:var(--accent);margin-left:2px}
-.form-input,.form-textarea{
-  width:100%;padding:10px 14px;
-  font-size:14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-btn);
-  background:var(--bg);
-  color:var(--fg);
-  outline:none;
-  font-family:inherit;
-  transition:border-color 0.15s;
-}
-.form-input:focus,.form-textarea:focus{border-color:var(--accent)}
-.form-textarea{resize:vertical;min-height:72px}
-.form-hint{font-size:12px;color:var(--muted);margin-top:4px}
-/* cover picker */
-.cover-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:4px}
-.cover-opt{
-  aspect-ratio:1;border-radius:10px;cursor:pointer;
-  border:2.5px solid transparent;transition:all 0.15s;
-  position:relative;overflow:hidden;
-}
-.cover-opt:hover{transform:scale(1.05)}
-.cover-opt.selected{border-color:var(--fg)}
-.cover-opt .cp-pattern{
-  position:absolute;inset:0;
-  opacity:0.12;
-  background-image:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(255,255,255,.35) 6px,rgba(255,255,255,.35) 12px);
-}
-/* category multi-select in modal */
-.cat-select{display:flex;flex-wrap:wrap;gap:6px}
-.cat-opt{
-  padding:4px 14px;font-size:13px;font-weight:500;
-  border-radius:var(--radius-tag);
-  border:1.5px solid var(--border);
-  background:var(--bg);color:var(--muted);cursor:pointer;
-  transition:all 0.1s;
-}
-.cat-opt.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
-.modal-actions .btn{min-width:80px}
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover)
+    }
 
-/* ===== TOAST ===== */
-.toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  padding:10px 20px;border-radius:var(--radius-btn);
-  background:var(--fg);color:var(--surface);
-  font-size:13px;font-weight:500;
-  box-shadow:var(--shadow-lg);
-  z-index:300;
-  animation:toastIn 0.3s;
-}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    .btn-ghost {
+      border-color: transparent;
+      background: transparent
+    }
 
-/* ===== FAVORITE HEART ANIMATION ===== */
-.heart-btn{
-  background:none;border:none;cursor:pointer;font-size:inherit;
-  transition:transform 0.2s;
-}
-.heart-btn:active{transform:scale(1.3)}
-.heart-btn.liked{color:var(--accent)}
+    .btn-ghost:hover {
+      background: var(--hover)
+    }
 
-/* ===== KB MENU DROPDOWN ===== */
-.menu-dropdown{
-  position:absolute;top:100%;right:0;z-index:50;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;
-  box-shadow:var(--shadow-lg);
-  padding:4px;
-  min-width:140px;
-  animation:slideUp 0.12s;
-}
-.menu-dropdown button{
-  display:block;width:100%;padding:8px 14px;
-  text-align:left;font-size:13px;
-  background:none;border:none;color:var(--fg);cursor:pointer;
-  border-radius:6px;transition:background 0.1s;
-}
-.menu-dropdown button:hover{background:var(--hover)}
+    /* ===== EMPTY STATE ===== */
+    #app {
+      min-height: 100vh
+    }
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:820px){
-  #kb-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));padding:16px;gap:12px}
-  .header{padding:0 16px}
-  .toolbar-section{padding:12px 16px 0}
-  .divider{margin:12px 16px 0}
-}
-@media(max-width:480px){
-  #kb-grid{grid-template-columns:1fr;padding:12px;gap:10px}
-  .header{padding:0 12px}
-  .logo{font-size:16px}
-  .toolbar-section{padding:10px 12px 0}
-  .divider{margin:10px 12px 0}
-  .modal{padding:20px;width:95vw}
-  .cover-picker{grid-template-columns:repeat(3,1fr)}
-}
-/* ===== LUCIDE ICONS ===== */
-.lucide-icon{display:inline-flex;width:1em;height:1em;vertical-align:middle;stroke-width:1.5;pointer-events:none}
-.cover-icon .lucide-icon{width:18px;height:18px}
-.card-menu .lucide-icon{width:16px;height:16px;display:block}
-.heart-btn .lucide-icon{width:16px;height:16px;pointer-events:none}
-.heart-btn.liked{color:var(--accent)}
-.search-box .lucide-icon.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
-.view-toggle .lucide-icon{width:16px;height:16px;pointer-events:none}
-.btn .lucide-icon{width:16px;height:16px}
-.btn-primary .lucide-icon{color:white}
-</style>
-<script src="https://unpkg.com/lucide@latest"></script>
+    .section {
+      display: none
+    }
+
+    .section.active {
+      display: block
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: calc(100vh - var(--header-h));
+    }
+
+    .empty-illustration {
+      margin-bottom: 32px;
+      width: 200px;
+      height: 200px
+    }
+
+    .empty-state h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--fg)
+    }
+
+    .empty-state p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 380px
+    }
+
+    .empty-state .btn-primary {
+      height: 42px;
+      padding: 0 28px;
+      font-size: 15px
+    }
+
+    .empty-state .demo-link {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .empty-state .demo-link:hover {
+      color: var(--accent)
+    }
+
+    /* ===== CATEGORY TABS ===== */
+    .toolbar-section {
+      padding: 16px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .categories::-webkit-scrollbar {
+      height: 0
+    }
+
+    .cat-chip {
+      flex-shrink: 0;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-tag);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .cat-chip:hover {
+      border-color: color-mix(in oklch, var(--border) 60%, var(--fg));
+      color: var(--fg)
+    }
+
+    .cat-chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600
+    }
+
+    /* ===== SEARCH + VIEW TOGGLE ===== */
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 40px;
+      padding: 0 14px 0 40px;
+      font-size: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      background: var(--surface);
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted)
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent)
+    }
+
+    .view-toggle {
+      display: flex;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      overflow: hidden
+    }
+
+    .view-toggle button {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.15s;
+    }
+
+    .view-toggle button:hover {
+      background: var(--hover);
+      color: var(--fg)
+    }
+
+    .view-toggle button.active {
+      background: var(--accent);
+      color: white
+    }
+
+    /* ===== DIVIDER ===== */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 24px 0
+    }
+
+    /* ===== CARD GRID ===== */
+    #kb-grid {
+      padding: 20px 24px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    #kb-grid.list-view {
+      grid-template-columns: 1fr;
+      max-width: 720px
+    }
+
+    /* ===== KB CARD ===== */
+    .kb-card {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kb-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .kb-card .cover {
+      height: var(--cover-h);
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .kb-card .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, oklch(0% 0 0 / 0.25));
+    }
+
+    .kb-card .card-body {
+      padding: 24px 16px 16px
+    }
+
+    .kb-card .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .kb-card .card-title {
+      font-size: 17px;
+      font-weight: 660;
+      color: var(--fg);
+      flex: 1;
+      line-height: 1.3;
+    }
+
+    .kb-card .card-menu {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      border: none;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.1s;
+      opacity: 0;
+    }
+
+    .kb-card:hover .card-menu {
+      opacity: 1
+    }
+
+    .kb-card .card-menu:hover {
+      background: var(--hover);
+      color: var(--fg)
+    }
+
+    .kb-card .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .kb-card .card-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 10px
+    }
+
+    .kb-card .card-tag {
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius-tag);
+      background: var(--tag-bg);
+      color: var(--muted);
+    }
+
+    .kb-card .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .kb-card .card-footer .dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border)
+    }
+
+    /* List view */
+    .list-view .kb-card {
+      display: flex;
+      gap: 0
+    }
+
+    .list-view .kb-card .cover {
+      width: 80px;
+      flex-shrink: 0
+    }
+
+    .list-view .kb-card .cover-overlay {
+      display: none
+    }
+
+    .list-view .kb-card .card-body {
+      flex: 1;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .list-view .kb-card .card-header {
+      margin-bottom: 0
+    }
+
+    .list-view .kb-card .card-desc {
+      display: none
+    }
+
+    .list-view .kb-card .card-tags {
+      margin-bottom: 0
+    }
+
+    .list-view .kb-card .card-footer {
+      border-top: none;
+      padding-top: 0;
+      margin-left: auto;
+      flex-shrink: 0
+    }
+
+    /* ===== INFINITE SCROLL ===== */
+    #scroll-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 24px 60px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loading-done {
+      color: var(--muted);
+      padding: 20px 0 60px;
+      text-align: center;
+      font-size: 13px
+    }
+
+    /* ===== SKELETON ===== */
+    .skeleton-card {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .skeleton-cover {
+      height: var(--cover-h);
+      background: var(--border);
+      animation: pulse 1.5s infinite
+    }
+
+    .skeleton-body {
+      padding: 16px
+    }
+
+    .skeleton-line {
+      height: 14px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-bottom: 10px;
+      animation: pulse 1.5s infinite
+    }
+
+    .skeleton-line.short {
+      width: 60%
+    }
+
+    .skeleton-line.tag {
+      width: 50px;
+      height: 22px;
+      display: inline-block;
+      margin-right: 4px
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.5
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: oklch(0% 0 0 / 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+      width: 440px;
+      max-width: 90vw;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.25s;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 680;
+      margin-bottom: 20px
+    }
+
+    .form-group {
+      margin-bottom: 16px
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 6px
+    }
+
+    .form-label .required {
+      color: var(--accent);
+      margin-left: 2px
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      background: var(--bg);
+      color: var(--fg);
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--accent)
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 72px
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    /* cover picker */
+    .cover-picker {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-bottom: 4px
+    }
+
+    .cover-opt {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2.5px solid transparent;
+      transition: all 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-opt:hover {
+      transform: scale(1.05)
+    }
+
+    .cover-opt.selected {
+      border-color: var(--fg)
+    }
+
+    .cover-opt img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    /* category multi-select in modal */
+    .cat-select {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px
+    }
+
+    .cat-opt {
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-tag);
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .cat-opt.selected {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent)
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: flex-end
+    }
+
+    .modal-actions .btn {
+      min-width: 80px
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: var(--radius-btn);
+      background: var(--fg);
+      color: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 300;
+      animation: toastIn 0.3s;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0)
+      }
+    }
+
+    /* ===== FAVORITE HEART ANIMATION ===== */
+    .heart-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: inherit;
+      transition: transform 0.2s;
+    }
+
+    .heart-btn:active {
+      transform: scale(1.3)
+    }
+
+    .heart-btn.liked {
+      color: var(--accent)
+    }
+
+    /* ===== KB MENU DROPDOWN ===== */
+    .menu-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      z-index: 50;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      padding: 4px;
+      min-width: 140px;
+      animation: slideUp 0.12s;
+    }
+
+    .menu-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 8px 14px;
+      text-align: left;
+      font-size: 13px;
+      background: none;
+      border: none;
+      color: var(--fg);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.1s;
+    }
+
+    .menu-dropdown button:hover {
+      background: var(--hover)
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:820px) {
+      #kb-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        padding: 16px;
+        gap: 12px
+      }
+
+      .header {
+        padding: 0 16px
+      }
+
+      .toolbar-section {
+        padding: 12px 16px 0
+      }
+
+      .divider {
+        margin: 12px 16px 0
+      }
+    }
+
+    @media(max-width:480px) {
+      #kb-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 10px
+      }
+
+      .header {
+        padding: 0 12px
+      }
+
+      .logo {
+        font-size: 16px
+      }
+
+      .toolbar-section {
+        padding: 10px 12px 0
+      }
+
+      .divider {
+        margin: 10px 12px 0
+      }
+
+      .modal {
+        padding: 20px;
+        width: 95vw
+      }
+
+      .cover-picker {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    /* ===== LUCIDE ICONS ===== */
+    .lucide-icon {
+      display: inline-flex;
+      width: 1em;
+      height: 1em;
+      vertical-align: middle;
+      stroke-width: 1.5;
+      pointer-events: none
+    }
+
+    .card-menu .lucide-icon {
+      width: 16px;
+      height: 16px;
+      display: block
+    }
+
+    .heart-btn .lucide-icon {
+      width: 16px;
+      height: 16px;
+      pointer-events: none
+    }
+
+    .heart-btn.liked {
+      color: var(--accent)
+    }
+
+    .search-box .lucide-icon.search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      pointer-events: none
+    }
+
+    .view-toggle .lucide-icon {
+      width: 16px;
+      height: 16px;
+      pointer-events: none
+    }
+
+    .btn .lucide-icon {
+      width: 16px;
+      height: 16px
+    }
+
+    .btn-primary .lucide-icon {
+      color: white
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
-<div id="app">
+  <div id="app">
 
-<!-- ===== HEADER ===== -->
-<header class="header">
-  <div class="header-left">
-    <div class="logo">Know<span>Flow</span></div>
-  </div>
-  <div class="header-actions">
-    <button class="btn btn-ghost" onclick="toggleView('empty')" title="显示空状态" id="view-empty-btn"><i data-lucide="circle" class="lucide-icon"></i> 空状态</button>
-    <button class="btn btn-primary" onclick="openCreateModal()"><i data-lucide="plus" class="lucide-icon"></i> 新建</button>
-  </div>
-</header>
-
-<!-- ===== EMPTY STATE SECTION ===== -->
-<div id="section-empty" class="section">
-  <div class="empty-state">
-    <svg class="empty-illustration" viewBox="0 0 200 200" fill="none">
-      <rect x="40" y="60" width="120" height="100" rx="12" fill="oklch(93% 0.006 70)" stroke="oklch(89% 0.005 70)" stroke-width="1.5"/>
-      <rect x="50" y="72" width="100" height="4" rx="2" fill="oklch(85% 0.006 70)"/>
-      <rect x="50" y="84" width="80" height="4" rx="2" fill="oklch(85% 0.006 70)"/>
-      <rect x="50" y="96" width="60" height="4" rx="2" fill="oklch(85% 0.006 70)"/>
-      <rect x="50" y="112" width="90" height="4" rx="2" fill="oklch(85% 0.006 70)"/>
-      <rect x="50" y="124" width="70" height="4" rx="2" fill="oklch(85% 0.006 70)"/>
-      <circle cx="156" cy="68" r="14" fill="oklch(75% 0.06 30)" opacity="0.8"/>
-      <path d="M152 68h8M156 64v8" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <path d="M96 155l8-8 8 8" stroke="oklch(54% 0.14 30)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
-      <path d="M104 147v12" stroke="oklch(54% 0.14 30)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-      <circle cx="140" cy="148" r="18" fill="oklch(75% 0.06 245)" opacity="0.15"/>
-      <circle cx="140" cy="148" r="8" fill="oklch(75% 0.06 245)" opacity="0.3"/>
-    </svg>
-    <h2>创建你的第一个知识库</h2>
-    <p>将你的学习笔记、工作文档和个人资料整理到知识库中，让 AI Agent 理解并使用你的私有知识。</p>
-    <button class="btn btn-primary" onclick="openCreateModal()"><i data-lucide="plus" class="lucide-icon"></i> 创建知识库</button>
-    <button class="demo-link" onclick="loadSampleData()">或加载示例数据预览 →</button>
-  </div>
-</div>
-
-<!-- ===== MAIN APP SECTION ===== -->
-<div id="section-main" class="section">
-  <div class="toolbar-section">
-    <div class="categories" id="categories"></div>
-    <div class="toolbar-row">
-      <div class="search-box">
-        <i data-lucide="search" class="lucide-icon search-icon"></i>
-        <input type="text" id="search-input" placeholder="搜索知识库名称或描述..." oninput="handleSearch()">
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">Know<span>Flow</span></div>
       </div>
-      <div class="view-toggle">
-        <button class="active" data-view="grid" onclick="setView('grid')" title="网格视图"><i data-lucide="grid-3x3" class="lucide-icon"></i></button>
-        <button data-view="list" onclick="setView('list')" title="列表视图"><i data-lucide="list" class="lucide-icon"></i></button>
+      <div class="header-actions">
+        <button class="btn btn-ghost" onclick="toggleView('empty')" title="显示空状态" id="view-empty-btn"><i
+            data-lucide="circle" class="lucide-icon"></i> 空状态</button>
+        <button class="btn btn-primary" onclick="openCreateModal()"><i data-lucide="plus" class="lucide-icon"></i>
+          新建</button>
+      </div>
+    </header>
+
+    <!-- ===== EMPTY STATE SECTION ===== -->
+    <div id="section-empty" class="section">
+      <div class="empty-state">
+        <svg class="empty-illustration" viewBox="0 0 200 200" fill="none">
+          <rect x="40" y="60" width="120" height="100" rx="12" fill="oklch(93% 0.006 70)" stroke="oklch(89% 0.005 70)"
+            stroke-width="1.5" />
+          <rect x="50" y="72" width="100" height="4" rx="2" fill="oklch(85% 0.006 70)" />
+          <rect x="50" y="84" width="80" height="4" rx="2" fill="oklch(85% 0.006 70)" />
+          <rect x="50" y="96" width="60" height="4" rx="2" fill="oklch(85% 0.006 70)" />
+          <rect x="50" y="112" width="90" height="4" rx="2" fill="oklch(85% 0.006 70)" />
+          <rect x="50" y="124" width="70" height="4" rx="2" fill="oklch(85% 0.006 70)" />
+          <circle cx="156" cy="68" r="14" fill="oklch(75% 0.06 30)" opacity="0.8" />
+          <path d="M152 68h8M156 64v8" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path d="M96 155l8-8 8 8" stroke="oklch(54% 0.14 30)" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" opacity="0.6" />
+          <path d="M104 147v12" stroke="oklch(54% 0.14 30)" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+          <circle cx="140" cy="148" r="18" fill="oklch(75% 0.06 245)" opacity="0.15" />
+          <circle cx="140" cy="148" r="8" fill="oklch(75% 0.06 245)" opacity="0.3" />
+        </svg>
+        <h2>创建你的第一个知识库</h2>
+        <p>将你的学习笔记、工作文档和个人资料整理到知识库中，让 AI Agent 理解并使用你的私有知识。</p>
+        <button class="btn btn-primary" onclick="openCreateModal()"><i data-lucide="plus" class="lucide-icon"></i>
+          创建知识库</button>
+        <button class="demo-link" onclick="loadSampleData()">或加载示例数据预览 →</button>
       </div>
     </div>
-  </div>
-  <div class="divider"></div>
-  <div id="kb-grid"></div>
-  <div id="scroll-loader">
-    <div class="spinner"></div>
-    <span>加载更多...</span>
-  </div>
-  <div id="scroll-end" style="display:none" class="loading-done">— 已加载全部知识库 —</div>
-</div>
 
-<!-- ===== CREATE MODAL ===== -->
-<div id="create-modal" class="modal-overlay" style="display:none" onclick="closeOnOverlay(event)">
-  <div class="modal">
-    <div class="modal-title">创建知识库</div>
-    <div class="form-group">
-      <div class="form-label">封面图案</div>
-      <div class="cover-picker" id="cover-picker"></div>
+    <!-- ===== MAIN APP SECTION ===== -->
+    <div id="section-main" class="section">
+      <div class="toolbar-section">
+        <div class="categories" id="categories"></div>
+        <div class="toolbar-row">
+          <div class="search-box">
+            <i data-lucide="search" class="lucide-icon search-icon"></i>
+            <input type="text" id="search-input" placeholder="搜索知识库名称或描述..." oninput="handleSearch()">
+          </div>
+          <div class="view-toggle">
+            <button class="active" data-view="grid" onclick="setView('grid')" title="网格视图"><i data-lucide="grid-3x3"
+                class="lucide-icon"></i></button>
+            <button data-view="list" onclick="setView('list')" title="列表视图"><i data-lucide="list"
+                class="lucide-icon"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div id="kb-grid"></div>
+      <div id="scroll-loader">
+        <div class="spinner"></div>
+        <span>加载更多...</span>
+      </div>
+      <div id="scroll-end" style="display:none" class="loading-done">— 已加载全部知识库 —</div>
     </div>
-    <div class="form-group">
-      <label class="form-label">名称 <span class="required">*</span></label>
-      <input class="form-input" id="kb-title-input" placeholder="给知识库起个名字..." maxlength="50">
-      <div class="form-hint" id="title-counter">0/50</div>
+
+    <!-- ===== CREATE MODAL ===== -->
+    <div id="create-modal" class="modal-overlay" style="display:none" onclick="closeOnOverlay(event)">
+      <div class="modal">
+        <div class="modal-title">创建知识库</div>
+        <div class="form-group">
+          <div class="form-label">封面图案</div>
+          <div class="cover-picker" id="cover-picker"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">名称 <span class="required">*</span></label>
+          <input class="form-input" id="kb-title-input" placeholder="给知识库起个名字..." maxlength="50">
+          <div class="form-hint" id="title-counter">0/50</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">所属分类</div>
+          <div class="cat-select" id="cat-select"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">描述</label>
+          <textarea class="form-textarea" id="kb-desc-input" placeholder="简短介绍这个知识库..." maxlength="200"></textarea>
+          <div class="form-hint">最多 200 字</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" onclick="closeCreateModal()">取消</button>
+          <button class="btn btn-primary" onclick="createKb()">创建</button>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <div class="form-label">所属分类</div>
-      <div class="cat-select" id="cat-select"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">描述</label>
-      <textarea class="form-textarea" id="kb-desc-input" placeholder="简短介绍这个知识库..." maxlength="200"></textarea>
-      <div class="form-hint">最多 200 字</div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeCreateModal()">取消</button>
-      <button class="btn btn-primary" onclick="createKb()">创建</button>
-    </div>
-  </div>
-</div>
 
-</div><!-- /app -->
+  </div><!-- /app -->
 
-<script>
-// ===== SAMPLE DATA =====
-const KB_DATA = [
-  { id:'kb1', title:'设计系统笔记', desc:'组件库、设计 Tokens、色彩系统和排版规范的设计系统完整文档', coverIdx:0, cats:['工作','项目'], files:12, updated:'2026-05-13', favorite:false },
-  { id:'kb2', title:'机器学习入门', desc:'从线性回归到 Transformer 的学习笔记和代码实现', coverIdx:1, cats:['学习'], files:8, updated:'2026-05-12', favorite:true },
-  { id:'kb3', title:'周记 2026', desc:'记录每周的生活碎片、思考和灵感', coverIdx:2, cats:['生活'], files:24, updated:'2026-05-11', favorite:false },
-  { id:'kb4', title:'产品需求文档', desc:'dear-agent 产品功能规格与迭代计划', coverIdx:3, cats:['工作'], files:6, updated:'2026-05-10', favorite:false },
-  { id:'kb5', title:'旅行攻略', desc:'日本关西、云南大理、冰岛环岛的详细行程记录', coverIdx:4, cats:['生活','其他'], files:5, updated:'2026-05-08', favorite:true },
-  { id:'kb6', title:'读书笔记', desc:'《设计中的设计》《思考快与慢》《哥德尔埃舍尔巴赫》等', coverIdx:5, cats:['学习','其他'], files:15, updated:'2026-05-06', favorite:false },
-  { id:'kb7', title:'摄影作品集', desc:'胶片摄影的拍摄参数、后期思路和器材评测', coverIdx:0, cats:['生活','项目'], files:9, updated:'2026-04-28', favorite:false },
-  { id:'kb8', title:'投资笔记', desc:'价值投资理念、公司研究和仓位管理', coverIdx:2, cats:['学习','项目'], files:4, updated:'2026-04-20', favorite:false },
-];
+  <script>
+    // ===== SAMPLE DATA =====
+    const KB_DATA = [
+      { id: 'kb1', title: '设计系统笔记', desc: '组件库、设计 Tokens、色彩系统和排版规范的设计系统完整文档', coverIdx: 0, cats: ['工作', '项目'], files: 12, updated: '2026-05-13', favorite: false },
+      { id: 'kb2', title: '机器学习入门', desc: '从线性回归到 Transformer 的学习笔记和代码实现', coverIdx: 1, cats: ['学习'], files: 8, updated: '2026-05-12', favorite: true },
+      { id: 'kb3', title: '周记 2026', desc: '记录每周的生活碎片、思考和灵感', coverIdx: 2, cats: ['生活'], files: 24, updated: '2026-05-11', favorite: false },
+      { id: 'kb4', title: '产品需求文档', desc: 'dear-agent 产品功能规格与迭代计划', coverIdx: 3, cats: ['工作'], files: 6, updated: '2026-05-10', favorite: false },
+      { id: 'kb5', title: '旅行攻略', desc: '日本关西、云南大理、冰岛环岛的详细行程记录', coverIdx: 4, cats: ['生活', '其他'], files: 5, updated: '2026-05-08', favorite: true },
+      { id: 'kb6', title: '读书笔记', desc: '《设计中的设计》《思考快与慢》《哥德尔埃舍尔巴赫》等', coverIdx: 5, cats: ['学习', '其他'], files: 15, updated: '2026-05-06', favorite: false },
+      { id: 'kb7', title: '摄影作品集', desc: '胶片摄影的拍摄参数、后期思路和器材评测', coverIdx: 0, cats: ['生活', '项目'], files: 9, updated: '2026-04-28', favorite: false },
+      { id: 'kb8', title: '投资笔记', desc: '价值投资理念、公司研究和仓位管理', coverIdx: 2, cats: ['学习', '项目'], files: 4, updated: '2026-04-20', favorite: false },
+    ];
 
-const COVERS = [
-  { bg:'oklch(58% 0.12 30)', name:'陶土' },
-  { bg:'oklch(60% 0.08 120)', name:'鼠尾草' },
-  { bg:'oklch(65% 0.10 80)', name:'暖金' },
-  { bg:'oklch(58% 0.08 240)', name:'雾蓝' },
-  { bg:'oklch(60% 0.10 350)', name:'玫瑰' },
-  { bg:'oklch(62% 0.08 280)', name:'薰衣草' },
-];
+    const COVERS = [
+      { url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=200&fit=crop&auto=format', name: '书桌', bg: 'oklch(58% 0.12 30)' },
+      { url: 'https://images.unsplash.com/photo-1517842645767-c639042777db?w=600&h=200&fit=crop&auto=format', name: '书房', bg: 'oklch(60% 0.08 120)' },
+      { url: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&h=200&fit=crop&auto=format', name: '笔记', bg: 'oklch(65% 0.10 80)' },
+      { url: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&h=200&fit=crop&auto=format', name: '写作', bg: 'oklch(58% 0.08 240)' },
+      { url: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=200&fit=crop&auto=format', name: '阅读', bg: 'oklch(60% 0.10 350)' },
+      { url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=200&fit=crop&auto=format', name: '学习', bg: 'oklch(62% 0.08 280)' },
+    ];
 
-const CATEGORIES = ['全部','学习','工作','生活','项目','其他'];
+    const CATEGORIES = ['全部', '学习', '工作', '生活', '项目', '其他'];
 
 
 
-// ===== STATE =====
-let state = {
-  data: [],
-  filtered: [],
-  activeCat: '全部',
-  searchQuery: '',
-  view: 'grid',
-  page: 1,
-  perPage: 20,
-  isLoading: false,
-  hasMore: true,
-  showEmpty: true, // start with empty state
-};
+    // ===== STATE =====
+    let state = {
+      data: [],
+      filtered: [],
+      activeCat: '全部',
+      searchQuery: '',
+      view: 'grid',
+      page: 1,
+      perPage: 20,
+      isLoading: false,
+      hasMore: true,
+      showEmpty: true, // start with empty state
+    };
 
-// ===== DOM REFS =====
-const $ = id => document.getElementById(id);
-const emptySec = $('section-empty');
-const mainSec = $('section-main');
-const grid = $('kb-grid');
-const cats = $('categories');
-const loader = $('scroll-loader');
-const loaderEnd = $('scroll-end');
+    // ===== DOM REFS =====
+    const $ = id => document.getElementById(id);
+    const emptySec = $('section-empty');
+    const mainSec = $('section-main');
+    const grid = $('kb-grid');
+    const cats = $('categories');
+    const loader = $('scroll-loader');
+    const loaderEnd = $('scroll-end');
 
-// ===== INIT =====
-function init() {
-  renderCategories();
-  renderCoverPicker();
-  renderCatSelect();
-  updateView();
-  lucide.createIcons();
-}
+    // ===== INIT =====
+    function init() {
+      renderCategories();
+      renderCoverPicker();
+      renderCatSelect();
+      updateView();
+      lucide.createIcons();
+    }
 
-// ===== VIEW TOGGLE: EMPTY vs MAIN =====
-function updateView() {
-  emptySec.classList.toggle('active', state.showEmpty);
-  mainSec.classList.toggle('active', !state.showEmpty);
-  $('view-empty-btn').innerHTML = state.showEmpty
-    ? '<i data-lucide="circle" fill="currentColor" class="lucide-icon"></i> 示例数据'
-    : '<i data-lucide="circle" class="lucide-icon"></i> 空状态';
-  if (!state.showEmpty && state.filtered.length === 0) {
-    state.data = [...KB_DATA];
-    applyFilters();
-  }
-  lucide.createIcons();
-}
+    // ===== VIEW TOGGLE: EMPTY vs MAIN =====
+    function updateView() {
+      emptySec.classList.toggle('active', state.showEmpty);
+      mainSec.classList.toggle('active', !state.showEmpty);
+      $('view-empty-btn').innerHTML = state.showEmpty
+        ? '<i data-lucide="circle" fill="currentColor" class="lucide-icon"></i> 示例数据'
+        : '<i data-lucide="circle" class="lucide-icon"></i> 空状态';
+      if (!state.showEmpty && state.filtered.length === 0) {
+        state.data = [...KB_DATA];
+        applyFilters();
+      }
+      lucide.createIcons();
+    }
 
-function toggleView(from) {
-  if (from === 'empty') {
-    state.showEmpty = !state.showEmpty;
-    if (!state.showEmpty && state.data.length === 0) loadSampleData();
-    else updateView();
-  }
-}
+    function toggleView(from) {
+      if (from === 'empty') {
+        state.showEmpty = !state.showEmpty;
+        if (!state.showEmpty && state.data.length === 0) loadSampleData();
+        else updateView();
+      }
+    }
 
-function loadSampleData() {
-  state.showEmpty = false;
-  state.data = [...KB_DATA];
-  applyFilters();
-  updateView();
-}
+    function loadSampleData() {
+      state.showEmpty = false;
+      state.data = [...KB_DATA];
+      applyFilters();
+      updateView();
+    }
 
-// ===== CATEGORIES =====
-function renderCategories() {
-  cats.innerHTML = CATEGORIES.map(c =>
-    `<button class="cat-chip${c === state.activeCat ? ' active' : ''}" onclick="filterCat('${c}')">${c}</button>`
-  ).join('');
-}
+    // ===== CATEGORIES =====
+    function renderCategories() {
+      cats.innerHTML = CATEGORIES.map(c =>
+        `<button class="cat-chip${c === state.activeCat ? ' active' : ''}" onclick="filterCat('${c}')">${c}</button>`
+      ).join('');
+    }
 
-function filterCat(cat) {
-  state.activeCat = cat;
-  state.page = 1;
-  renderCategories();
-  applyFilters();
-}
+    function filterCat(cat) {
+      state.activeCat = cat;
+      state.page = 1;
+      renderCategories();
+      applyFilters();
+    }
 
-// ===== SEARCH =====
-let searchTimer;
-function handleSearch() {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    state.searchQuery = $('search-input').value.trim().toLowerCase();
-    state.page = 1;
-    applyFilters();
-  }, 300);
-}
+    // ===== SEARCH =====
+    let searchTimer;
+    function handleSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        state.searchQuery = $('search-input').value.trim().toLowerCase();
+        state.page = 1;
+        applyFilters();
+      }, 300);
+    }
 
-// ===== FILTER =====
-function applyFilters() {
-  let items = state.data;
-  if (state.activeCat !== '全部') {
-    items = items.filter(kb => kb.cats.includes(state.activeCat));
-  }
-  if (state.searchQuery) {
-    items = items.filter(kb =>
-      kb.title.toLowerCase().includes(state.searchQuery) ||
-      kb.desc.toLowerCase().includes(state.searchQuery)
-    );
-  }
-  state.filtered = items;
-  state.hasMore = items.length > state.perPage;
-  renderGrid();
-  updateLoader();
-}
+    // ===== FILTER =====
+    function applyFilters() {
+      let items = state.data;
+      if (state.activeCat !== '全部') {
+        items = items.filter(kb => kb.cats.includes(state.activeCat));
+      }
+      if (state.searchQuery) {
+        items = items.filter(kb =>
+          kb.title.toLowerCase().includes(state.searchQuery) ||
+          kb.desc.toLowerCase().includes(state.searchQuery)
+        );
+      }
+      state.filtered = items;
+      state.hasMore = items.length > state.perPage;
+      renderGrid();
+      updateLoader();
+    }
 
-// ===== VIEW MODE =====
-function setView(v) {
-  state.view = v;
-  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
-  renderGrid();
-}
+    // ===== VIEW MODE =====
+    function setView(v) {
+      state.view = v;
+      document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+      renderGrid();
+    }
 
-// ===== RENDER CARDS =====
-function renderGrid() {
-  const items = state.filtered.slice(0, state.page * state.perPage);
-  if (items.length === 0 && state.searchQuery) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">未找到匹配「${state.searchQuery}」的知识库</div>`;
-    return;
-  }
-  grid.className = state.view === 'list' ? 'list-view' : '';
-  grid.innerHTML = items.map(kb => {
-    const cover = COVERS[kb.coverIdx];
-    return `
+    // ===== RENDER CARDS =====
+    function renderGrid() {
+      const items = state.filtered.slice(0, state.page * state.perPage);
+      if (items.length === 0 && state.searchQuery) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">未找到匹配「${state.searchQuery}」的知识库</div>`;
+        return;
+      }
+      grid.className = state.view === 'list' ? 'list-view' : '';
+      grid.innerHTML = items.map(kb => {
+        const cover = COVERS[kb.coverIdx];
+        return `
       <div class="kb-card" data-id="${kb.id}" onclick="openKb('${kb.id}')">
-        <div class="cover" style="background:${cover.bg}">
-          <div class="cover-pattern"></div>
-          <div class="cover-icon"><i data-lucide="folder" class="lucide-icon"></i></div>
+        <div class="cover" style="background:${cover.bg};background-image:url('${cover.url}')">
+          <div class="cover-overlay"></div>
         </div>
         <div class="card-body">
           <div>
@@ -671,165 +1205,166 @@ function renderGrid() {
               <span class="dot"></span>
               <span><i data-lucide="file-text" style="width:12px;height:12px;vertical-align:middle;margin-right:2px"></i> ${kb.files} 个文件</span>
               <span style="margin-left:auto">
-                <button class="heart-btn${kb.favorite?' liked':''}" onclick="event.stopPropagation();toggleFav('${kb.id}')">${kb.favorite?'<i data-lucide="heart" fill="currentColor" class="lucide-icon"></i>':'<i data-lucide="heart" class="lucide-icon"></i>'}</button>
+                <button class="heart-btn${kb.favorite ? ' liked' : ''}" onclick="event.stopPropagation();toggleFav('${kb.id}')">${kb.favorite ? '<i data-lucide="heart" fill="currentColor" class="lucide-icon"></i>' : '<i data-lucide="heart" class="lucide-icon"></i>'}</button>
               </span>
             </div>
           </div>
         </div>
       </div>`;
-  }).join('');
-  lucide.createIcons();
-}
+      }).join('');
+      lucide.createIcons();
+    }
 
-// ===== FAVORITE TOGGLE =====
-function toggleFav(id) {
-  const kb = state.data.find(d => d.id === id);
-  if (kb) { kb.favorite = !kb.favorite; renderGrid(); }
-}
+    // ===== FAVORITE TOGGLE =====
+    function toggleFav(id) {
+      const kb = state.data.find(d => d.id === id);
+      if (kb) { kb.favorite = !kb.favorite; renderGrid(); }
+    }
 
-// ===== MENU DROPDOWN =====
-function toggleMenu(e, id) {
-  e.stopPropagation();
-  const existing = document.querySelector('.menu-dropdown');
-  if (existing && existing.dataset.id === id) { existing.remove(); return; }
-  document.querySelectorAll('.menu-dropdown').forEach(m => m.remove());
-  const rect = e.currentTarget.getBoundingClientRect();
-  const menu = document.createElement('div');
-  menu.className = 'menu-dropdown';
-  menu.dataset.id = id;
-  menu.style.top = (rect.bottom + 4) + 'px';
-  menu.style.right = (window.innerWidth - rect.right) + 'px';
-  menu.innerHTML = `<button onclick="editKb('${id}')"><i data-lucide="pencil" class="lucide-icon" style="width:14px;height:14px;margin-right:4px"></i> 编辑信息</button><button onclick="deleteKb('${id}')"><i data-lucide="trash-2" class="lucide-icon" style="width:14px;height:14px;margin-right:4px"></i> 删除</button>`;
-  document.body.appendChild(menu);
-  lucide.createIcons();
-  setTimeout(() => document.addEventListener('click', closeMenu, {once:true}), 0);
-}
-function closeMenu() { document.querySelectorAll('.menu-dropdown').forEach(m => m.remove()) }
-function editKb(id) { closeMenu(); toast('编辑功能 — 可打开知识库详情修改'); }
-function deleteKb(id) {
-  closeMenu();
-  if (confirm(`确定删除「${state.data.find(d=>d.id===id).title}」？`)) {
-    state.data = state.data.filter(d => d.id !== id);
-    if (state.data.length === 0) { state.showEmpty = true; updateView(); }
-    else applyFilters();
-  }
-}
+    // ===== MENU DROPDOWN =====
+    function toggleMenu(e, id) {
+      e.stopPropagation();
+      const existing = document.querySelector('.menu-dropdown');
+      if (existing && existing.dataset.id === id) { existing.remove(); return; }
+      document.querySelectorAll('.menu-dropdown').forEach(m => m.remove());
+      const rect = e.currentTarget.getBoundingClientRect();
+      const menu = document.createElement('div');
+      menu.className = 'menu-dropdown';
+      menu.dataset.id = id;
+      menu.style.top = (rect.bottom + 4) + 'px';
+      menu.style.right = (window.innerWidth - rect.right) + 'px';
+      menu.innerHTML = `<button onclick="editKb('${id}')"><i data-lucide="pencil" class="lucide-icon" style="width:14px;height:14px;margin-right:4px"></i> 编辑信息</button><button onclick="deleteKb('${id}')"><i data-lucide="trash-2" class="lucide-icon" style="width:14px;height:14px;margin-right:4px"></i> 删除</button>`;
+      document.body.appendChild(menu);
+      lucide.createIcons();
+      setTimeout(() => document.addEventListener('click', closeMenu, { once: true }), 0);
+    }
+    function closeMenu() { document.querySelectorAll('.menu-dropdown').forEach(m => m.remove()) }
+    function editKb(id) { closeMenu(); toast('编辑功能 — 可打开知识库详情修改'); }
+    function deleteKb(id) {
+      closeMenu();
+      if (confirm(`确定删除「${state.data.find(d => d.id === id).title}」？`)) {
+        state.data = state.data.filter(d => d.id !== id);
+        if (state.data.length === 0) { state.showEmpty = true; updateView(); }
+        else applyFilters();
+      }
+    }
 
-// ===== OPEN KB =====
-function openKb(id) {
-  const kb = state.data.find(d => d.id === id);
-  if (kb) window.location.href = `kb-detail.html?kb=${encodeURIComponent(kb.title)}`;
-}
+    // ===== OPEN KB =====
+    function openKb(id) {
+      const kb = state.data.find(d => d.id === id);
+      if (kb) window.location.href = `kb-detail.html?kb=${encodeURIComponent(kb.title)}`;
+    }
 
-// ===== CREATE MODAL =====
-let selectedCover = 0;
-function renderCoverPicker() {
-  $('cover-picker').innerHTML = COVERS.map((c, i) =>
-    `<div class="cover-opt${i===selectedCover?' selected':''}" style="background:${c.bg}" onclick="pickCover(${i})"><div class="cp-pattern"></div></div>`
-  ).join('');
-}
-function pickCover(i) { selectedCover = i; renderCoverPicker() }
+    // ===== CREATE MODAL =====
+    let selectedCover = 0;
+    function renderCoverPicker() {
+      $('cover-picker').innerHTML = COVERS.map((c, i) =>
+        `<div class="cover-opt${i === selectedCover ? ' selected' : ''}" style="background:${c.bg}" onclick="pickCover(${i})"><img src="${c.url}" alt="${c.name}" loading="lazy"></div>`
+      ).join('');
+    }
+    function pickCover(i) { selectedCover = i; renderCoverPicker() }
 
-function renderCatSelect() {
-  const cats_filter = CATEGORIES.filter(c => c !== '全部');
-  $('cat-select').innerHTML = cats_filter.map(c =>
-    `<span class="cat-opt" data-cat="${c}" onclick="this.classList.toggle('selected')">${c}</span>`
-  ).join('');
-}
+    function renderCatSelect() {
+      const cats_filter = CATEGORIES.filter(c => c !== '全部');
+      $('cat-select').innerHTML = cats_filter.map(c =>
+        `<span class="cat-opt" data-cat="${c}" onclick="this.classList.toggle('selected')">${c}</span>`
+      ).join('');
+    }
 
-function openCreateModal() {
-  selectedCover = 0;
-  $('kb-title-input').value = '';
-  $('kb-desc-input').value = '';
-  $('title-counter').textContent = '0/50';
-  renderCoverPicker();
-  document.querySelectorAll('.cat-opt').forEach(el => el.classList.remove('selected'));
-  $('create-modal').style.display = 'flex';
-  // Focus title after animation
-  setTimeout(() => $('kb-title-input').focus(), 250);
-  // Char counter
-  $('kb-title-input').oninput = function() { $('title-counter').textContent = `${this.value.length}/50`; };
-}
+    function openCreateModal() {
+      selectedCover = 0;
+      $('kb-title-input').value = '';
+      $('kb-desc-input').value = '';
+      $('title-counter').textContent = '0/50';
+      renderCoverPicker();
+      document.querySelectorAll('.cat-opt').forEach(el => el.classList.remove('selected'));
+      $('create-modal').style.display = 'flex';
+      // Focus title after animation
+      setTimeout(() => $('kb-title-input').focus(), 250);
+      // Char counter
+      $('kb-title-input').oninput = function () { $('title-counter').textContent = `${this.value.length}/50`; };
+    }
 
-function closeCreateModal() { $('create-modal').style.display = 'none' }
-function closeOnOverlay(e) { if (e.target === e.currentTarget) closeCreateModal() }
+    function closeCreateModal() { $('create-modal').style.display = 'none' }
+    function closeOnOverlay(e) { if (e.target === e.currentTarget) closeCreateModal() }
 
-function createKb() {
-  const title = $('kb-title-input').value.trim();
-  if (!title) { toast('请输入知识库名称'); return; }
-  const desc = $('kb-desc-input').value.trim();
-  const cats = [...document.querySelectorAll('.cat-opt.selected')].map(el => el.dataset.cat);
-  const newKb = {
-    id: 'kb' + Date.now(),
-    title,
-    desc: desc || '暂无描述',
-    coverIdx: selectedCover,
-    cats,
-    files: 0,
-    updated: new Date().toISOString().slice(0,10),
-    favorite: false,
-  };
-  state.data.unshift(newKb);
-  if (state.showEmpty) { state.showEmpty = false; updateView(); }
-  else applyFilters();
-  closeCreateModal();
-  toast(`「${title}」已创建`);
-}
+    function createKb() {
+      const title = $('kb-title-input').value.trim();
+      if (!title) { toast('请输入知识库名称'); return; }
+      const desc = $('kb-desc-input').value.trim();
+      const cats = [...document.querySelectorAll('.cat-opt.selected')].map(el => el.dataset.cat);
+      const newKb = {
+        id: 'kb' + Date.now(),
+        title,
+        desc: desc || '暂无描述',
+        coverIdx: selectedCover,
+        cats,
+        files: 0,
+        updated: new Date().toISOString().slice(0, 10),
+        favorite: false,
+      };
+      state.data.unshift(newKb);
+      if (state.showEmpty) { state.showEmpty = false; updateView(); }
+      else applyFilters();
+      closeCreateModal();
+      toast(`「${title}」已创建`);
+    }
 
-// ===== INFINITE SCROLL =====
-function updateLoader() {
-  if (state.searchQuery || state.filtered.length === 0) {
-    loader.style.display = 'none';
-    loaderEnd.style.display = 'none';
-    return;
-  }
-  const shown = state.page * state.perPage;
-  if (shown >= state.filtered.length) {
-    loader.style.display = 'none';
-    loaderEnd.style.display = 'block';
-  } else {
-    loader.style.display = 'flex';
-    loaderEnd.style.display = 'none';
-  }
-}
+    // ===== INFINITE SCROLL =====
+    function updateLoader() {
+      if (state.searchQuery || state.filtered.length === 0) {
+        loader.style.display = 'none';
+        loaderEnd.style.display = 'none';
+        return;
+      }
+      const shown = state.page * state.perPage;
+      if (shown >= state.filtered.length) {
+        loader.style.display = 'none';
+        loaderEnd.style.display = 'block';
+      } else {
+        loader.style.display = 'flex';
+        loaderEnd.style.display = 'none';
+      }
+    }
 
-function loadMore() {
-  if (state.isLoading || !state.hasMore) return;
-  state.isLoading = true;
-  state.page++;
-  renderGrid();
-  state.isLoading = false;
-  updateLoader();
-}
+    function loadMore() {
+      if (state.isLoading || !state.hasMore) return;
+      state.isLoading = true;
+      state.page++;
+      renderGrid();
+      state.isLoading = false;
+      updateLoader();
+    }
 
-// Infinite scroll listener
-let scrollThrottle;
-window.addEventListener('scroll', () => {
-  if (state.showEmpty || state.searchQuery) return;
-  clearTimeout(scrollThrottle);
-  scrollThrottle = setTimeout(() => {
-    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
-    if (nearBottom) loadMore();
-  }, 100);
-});
+    // Infinite scroll listener
+    let scrollThrottle;
+    window.addEventListener('scroll', () => {
+      if (state.showEmpty || state.searchQuery) return;
+      clearTimeout(scrollThrottle);
+      scrollThrottle = setTimeout(() => {
+        const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
+        if (nearBottom) loadMore();
+      }, 100);
+    });
 
-// ===== TOAST =====
-function toast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
+    // ===== TOAST =====
+    function toast(msg) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
 
-// ===== KEYBOARD =====
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeCreateModal();
-});
+    // ===== KEYBOARD =====
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeCreateModal();
+    });
 
-// ===== BOOT =====
-init();
-updateView();
-</script>
+    // ===== BOOT =====
+    init();
+    updateView();
+  </script>
 </body>
+
 </html>
