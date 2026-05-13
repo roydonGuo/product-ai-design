@@ -1,923 +1,1332 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KnowFlow — AI Agent 知识库</title>
-<style>
-/* ============================================
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KnowFlow — AI Agent 知识库</title>
+  <style>
+    /* ============================================
    MODERN-MINIMAL palette
    ============================================ */
-:root {
-  --bg:      oklch(99% 0.002 240);
-  --surface: oklch(100% 0 0);
-  --fg:      oklch(18% 0.012 250);
-  --muted:   oklch(54% 0.012 250);
-  --border:  oklch(92% 0.005 250);
-  --accent:  oklch(58% 0.18 255);
-  --accent-hover: oklch(52% 0.20 255);
-  --accent-bg: oklch(58% 0.18 255 / 0.08);
-  --danger:  oklch(55% 0.20 25);
-  --danger-bg: oklch(55% 0.20 25 / 0.08);
-  --success: oklch(55% 0.18 145);
-  --radius: 10px;
-  --radius-sm: 6px;
-  --shadow: 0 1px 3px oklch(0% 0 0 / 0.06), 0 1px 2px oklch(0% 0 0 / 0.04);
-  --shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.08);
-  --transition: 0.2s ease;
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
-  --tree-indent: 20px;
-  --topbar-height: 52px;
-}
+    :root {
+      --bg: oklch(99% 0.002 240);
+      --surface: oklch(100% 0 0);
+      --fg: oklch(18% 0.012 250);
+      --muted: oklch(54% 0.012 250);
+      --border: oklch(92% 0.005 250);
+      --accent: oklch(58% 0.18 255);
+      --accent-hover: oklch(52% 0.20 255);
+      --accent-bg: oklch(58% 0.18 255 / 0.08);
+      --danger: oklch(55% 0.20 25);
+      --danger-bg: oklch(55% 0.20 25 / 0.08);
+      --success: oklch(55% 0.18 145);
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px oklch(0% 0 0 / 0.06), 0 1px 2px oklch(0% 0 0 / 0.04);
+      --shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.08);
+      --transition: 0.2s ease;
+      --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+      --tree-indent: 20px;
+      --topbar-height: 52px;
+    }
 
-/* dark mode overrides */
-[data-theme="dark"] {
-  --bg:      oklch(15% 0.008 250);
-  --surface: oklch(20% 0.01 250);
-  --fg:      oklch(92% 0.005 250);
-  --muted:   oklch(60% 0.01 250);
-  --border:  oklch(28% 0.01 250);
-  --accent:  oklch(65% 0.18 255);
-  --accent-hover: oklch(70% 0.18 255);
-  --accent-bg: oklch(65% 0.18 255 / 0.12);
-  --shadow: 0 1px 3px oklch(0% 0 0 / 0.2);
-  --shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.3);
-}
+    /* dark mode overrides */
+    [data-theme="dark"] {
+      --bg: oklch(15% 0.008 250);
+      --surface: oklch(20% 0.01 250);
+      --fg: oklch(92% 0.005 250);
+      --muted: oklch(60% 0.01 250);
+      --border: oklch(28% 0.01 250);
+      --accent: oklch(65% 0.18 255);
+      --accent-hover: oklch(70% 0.18 255);
+      --accent-bg: oklch(65% 0.18 255 / 0.12);
+      --shadow: 0 1px 3px oklch(0% 0 0 / 0.2);
+      --shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.3);
+    }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--fg);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  transition: background var(--transition), color var(--transition);
-}
-input, textarea, button { font-family: inherit; font-size: inherit; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* ============================================
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    input,
+    textarea,
+    button {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ============================================
    Shared components
    ============================================ */
-.top-bar {
-  height: var(--topbar-height);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  transition: background var(--transition), border var(--transition);
-  flex-shrink: 0;
-}
-.logo {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.02em;
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.logo svg { flex-shrink: 0; }
+    .top-bar {
+      height: var(--topbar-height);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      transition: background var(--transition), border var(--transition);
+      flex-shrink: 0;
+    }
 
-.icon-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-  font-size: 16px;
-}
-.icon-btn:hover { background: var(--accent-bg); color: var(--accent); }
-.icon-btn.active { color: var(--accent); background: var(--accent-bg); }
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  font-weight: 510;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-.btn-primary:hover { background: var(--accent-hover); }
-.btn-secondary {
-  background: none;
-  color: var(--fg);
-  border: 1px solid var(--border);
-  padding: 7px 16px;
-  border-radius: var(--radius-sm);
-  font-weight: 510;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .logo svg {
+      flex-shrink: 0;
+    }
 
-input[type="text"], input[type="search"], textarea {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--fg);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition: border var(--transition);
-  width: 100%;
-}
-input:focus, textarea:focus { border-color: var(--accent); }
-::placeholder { color: var(--muted); }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      font-size: 16px;
+    }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 510;
-  background: var(--accent-bg);
-  color: var(--accent);
-  letter-spacing: 0.02em;
-}
+    .icon-btn:hover {
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
 
-.hidden { display: none !important; }
+    .icon-btn.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+    }
 
-/* ============================================
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 510;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: none;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 510;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    input[type="text"],
+    input[type="search"],
+    textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border var(--transition);
+      width: 100%;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    ::placeholder {
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 510;
+      background: var(--accent-bg);
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ============================================
    Modal
    ============================================ */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: oklch(0% 0 0 / 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: auto; }
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  width: 420px;
-  max-width: 90vw;
-  box-shadow: var(--shadow-lg);
-  transition: background var(--transition), border var(--transition);
-}
-.modal h2 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  margin-bottom: 16px;
-}
-.modal .field { margin-bottom: 14px; }
-.modal .field label { display: block; font-size: 12px; font-weight: 510; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.02em; }
-.modal .field input, .modal .field textarea { font-size: 13px; }
-.modal .field textarea { resize: vertical; min-height: 60px; }
-.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: oklch(0% 0 0 / 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
 
-/* ============================================
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 420px;
+      max-width: 90vw;
+      box-shadow: var(--shadow-lg);
+      transition: background var(--transition), border var(--transition);
+    }
+
+    .modal h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .modal .field {
+      margin-bottom: 14px;
+    }
+
+    .modal .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 510;
+      color: var(--muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .modal .field input,
+    .modal .field textarea {
+      font-size: 13px;
+    }
+
+    .modal .field textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ============================================
    Screen 1 — KB List
    ============================================ */
-#screen-list {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.top-bar-left { display: flex; align-items: center; gap: 12px; flex: 1; }
-.top-bar-right { display: flex; align-items: center; gap: 8px; }
+    #screen-list {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-.search-wrapper {
-  flex: 1;
-  min-width: 220px;
-  position: relative;
-}
-.search-wrapper .search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  font-size: 14px;
-  pointer-events: none;
-}
-.search-wrapper input { padding-left: 34px; font-size: 13px; }
-.view-toggle { display: flex; gap: 2px; background: var(--border); border-radius: var(--radius-sm); padding: 2px; }
-.view-toggle .icon-btn { border-radius: 4px; font-size: 14px; padding: 4px 8px; }
-.view-toggle .icon-btn.active { background: var(--surface); color: var(--fg); box-shadow: var(--shadow); }
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
 
-.tags-row {
-  display: flex;
-  gap: 6px;
-  padding: 0 20px 12px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-.tag-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 510;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.tag-chip:hover { border-color: var(--accent); color: var(--accent); }
-.tag-chip.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-#kb-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 20px 20px;
-}
-#kb-container.kb-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px;
-  align-content: start;
-}
-#kb-container.kb-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
 
-.kb-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  cursor: pointer;
-  transition: all var(--transition);
-  position: relative;
-}
-.kb-card:hover {
-  border-color: var(--accent);
-  box-shadow: var(--shadow);
-}
-.kb-card.dragging { opacity: 0.4; }
-.kb-card.drag-over { border-color: var(--accent); border-style: dashed; }
+    .search-wrapper {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
 
-/* Card cover image */
-.kb-card-cover {
-  height: 100px;
-  margin: -18px -20px 14px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  overflow: hidden;
-  position: relative;
-}
-.kb-card-cover svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
+    .search-wrapper .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
 
-/* Cover patterns — each KB gets a distinct abstract SVG pattern */
-.cover-circuit { background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.08), oklch(58% 0.18 255 / 0.02)); }
-.cover-dots { background: linear-gradient(135deg, oklch(55% 0.18 145 / 0.08), oklch(55% 0.18 145 / 0.02)); }
-.cover-waves { background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.10), oklch(55% 0.18 145 / 0.04)); }
-.cover-circles { background: linear-gradient(135deg, oklch(55% 0.20 25 / 0.08), oklch(58% 0.18 255 / 0.03)); }
-.cover-grid { background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.10), oklch(65% 0.10 280 / 0.04)); }
+    .search-wrapper input {
+      padding-left: 34px;
+      font-size: 13px;
+    }
 
-/* List mode cover */
-.kb-list .kb-card-cover {
-  width: 36px;
-  height: 36px;
-  margin: 0;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
+    .view-toggle {
+      display: flex;
+      gap: 2px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
 
-.kb-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-.kb-card-header h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  color: var(--fg);
-  line-height: 1.3;
-}
-.kb-card p {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 4px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.kb-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--muted);
-}
-.kb-tags {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.kb-menu {
-  position: relative;
-  flex-shrink: 0;
-}
-.kb-menu-btn {
-  background: none; border: none; color: var(--muted); cursor: pointer;
-  padding: 4px; border-radius: var(--radius-sm); font-size: 16px; line-height: 1;
-}
-.kb-menu-btn:hover { background: var(--accent-bg); color: var(--accent); }
-.kb-dropdown {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  padding: 4px;
-  min-width: 120px;
-  z-index: 10;
-  display: none;
-}
-.kb-dropdown.open { display: block; }
-.kb-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--fg);
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-.kb-dropdown-item:hover { background: var(--accent-bg); color: var(--accent); }
-.kb-dropdown-item.danger { color: var(--danger); }
-.kb-dropdown-item.danger:hover { background: var(--danger-bg); }
+    .view-toggle .icon-btn {
+      border-radius: 4px;
+      font-size: 14px;
+      padding: 4px 8px;
+    }
 
-/* list mode specific */
-.kb-list .kb-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-}
-.kb-list .kb-card-header h3 { font-size: 14px; }
-.kb-list .kb-card p { display: none; }
-.kb-list .kb-meta { margin-top: 0; white-space: nowrap; }
-.kb-list .kb-tags { margin-top: 0; flex-shrink: 0; }
-.kb-list .kb-card .kb-meta-files { display: none; }
+    .view-toggle .icon-btn.active {
+      background: var(--surface);
+      color: var(--fg);
+      box-shadow: var(--shadow);
+    }
 
-/* Cover picker in create modal */
-.cover-picker {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.cover-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border);
-  transition: all var(--transition);
-  background: var(--bg);
-}
-.cover-option:hover { border-color: var(--accent); }
-.cover-option.active { border-color: var(--accent); background: var(--accent-bg); }
-.cover-option span {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.02em;
-}
-.cover-option.active span { color: var(--accent); font-weight: 510; }
-.cover-preview {
-  width: 60px;
-  height: 24px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-.cover-preview svg { display: block; width: 100%; height: 100%; }
+    .tags-row {
+      display: flex;
+      gap: 6px;
+      padding: 0 20px 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
 
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--muted);
-}
-.empty-state p { font-size: 14px; }
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 510;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
 
-/* ============================================
+    .tag-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tag-chip.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #kb-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px;
+    }
+
+    #kb-container.kb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    #kb-container.kb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kb-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .kb-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    .kb-card.dragging {
+      opacity: 0.4;
+    }
+
+    .kb-card.drag-over {
+      border-color: var(--accent);
+      border-style: dashed;
+    }
+
+    /* Card cover image */
+    .kb-card-cover {
+      height: 100px;
+      margin: -18px -20px 14px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .kb-card-cover svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Cover patterns — each KB gets a distinct abstract SVG pattern */
+    .cover-circuit {
+      background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.08), oklch(58% 0.18 255 / 0.02));
+    }
+
+    .cover-dots {
+      background: linear-gradient(135deg, oklch(55% 0.18 145 / 0.08), oklch(55% 0.18 145 / 0.02));
+    }
+
+    .cover-waves {
+      background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.10), oklch(55% 0.18 145 / 0.04));
+    }
+
+    .cover-circles {
+      background: linear-gradient(135deg, oklch(55% 0.20 25 / 0.08), oklch(58% 0.18 255 / 0.03));
+    }
+
+    .cover-grid {
+      background: linear-gradient(135deg, oklch(58% 0.18 255 / 0.10), oklch(65% 0.10 280 / 0.04));
+    }
+
+    /* List mode cover */
+    .kb-list .kb-card-cover {
+      width: 36px;
+      height: 36px;
+      margin: 0;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .kb-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .kb-card-header h3 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      line-height: 1.3;
+    }
+
+    .kb-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .kb-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .kb-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .kb-menu {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .kb-menu-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .kb-menu-btn:hover {
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .kb-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      padding: 4px;
+      min-width: 120px;
+      z-index: 10;
+      display: none;
+    }
+
+    .kb-dropdown.open {
+      display: block;
+    }
+
+    .kb-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--fg);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .kb-dropdown-item:hover {
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .kb-dropdown-item.danger {
+      color: var(--danger);
+    }
+
+    .kb-dropdown-item.danger:hover {
+      background: var(--danger-bg);
+    }
+
+    /* list mode specific */
+    .kb-list .kb-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+    }
+
+    .kb-list .kb-card-header h3 {
+      font-size: 14px;
+    }
+
+    .kb-list .kb-card p {
+      display: none;
+    }
+
+    .kb-list .kb-meta {
+      margin-top: 0;
+      white-space: nowrap;
+    }
+
+    .kb-list .kb-tags {
+      margin-top: 0;
+      flex-shrink: 0;
+    }
+
+    .kb-list .kb-card .kb-meta-files {
+      display: none;
+    }
+
+    /* Cover picker in create modal */
+    .cover-picker {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .cover-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      transition: all var(--transition);
+      background: var(--bg);
+    }
+
+    .cover-option:hover {
+      border-color: var(--accent);
+    }
+
+    .cover-option.active {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+    }
+
+    .cover-option span {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .cover-option.active span {
+      color: var(--accent);
+      font-weight: 510;
+    }
+
+    .cover-preview {
+      width: 60px;
+      height: 24px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .cover-preview svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    /* ============================================
    Screen 2 — KB Detail
    ============================================ */
-#screen-detail {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.detail-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  flex: 1;
-}
+    #screen-detail {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-.split-view {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-}
+    .detail-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      flex: 1;
+    }
 
-/* Tree panel (left) */
-.tree-panel {
-  width: 300px;
-  min-width: 220px;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  transition: background var(--transition), border var(--transition);
-  flex-shrink: 0;
-}
-.tree-search {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.tree-search input { font-size: 12px; padding: 6px 10px; }
+    .split-view {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
 
-.file-tree {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-}
-.tree-node { user-select: none; }
-.tree-node-content {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 13px;
-  transition: background var(--transition);
-  position: relative;
-}
-.tree-node-content:hover { background: var(--accent-bg); }
-.tree-node-content.active { background: var(--accent-bg); color: var(--accent); font-weight: 510; }
-.tree-node-icon { flex-shrink: 0; font-size: 14px; opacity: 0.7; color: var(--muted); }
-.tree-node-icon.folder-icon { color: var(--accent); opacity: 0.8; }
-.tree-node-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tree-children { padding-left: var(--tree-indent); }
-.tree-node-toggle {
-  width: 16px;
-  flex-shrink: 0;
-  text-align: center;
-  color: var(--muted);
-  font-size: 10px;
-  transition: transform 0.15s;
-}
-.tree-node-toggle.expanded { transform: rotate(90deg); }
-.tree-node-toggle.hidden-toggle { visibility: hidden; }
+    /* Tree panel (left) */
+    .tree-panel {
+      width: 300px;
+      min-width: 220px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      transition: background var(--transition), border var(--transition);
+      flex-shrink: 0;
+    }
 
-.tree-context-menu {
-  position: fixed;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  padding: 4px;
-  min-width: 130px;
-  z-index: 50;
-  display: none;
-}
-.tree-context-menu.open { display: block; }
+    .tree-search {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* Content panel (right) */
-.content-panel {
-  flex: 1;
-  overflow-y: auto;
-  padding: 32px 40px;
-  background: var(--bg);
-  transition: background var(--transition);
-}
-.content-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--muted);
-}
-.content-empty p { font-size: 14px; }
+    .tree-search input {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
 
-/* Markdown viewer */
-.markdown-body {
-  max-width: 720px;
-  margin: 0 auto;
-  line-height: 1.7;
-  font-size: 15px;
-}
-.markdown-body h1 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 28px;
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.markdown-body h2 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 20px;
-  letter-spacing: -0.01em;
-  margin-top: 28px;
-  margin-bottom: 8px;
-}
-.markdown-body h3 {
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 20px;
-  margin-bottom: 6px;
-}
-.markdown-body p { margin-bottom: 12px; color: var(--fg); }
-.markdown-body strong { font-weight: 600; }
-.markdown-body code {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  background: var(--accent-bg);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.markdown-body pre {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  overflow-x: auto;
-  margin-bottom: 14px;
-}
-.markdown-body pre code {
-  background: none;
-  padding: 0;
-  font-size: 13px;
-  line-height: 1.6;
-}
-.markdown-body ul, .markdown-body ol { margin-bottom: 12px; padding-left: 20px; }
-.markdown-body li { margin-bottom: 4px; }
-.markdown-body blockquote {
-  border-inline-start: 3px solid var(--accent);
-  margin: 14px 0;
-  padding: 8px 16px;
-  background: var(--surface);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  color: var(--muted);
-}
-.markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-.markdown-body table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 14px;
-  font-size: 13px;
-}
-.markdown-body th, .markdown-body td {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  text-align: start;
-}
-.markdown-body th {
-  background: var(--surface);
-  font-weight: 510;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
 
-/* Editor */
-.editor-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-#editor-textarea {
-  width: 100%;
-  min-height: 400px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.7;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  resize: vertical;
-  background: var(--surface);
-  color: var(--fg);
-  transition: background var(--transition), border var(--transition);
-}
-#editor-textarea:focus { border-color: var(--accent); }
+    .tree-node {
+      user-select: none;
+    }
 
-/* Breadcrumb */
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.breadcrumb span { color: var(--muted); }
+    .tree-node-content {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background var(--transition);
+      position: relative;
+    }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    .tree-node-content:hover {
+      background: var(--accent-bg);
+    }
 
-/* ============================================
+    .tree-node-content.active {
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-weight: 510;
+    }
+
+    .tree-node-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+      opacity: 0.7;
+      color: var(--muted);
+    }
+
+    .tree-node-icon.folder-icon {
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    .tree-node-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tree-children {
+      padding-left: var(--tree-indent);
+    }
+
+    .tree-node-toggle {
+      width: 16px;
+      flex-shrink: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+      transition: transform 0.15s;
+    }
+
+    .tree-node-toggle.expanded {
+      transform: rotate(90deg);
+    }
+
+    .tree-node-toggle.hidden-toggle {
+      visibility: hidden;
+    }
+
+    .tree-context-menu {
+      position: fixed;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      padding: 4px;
+      min-width: 130px;
+      z-index: 50;
+      display: none;
+    }
+
+    .tree-context-menu.open {
+      display: block;
+    }
+
+    /* Content panel (right) */
+    .content-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 40px;
+      background: var(--bg);
+      transition: background var(--transition);
+    }
+
+    .content-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+    }
+
+    .content-empty p {
+      font-size: 14px;
+    }
+
+    /* Markdown viewer */
+    .markdown-body {
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .markdown-body h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+
+    .markdown-body h3 {
+      font-weight: 600;
+      font-size: 16px;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+
+    .markdown-body p {
+      margin-bottom: 12px;
+      color: var(--fg);
+    }
+
+    .markdown-body strong {
+      font-weight: 600;
+    }
+
+    .markdown-body code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: var(--accent-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .markdown-body pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 12px;
+      padding-left: 20px;
+    }
+
+    .markdown-body li {
+      margin-bottom: 4px;
+    }
+
+    .markdown-body blockquote {
+      border-inline-start: 3px solid var(--accent);
+      margin: 14px 0;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      color: var(--muted);
+    }
+
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      text-align: start;
+    }
+
+    .markdown-body th {
+      background: var(--surface);
+      font-weight: 510;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Editor */
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #editor-textarea {
+      width: 100%;
+      min-height: 400px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      resize: vertical;
+      background: var(--surface);
+      color: var(--fg);
+      transition: background var(--transition), border var(--transition);
+    }
+
+    #editor-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb span {
+      color: var(--muted);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    /* ============================================
    Animations
    ============================================ */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.kb-card { animation: fadeIn 0.3s ease both; }
-.kb-card:nth-child(1) { animation-delay: 0.01s; }
-.kb-card:nth-child(2) { animation-delay: 0.03s; }
-.kb-card:nth-child(3) { animation-delay: 0.05s; }
-.kb-card:nth-child(4) { animation-delay: 0.07s; }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
 
-/* ============================================
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .kb-card {
+      animation: fadeIn 0.3s ease both;
+    }
+
+    .kb-card:nth-child(1) {
+      animation-delay: 0.01s;
+    }
+
+    .kb-card:nth-child(2) {
+      animation-delay: 0.03s;
+    }
+
+    .kb-card:nth-child(3) {
+      animation-delay: 0.05s;
+    }
+
+    .kb-card:nth-child(4) {
+      animation-delay: 0.07s;
+    }
+
+    /* ============================================
    Responsive
    ============================================ */
-@media (max-width: 768px) {
-  .tree-panel { width: 240px; min-width: 180px; }
-  .content-panel { padding: 20px; }
-  #kb-container.kb-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  .split-view { flex-direction: column; }
-  .tree-panel { width: 100%; min-width: 0; max-height: 40%; border-right: none; border-bottom: 1px solid var(--border); }
-  .toolbar { flex-direction: column; align-items: stretch; }
-  .search-wrapper { min-width: 0; }
-}
-</style>
-<script src="https://unpkg.com/lucide@0.473.0/dist/umd/lucide.js"></script>
+    @media (max-width: 768px) {
+      .tree-panel {
+        width: 240px;
+        min-width: 180px;
+      }
+
+      .content-panel {
+        padding: 20px;
+      }
+
+      #kb-container.kb-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .split-view {
+        flex-direction: column;
+      }
+
+      .tree-panel {
+        width: 100%;
+        min-width: 0;
+        max-height: 40%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-wrapper {
+        min-width: 0;
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@0.473.0/dist/umd/lucide.js"></script>
 </head>
+
 <body>
 
-<!-- ============ SCREEN 1: KB LIST ============ -->
-<div id="screen-list">
-  <header class="top-bar">
-    <div class="top-bar-left">
-      <div class="logo">
-        <i data-lucide="layers" style="width:20px;height:20px"></i>
-        KnowFlow
-      </div>
-    </div>
-    <div class="top-bar-right">
-      <button class="icon-btn" id="dark-toggle-list" title="切换深色模式"><i data-lucide="moon" style="width:16px;height:16px"></i></button>
-    </div>
-  </header>
-
-  <div class="toolbar">
-    <div class="search-wrapper">
-      <span class="search-icon"><i data-lucide="search" style="width:14px;height:14px"></i></span>
-      <input type="search" id="kb-search" placeholder="搜索知识库..." autocomplete="off">
-    </div>
-    <div class="view-toggle">
-      <button class="icon-btn active" data-view="grid" title="卡片视图"><i data-lucide="grid" style="width:14px;height:14px"></i></button>
-      <button class="icon-btn" data-view="list" title="列表视图"><i data-lucide="list" style="width:14px;height:14px"></i></button>
-    </div>
-    <button class="btn-primary" id="create-kb-btn">+ 新建</button>
-  </div>
-
-  <div class="tags-row" id="tags-filter"></div>
-
-  <div id="kb-container" class="kb-grid"></div>
-</div>
-
-<!-- ============ SCREEN 2: KB DETAIL ============ -->
-<div id="screen-detail" class="hidden">
-  <header class="top-bar">
-    <button class="icon-btn" id="back-btn" title="返回"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
-    <span class="detail-title" id="detail-title"></span>
-    <div class="top-bar-right">
-      <button class="icon-btn" id="upload-file-btn" title="上传文件"><i data-lucide="upload" style="width:16px;height:16px"></i></button>
-      <button class="icon-btn" id="search-files-btn" title="搜索文件"><i data-lucide="search" style="width:16px;height:16px"></i></button>
-      <button class="icon-btn" id="dark-toggle-detail" title="切换深色模式"><i data-lucide="moon" style="width:16px;height:16px"></i></button>
-    </div>
-  </header>
-
-  <div class="split-view">
-    <aside class="tree-panel">
-      <div class="tree-search">
-        <input type="text" id="file-search" placeholder="搜索文件..." autocomplete="off">
-      </div>
-      <div id="file-tree" class="file-tree"></div>
-    </aside>
-
-    <main class="content-panel" id="content-panel">
-      <div class="content-empty" id="content-empty">
-        <i data-lucide="book-open" style="width:48px;height:48px;opacity:0.3;color:var(--muted);margin-bottom:12px"></i>
-        <p>选择一个文件来查看内容</p>
-      </div>
-      <div id="markdown-viewer" class="markdown-body hidden"></div>
-      <div id="editor-section" class="hidden">
-        <div class="editor-toolbar">
-          <span style="font-size:13px;font-weight:510;flex:1;color:var(--fg)" id="editor-filename"></span>
-          <button class="btn-primary" id="save-edit-btn">保存</button>
-          <button class="btn-secondary" id="cancel-edit-btn">取消</button>
+  <!-- ============ SCREEN 1: KB LIST ============ -->
+  <div id="screen-list">
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <div class="logo">
+          <i data-lucide="layers" style="width:20px;height:20px"></i>
+          KnowFlow
         </div>
-        <textarea id="editor-textarea"></textarea>
       </div>
-    </main>
-  </div>
-</div>
+      <div class="top-bar-right">
+        <button class="icon-btn" id="dark-toggle-list" title="切换深色模式"><i data-lucide="moon"
+            style="width:16px;height:16px"></i></button>
+      </div>
+    </header>
 
-<!-- ============ MODALS ============ -->
-<!-- Create KB -->
-<div class="modal-overlay" id="create-modal">
-  <div class="modal">
-    <h2>新建知识库</h2>
-    <div class="field">
-      <label>名称</label>
-      <input type="text" id="new-kb-name" placeholder="知识库名称">
+    <div class="toolbar">
+      <div class="search-wrapper">
+        <span class="search-icon"><i data-lucide="search" style="width:14px;height:14px"></i></span>
+        <input type="search" id="kb-search" placeholder="搜索知识库..." autocomplete="off">
+      </div>
+      <div class="view-toggle">
+        <button class="icon-btn active" data-view="grid" title="卡片视图"><i data-lucide="grid"
+            style="width:14px;height:14px"></i></button>
+        <button class="icon-btn" data-view="list" title="列表视图"><i data-lucide="list"
+            style="width:14px;height:14px"></i></button>
+      </div>
+      <button class="btn-primary" id="create-kb-btn">+ 新建</button>
     </div>
-    <div class="field">
-      <label>描述</label>
-      <textarea id="new-kb-desc" placeholder="简要描述"></textarea>
+
+    <div class="tags-row" id="tags-filter"></div>
+
+    <div id="kb-container" class="kb-grid"></div>
+  </div>
+
+  <!-- ============ SCREEN 2: KB DETAIL ============ -->
+  <div id="screen-detail" class="hidden">
+    <header class="top-bar">
+      <button class="icon-btn" id="back-btn" title="返回"><i data-lucide="arrow-left"
+          style="width:16px;height:16px"></i></button>
+      <span class="detail-title" id="detail-title"></span>
+      <div class="top-bar-right">
+        <button class="icon-btn" id="upload-file-btn" title="上传文件"><i data-lucide="upload"
+            style="width:16px;height:16px"></i></button>
+        <button class="icon-btn" id="search-files-btn" title="搜索文件"><i data-lucide="search"
+            style="width:16px;height:16px"></i></button>
+        <button class="icon-btn" id="dark-toggle-detail" title="切换深色模式"><i data-lucide="moon"
+            style="width:16px;height:16px"></i></button>
+      </div>
+    </header>
+
+    <div class="split-view">
+      <aside class="tree-panel">
+        <div class="tree-search">
+          <input type="text" id="file-search" placeholder="搜索文件..." autocomplete="off">
+        </div>
+        <div id="file-tree" class="file-tree"></div>
+      </aside>
+
+      <main class="content-panel" id="content-panel">
+        <div class="content-empty" id="content-empty">
+          <i data-lucide="book-open"
+            style="width:48px;height:48px;opacity:0.3;color:var(--muted);margin-bottom:12px"></i>
+          <p>选择一个文件来查看内容</p>
+        </div>
+        <div id="markdown-viewer" class="markdown-body hidden"></div>
+        <div id="editor-section" class="hidden">
+          <div class="editor-toolbar">
+            <span style="font-size:13px;font-weight:510;flex:1;color:var(--fg)" id="editor-filename"></span>
+            <button class="btn-primary" id="save-edit-btn">保存</button>
+            <button class="btn-secondary" id="cancel-edit-btn">取消</button>
+          </div>
+          <textarea id="editor-textarea"></textarea>
+        </div>
+      </main>
     </div>
-    <div class="field">
-      <label>标签（逗号分隔）</label>
-      <input type="text" id="new-kb-tags" placeholder="AI, 文档, 最佳实践">
-    </div>
-    <div class="field">
-      <label>封面样式</label>
-      <div class="cover-picker" id="cover-picker">
-        <label class="cover-option active" data-cover="circuit">
-          <input type="radio" name="kb-cover" value="circuit" checked hidden>
-          <div class="cover-preview cover-circuit"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12h8l4-6 4 6 4-6 4 6 4-6 4 6 4-6 4 6 4-6 4 6" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1.2"/><circle cx="12" cy="12" r="1.5" fill="oklch(58% 0.18 255)"/><circle cx="32" cy="6" r="1.5" fill="oklch(58% 0.18 255)"/></svg></div>
-          <span>电路</span>
-        </label>
-        <label class="cover-option" data-cover="dots">
-          <input type="radio" name="kb-cover" value="dots" hidden>
-          <div class="cover-preview cover-dots"><svg viewBox="0 0 60 24" fill="none"><circle cx="8" cy="8" r="2" fill="oklch(58% 0.18 255 / 0.35)"/><circle cx="20" cy="6" r="1.5" fill="oklch(58% 0.18 255 / 0.35)"/><circle cx="32" cy="10" r="2.5" fill="oklch(58% 0.18 255 / 0.35)"/><circle cx="44" cy="7" r="1.8" fill="oklch(58% 0.18 255 / 0.35)"/><circle cx="54" cy="9" r="2" fill="oklch(58% 0.18 255 / 0.35)"/></svg></div>
-          <span>圆点</span>
-        </label>
-        <label class="cover-option" data-cover="waves">
-          <input type="radio" name="kb-cover" value="waves" hidden>
-          <div class="cover-preview cover-waves"><svg viewBox="0 0 60 24" fill="none"><path d="M0 14c10-8 20 12 30 0s20-8 30 0v10H0z" fill="oklch(58% 0.18 255 / 0.25)"/></svg></div>
-          <span>波浪</span>
-        </label>
-        <label class="cover-option" data-cover="circles">
-          <input type="radio" name="kb-cover" value="circles" hidden>
-          <div class="cover-preview cover-circles"><svg viewBox="0 0 60 24" fill="none"><circle cx="12" cy="12" r="9" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1"/><circle cx="30" cy="12" r="7" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1"/><circle cx="48" cy="12" r="9" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1"/></svg></div>
-          <span>圆环</span>
-        </label>
-        <label class="cover-option" data-cover="grid">
-          <input type="radio" name="kb-cover" value="grid" hidden>
-          <div class="cover-preview cover-grid"><svg viewBox="0 0 60 24" fill="none"><path d="M0 8h60M0 16h60M15 0v24M30 0v24M45 0v24" stroke="oklch(58% 0.18 255 / 0.25)" stroke-width="1"/></svg></div>
-          <span>网格</span>
-        </label>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+  <!-- Create KB -->
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <h2>新建知识库</h2>
+      <div class="field">
+        <label>名称</label>
+        <input type="text" id="new-kb-name" placeholder="知识库名称">
+      </div>
+      <div class="field">
+        <label>描述</label>
+        <textarea id="new-kb-desc" placeholder="简要描述"></textarea>
+      </div>
+      <div class="field">
+        <label>标签（逗号分隔）</label>
+        <input type="text" id="new-kb-tags" placeholder="AI, 文档, 最佳实践">
+      </div>
+      <div class="field">
+        <label>封面样式</label>
+        <div class="cover-picker" id="cover-picker">
+          <label class="cover-option active" data-cover="circuit">
+            <input type="radio" name="kb-cover" value="circuit" checked hidden>
+            <div class="cover-preview cover-circuit"><svg viewBox="0 0 60 24" fill="none">
+                <path d="M0 12h8l4-6 4 6 4-6 4 6 4-6 4 6 4-6 4 6 4-6 4 6" stroke="oklch(58% 0.18 255 / 0.35)"
+                  stroke-width="1.2" />
+                <circle cx="12" cy="12" r="1.5" fill="oklch(58% 0.18 255)" />
+                <circle cx="32" cy="6" r="1.5" fill="oklch(58% 0.18 255)" />
+              </svg></div>
+            <span>电路</span>
+          </label>
+          <label class="cover-option" data-cover="dots">
+            <input type="radio" name="kb-cover" value="dots" hidden>
+            <div class="cover-preview cover-dots"><svg viewBox="0 0 60 24" fill="none">
+                <circle cx="8" cy="8" r="2" fill="oklch(58% 0.18 255 / 0.35)" />
+                <circle cx="20" cy="6" r="1.5" fill="oklch(58% 0.18 255 / 0.35)" />
+                <circle cx="32" cy="10" r="2.5" fill="oklch(58% 0.18 255 / 0.35)" />
+                <circle cx="44" cy="7" r="1.8" fill="oklch(58% 0.18 255 / 0.35)" />
+                <circle cx="54" cy="9" r="2" fill="oklch(58% 0.18 255 / 0.35)" />
+              </svg></div>
+            <span>圆点</span>
+          </label>
+          <label class="cover-option" data-cover="waves">
+            <input type="radio" name="kb-cover" value="waves" hidden>
+            <div class="cover-preview cover-waves"><svg viewBox="0 0 60 24" fill="none">
+                <path d="M0 14c10-8 20 12 30 0s20-8 30 0v10H0z" fill="oklch(58% 0.18 255 / 0.25)" />
+              </svg></div>
+            <span>波浪</span>
+          </label>
+          <label class="cover-option" data-cover="circles">
+            <input type="radio" name="kb-cover" value="circles" hidden>
+            <div class="cover-preview cover-circles"><svg viewBox="0 0 60 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1" />
+                <circle cx="30" cy="12" r="7" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1" />
+                <circle cx="48" cy="12" r="9" stroke="oklch(58% 0.18 255 / 0.35)" stroke-width="1" />
+              </svg></div>
+            <span>圆环</span>
+          </label>
+          <label class="cover-option" data-cover="grid">
+            <input type="radio" name="kb-cover" value="grid" hidden>
+            <div class="cover-preview cover-grid"><svg viewBox="0 0 60 24" fill="none">
+                <path d="M0 8h60M0 16h60M15 0v24M30 0v24M45 0v24" stroke="oklch(58% 0.18 255 / 0.25)"
+                  stroke-width="1" />
+              </svg></div>
+            <span>网格</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-create">取消</button>
+        <button class="btn-primary" id="confirm-create">创建</button>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancel-create">取消</button>
-      <button class="btn-primary" id="confirm-create">创建</button>
+  </div>
+
+  <!-- Rename KB -->
+  <div class="modal-overlay" id="rename-modal">
+    <div class="modal">
+      <h2>重命名</h2>
+      <div class="field">
+        <label>新名称</label>
+        <input type="text" id="rename-input" placeholder="输入新名称">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-rename">取消</button>
+        <button class="btn-primary" id="confirm-rename">确认</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Rename KB -->
-<div class="modal-overlay" id="rename-modal">
-  <div class="modal">
-    <h2>重命名</h2>
-    <div class="field">
-      <label>新名称</label>
-      <input type="text" id="rename-input" placeholder="输入新名称">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancel-rename">取消</button>
-      <button class="btn-primary" id="confirm-rename">确认</button>
+  <!-- Delete confirm -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal">
+      <h2>确认删除</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="delete-msg"></p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-delete">取消</button>
+        <button class="btn-primary" id="confirm-delete" style="background:var(--danger);">删除</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Delete confirm -->
-<div class="modal-overlay" id="delete-modal">
-  <div class="modal">
-    <h2>确认删除</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="delete-msg"></p>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancel-delete">取消</button>
-      <button class="btn-primary" id="confirm-delete" style="background:var(--danger);">删除</button>
+  <!-- Upload file -->
+  <div class="modal-overlay" id="upload-modal">
+    <div class="modal">
+      <h2>上传文件</h2>
+      <div class="field">
+        <label>文件名</label>
+        <input type="text" id="upload-filename" placeholder="example.md">
+      </div>
+      <div class="field">
+        <label>目标文件夹</label>
+        <select id="upload-folder"
+          style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--fg);font-size:13px;"></select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-upload">取消</button>
+        <button class="btn-primary" id="confirm-upload">上传</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Upload file -->
-<div class="modal-overlay" id="upload-modal">
-  <div class="modal">
-    <h2>上传文件</h2>
-    <div class="field">
-      <label>文件名</label>
-      <input type="text" id="upload-filename" placeholder="example.md">
-    </div>
-    <div class="field">
-      <label>目标文件夹</label>
-      <select id="upload-folder" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--fg);font-size:13px;"></select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancel-upload">取消</button>
-      <button class="btn-primary" id="confirm-upload">上传</button>
+  <!-- Rename file -->
+  <div class="modal-overlay" id="rename-file-modal">
+    <div class="modal">
+      <h2>重命名文件</h2>
+      <div class="field">
+        <label>新文件名</label>
+        <input type="text" id="rename-file-input" placeholder="新文件名">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-rename-file">取消</button>
+        <button class="btn-primary" id="confirm-rename-file">确认</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Rename file -->
-<div class="modal-overlay" id="rename-file-modal">
-  <div class="modal">
-    <h2>重命名文件</h2>
-    <div class="field">
-      <label>新文件名</label>
-      <input type="text" id="rename-file-input" placeholder="新文件名">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancel-rename-file">取消</button>
-      <button class="btn-primary" id="confirm-rename-file">确认</button>
-    </div>
+  <!-- Tree context menu -->
+  <div class="tree-context-menu" id="tree-context-menu">
+    <button class="kb-dropdown-item" data-action="rename-file"><i data-lucide="pencil"
+        style="width:13px;height:13px"></i> 重命名</button>
+    <button class="kb-dropdown-item danger" data-action="delete-file"><i data-lucide="trash-2"
+        style="width:13px;height:13px"></i> 删除</button>
   </div>
-</div>
 
-<!-- Tree context menu -->
-<div class="tree-context-menu" id="tree-context-menu">
-  <button class="kb-dropdown-item" data-action="rename-file"><i data-lucide="pencil" style="width:13px;height:13px"></i> 重命名</button>
-  <button class="kb-dropdown-item danger" data-action="delete-file"><i data-lucide="trash-2" style="width:13px;height:13px"></i> 删除</button>
-</div>
-
-<script>
-// ============================================================
-// DATA
-// ============================================================
-const DEMO_FILES = {
-  'file-quickstart': `# 快速开始
+  <script>
+    // ============================================================
+    // DATA
+    // ============================================================
+    const DEMO_FILES = {
+      'file-quickstart': `# 快速开始
 
 欢迎使用 AI Agent 开发框架。本文档将带你完成第一个 Agent 的搭建。
 
@@ -958,7 +1367,7 @@ print(response)
 
 > **提示：** 首次运行前请确保已配置环境变量 \`OPENAI_API_KEY\``,
 
-  'file-env': `# 环境配置
+      'file-env': `# 环境配置
 
 ## 快速配置
 
@@ -995,7 +1404,7 @@ config = {
 python -c "from agent_sdk import Agent; print('OK')"
 \`\`\``,
 
-  'file-arch': `# Agent 架构
+      'file-arch': `# Agent 架构
 
 ## 整体架构
 
@@ -1035,7 +1444,7 @@ Agent 可以调用的外部能力，例如：
 - **短期记忆**：当前会话上下文
 - **长期记忆**：跨会话的知识存储`,
 
-  'file-tools': `# 工具调用
+      'file-tools': `# 工具调用
 
 ## 工具定义
 
@@ -1081,7 +1490,7 @@ def get_weather(city: str) -> dict:
     }
 \`\`\``,
 
-  'file-memory': `# 记忆系统
+      'file-memory': `# 记忆系统
 
 ## 记忆类型
 
@@ -1119,7 +1528,7 @@ results = memory.search("输出方式")
 
 > 记忆系统的核心在于**相关性和压缩率**之间的平衡。`,
 
-  'file-prompt-eng': `# 提示词工程
+      'file-prompt-eng': `# 提示词工程
 
 ## 基本原则
 
@@ -1164,7 +1573,7 @@ results = memory.search("输出方式")
 {"analysis": "...", "code": "...", "explanation": "..."}
 \`\`\``,
 
-  'file-workflow': `# 工作流设计
+      'file-workflow': `# 工作流设计
 
 ## 基础工作流
 
@@ -1202,7 +1611,7 @@ def route_task(task_type: str) -> Agent:
 
 复杂任务需要多次迭代才能完成。设置最大迭代次数防止无限循环。`,
 
-  'file-errors': `# 错误处理
+      'file-errors': `# 错误处理
 
 ## 常见错误类型
 
@@ -1231,7 +1640,7 @@ def call_llm(prompt):
 3. 再失败 → 使用本地轻量模型
 4. 全部失败 → 返回友好错误信息给用户`,
 
-  'file-multi-agent': `# 多 Agent 协作
+      'file-multi-agent': `# 多 Agent 协作
 
 ## 协作模式
 
@@ -1258,7 +1667,7 @@ Agent 依次处理，前一个输出是后一个的输入。
 
 Agent 之间通过消息队列通信，支持同步和异步两种模式。`,
 
-  'file-security': `# 安全与合规
+      'file-security': `# 安全与合规
 
 ## 安全原则
 
@@ -1293,357 +1702,367 @@ class SecureAgent(Agent):
 - [x] 访问控制（RBAC）
 - [x] GDPR 合规`
 
-};
+    };
 
-const DEMO_DATA = [
-  {
-    id: 'kb-1',
-    name: 'AI Agent 开发指南',
-    description: '从入门到高级的 AI Agent 开发知识库，涵盖架构设计、工具调用、记忆系统与安全合规。',
-    tags: ['AI', '开发', '最佳实践'],
-    fileCount: 11,
-    updatedAt: '2026-05-13',
-    cover: 'circuit',
-    children: [
-      { id: 'd1-f1', name: 'README.md', type: 'file', fileId: 'file-quickstart' },
+    const DEMO_DATA = [
       {
-        id: 'd1-folder-1', name: '01-入门指南', type: 'folder', expanded: false,
+        id: 'kb-1',
+        name: 'AI Agent 开发指南',
+        description: '从入门到高级的 AI Agent 开发知识库，涵盖架构设计、工具调用、记忆系统与安全合规。',
+        tags: ['AI', '开发', '最佳实践'],
+        fileCount: 11,
+        updatedAt: '2026-05-13',
+        cover: 'circuit',
         children: [
-          { id: 'd1-f1-1', name: '快速开始.md', type: 'file', fileId: 'file-quickstart' },
-          { id: 'd1-f1-2', name: '环境配置.md', type: 'file', fileId: 'file-env' }
+          { id: 'd1-f1', name: 'README.md', type: 'file', fileId: 'file-quickstart' },
+          {
+            id: 'd1-folder-11', name: '01-入门指南', type: 'folder', expanded: false,
+            children: [
+              {
+                id: 'd1-f11', name: '01111-入门指南', type: 'folder', expanded: 'false',
+                children: [
+                  { id: 'd1-f1-11', name: '快速开始.md', type: 'file', fileId: 'file-quickstart' },
+                  { id: 'd1-f1-21', name: '环境配置.md', type: 'file', fileId: 'file-env' }
+                ]
+              },
+              { id: 'd1-f1-1', name: '快速开始.md', type: 'file', fileId: 'file-quickstart' },
+              { id: 'd1-f1-2', name: '环境配置.md', type: 'file', fileId: 'file-env' }
+            ]
+          },
+          {
+            id: 'd1-folder-2', name: '02-核心概念', type: 'folder', expanded: false,
+            children: [
+              { id: 'd1-f2-1', name: 'Agent 架构.md', type: 'file', fileId: 'file-arch' },
+              { id: 'd1-f2-2', name: '工具调用.md', type: 'file', fileId: 'file-tools' },
+              { id: 'd1-f2-3', name: '记忆系统.md', type: 'file', fileId: 'file-memory' }
+            ]
+          },
+          {
+            id: 'd1-folder-3', name: '03-最佳实践', type: 'folder', expanded: false,
+            children: [
+              { id: 'd1-f3-1', name: '提示词工程.md', type: 'file', fileId: 'file-prompt-eng' },
+              { id: 'd1-f3-2', name: '工作流设计.md', type: 'file', fileId: 'file-workflow' },
+              { id: 'd1-f3-3', name: '错误处理.md', type: 'file', fileId: 'file-errors' }
+            ]
+          },
+          {
+            id: 'd1-folder-4', name: '04-高级主题', type: 'folder', expanded: false,
+            children: [
+              { id: 'd1-f4-1', name: '多Agent协作.md', type: 'file', fileId: 'file-multi-agent' },
+              { id: 'd1-f4-2', name: '安全与合规.md', type: 'file', fileId: 'file-security' }
+            ]
+          }
         ]
       },
       {
-        id: 'd1-folder-2', name: '02-核心概念', type: 'folder', expanded: false,
+        id: 'kb-2',
+        name: '产品需求文档',
+        description: 'AI Agent 平台的产品需求与技术规格说明书。',
+        tags: ['产品', '需求', '规范'],
+        fileCount: 8,
+        updatedAt: '2026-05-10',
+        cover: 'dots',
         children: [
-          { id: 'd1-f2-1', name: 'Agent 架构.md', type: 'file', fileId: 'file-arch' },
-          { id: 'd1-f2-2', name: '工具调用.md', type: 'file', fileId: 'file-tools' },
-          { id: 'd1-f2-3', name: '记忆系统.md', type: 'file', fileId: 'file-memory' }
+          { id: 'd2-f1', name: '产品愿景.md', type: 'file', fileId: 'file-quickstart' },
+          {
+            id: 'd2-folder-1', name: '功能规格', type: 'folder', expanded: false,
+            children: [
+              { id: 'd2-f1-1', name: '用户认证.md', type: 'file', fileId: 'file-arch' },
+              { id: 'd2-f1-2', name: '知识库管理.md', type: 'file', fileId: 'file-memory' }
+            ]
+          }
         ]
       },
       {
-        id: 'd1-folder-3', name: '03-最佳实践', type: 'folder', expanded: false,
+        id: 'kb-3',
+        name: '技术架构规范',
+        description: '后端服务架构、API 设计与数据库规范。',
+        tags: ['技术', '架构', 'API'],
+        fileCount: 15,
+        updatedAt: '2026-05-08',
+        cover: 'waves',
         children: [
-          { id: 'd1-f3-1', name: '提示词工程.md', type: 'file', fileId: 'file-prompt-eng' },
-          { id: 'd1-f3-2', name: '工作流设计.md', type: 'file', fileId: 'file-workflow' },
-          { id: 'd1-f3-3', name: '错误处理.md', type: 'file', fileId: 'file-errors' }
+          { id: 'd3-f1', name: '系统架构概览.md', type: 'file', fileId: 'file-arch' },
+          { id: 'd3-f2', name: 'API 设计规范.md', type: 'file', fileId: 'file-tools' }
         ]
       },
       {
-        id: 'd1-folder-4', name: '04-高级主题', type: 'folder', expanded: false,
+        id: 'kb-4',
+        name: '团队协作手册',
+        description: '团队工作流程、代码审查规范与日常协作指南。',
+        tags: ['团队', '协作', '流程'],
+        fileCount: 6,
+        updatedAt: '2026-05-05',
+        cover: 'circles',
         children: [
-          { id: 'd1-f4-1', name: '多Agent协作.md', type: 'file', fileId: 'file-multi-agent' },
-          { id: 'd1-f4-2', name: '安全与合规.md', type: 'file', fileId: 'file-security' }
+          { id: 'd4-f1', name: '团队文化.md', type: 'file', fileId: 'file-quickstart' },
+          { id: 'd4-f2', name: '工作流程.md', type: 'file', fileId: 'file-workflow' },
+          { id: 'd4-f3', name: '代码审查规范.md', type: 'file', fileId: 'file-errors' }
+        ]
+      },
+      {
+        id: 'kb-5',
+        name: '设计系统组件库',
+        description: 'UI 组件库与设计规范，包含按钮、表单、导航等通用组件的使用指南与最佳实践。',
+        tags: ['设计', 'UI', '规范'],
+        fileCount: 9,
+        updatedAt: '2026-05-01',
+        cover: 'grid',
+        children: [
+          { id: 'd5-f1', name: '设计原则.md', type: 'file', fileId: 'file-arch' },
+          {
+            id: 'd5-folder-1', name: '基础组件', type: 'folder', expanded: false,
+            children: [
+              { id: 'd5-f1-1', name: '按钮规范.md', type: 'file', fileId: 'file-prompt-eng' },
+              { id: 'd5-f1-2', name: '表单组件.md', type: 'file', fileId: 'file-env' },
+              { id: 'd5-f1-3', name: '导航模式.md', type: 'file', fileId: 'file-workflow' }
+            ]
+          },
+          {
+            id: 'd5-folder-2', name: '设计 Token', type: 'folder', expanded: false,
+            children: [
+              { id: 'd5-f2-1', name: '颜色系统.md', type: 'file', fileId: 'file-memory' },
+              { id: 'd5-f2-2', name: '间距与排版.md', type: 'file', fileId: 'file-tools' }
+            ]
+          }
         ]
       }
-    ]
-  },
-  {
-    id: 'kb-2',
-    name: '产品需求文档',
-    description: 'AI Agent 平台的产品需求与技术规格说明书。',
-    tags: ['产品', '需求', '规范'],
-    fileCount: 8,
-    updatedAt: '2026-05-10',
-    cover: 'dots',
-    children: [
-      { id: 'd2-f1', name: '产品愿景.md', type: 'file', fileId: 'file-quickstart' },
-      { id: 'd2-folder-1', name: '功能规格', type: 'folder', expanded: false,
-        children: [
-          { id: 'd2-f1-1', name: '用户认证.md', type: 'file', fileId: 'file-arch' },
-          { id: 'd2-f1-2', name: '知识库管理.md', type: 'file', fileId: 'file-memory' }
-        ]
+    ];
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let state = {
+      kbs: JSON.parse(JSON.stringify(DEMO_DATA)),
+      viewMode: 'grid',
+      currentKbId: null,
+      currentFileId: null,
+      theme: 'light',
+      editing: false,
+      filterTag: null,
+      searchQuery: '',
+      fileSearchQuery: '',
+      draggedId: null,
+      renameTarget: null,    // { type: 'kb', id: '...' } | { type: 'file', id: '...', kbId: '...' }
+      deleteTarget: null,
+      selectedFileId: null,  // tree context menu target
+    };
+
+    let currentKb = null;
+
+    // ============================================================
+    // UTILITY
+    // ============================================================
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function refreshIcons() {
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    }
+
+    function getCoverHtml(cover) {
+      const accent = 'oklch(58% 0.18 255)';
+      const accentMuted = 'oklch(58% 0.18 255 / 0.25)';
+      const accentDim = 'oklch(58% 0.18 255 / 0.08)';
+      const patterns = {
+        circuit: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 48h40l20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20V0" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="40" cy="48" r="2" fill="${accent}"/><circle cx="100" cy="28" r="2" fill="${accent}"/><circle cx="180" cy="48" r="2" fill="${accent}"/><circle cx="260" cy="28" r="2" fill="${accent}"/><path d="M0 76h300" stroke="${accentMuted}" stroke-width="1"/></svg>`,
+        dots: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><circle cx="30" cy="24" r="3" fill="${accentMuted}"/><circle cx="80" cy="18" r="2" fill="${accentMuted}"/><circle cx="130" cy="30" r="4" fill="${accentMuted}"/><circle cx="180" cy="22" r="2.5" fill="${accentMuted}"/><circle cx="230" cy="28" r="3" fill="${accentMuted}"/><circle cx="280" cy="20" r="2" fill="${accentMuted}"/><circle cx="50" cy="60" r="2" fill="${accentMuted}"/><circle cx="100" cy="70" r="3" fill="${accentMuted}"/><circle cx="150" cy="58" r="2" fill="${accentMuted}"/><circle cx="200" cy="68" r="3.5" fill="${accentMuted}"/><circle cx="250" cy="62" r="2" fill="${accentMuted}"/></svg>`,
+        waves: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 50 C50 30 100 70 150 50 C200 30 250 70 300 50 V96 H0Z" fill="${accentMuted}" opacity="0.4"/><path d="M0 65 C50 50 100 80 150 65 C200 50 250 80 300 65 V96 H0Z" fill="${accent}" opacity="0.15"/></svg>`,
+        circles: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><circle cx="50" cy="48" r="38" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="130" cy="48" r="32" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="210" cy="48" r="38" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="90" cy="48" r="18" stroke="${accent}" stroke-width="1.5" fill="none"/><circle cx="170" cy="48" r="20" stroke="${accent}" stroke-width="1.5" fill="none"/></svg>`,
+        grid: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 24h300M0 48h300M0 72h300" stroke="${accentMuted}" stroke-width="1"/><path d="M60 0v96M120 0v96M180 0v96M240 0v96" stroke="${accentMuted}" stroke-width="1"/><rect x="64" y="4" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/><rect x="124" y="28" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/><rect x="4" y="52" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/></svg>`
+      };
+      // Ensure all SVGs use slice for consistent thumbnail cropping
+      for (const key in patterns) {
+        patterns[key] = patterns[key].replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"');
       }
-    ]
-  },
-  {
-    id: 'kb-3',
-    name: '技术架构规范',
-    description: '后端服务架构、API 设计与数据库规范。',
-    tags: ['技术', '架构', 'API'],
-    fileCount: 15,
-    updatedAt: '2026-05-08',
-    cover: 'waves',
-    children: [
-      { id: 'd3-f1', name: '系统架构概览.md', type: 'file', fileId: 'file-arch' },
-      { id: 'd3-f2', name: 'API 设计规范.md', type: 'file', fileId: 'file-tools' }
-    ]
-  },
-  {
-    id: 'kb-4',
-    name: '团队协作手册',
-    description: '团队工作流程、代码审查规范与日常协作指南。',
-    tags: ['团队', '协作', '流程'],
-    fileCount: 6,
-    updatedAt: '2026-05-05',
-    cover: 'circles',
-    children: [
-      { id: 'd4-f1', name: '团队文化.md', type: 'file', fileId: 'file-quickstart' },
-      { id: 'd4-f2', name: '工作流程.md', type: 'file', fileId: 'file-workflow' },
-      { id: 'd4-f3', name: '代码审查规范.md', type: 'file', fileId: 'file-errors' }
-    ]
-  },
-  {
-    id: 'kb-5',
-    name: '设计系统组件库',
-    description: 'UI 组件库与设计规范，包含按钮、表单、导航等通用组件的使用指南与最佳实践。',
-    tags: ['设计', 'UI', '规范'],
-    fileCount: 9,
-    updatedAt: '2026-05-01',
-    cover: 'grid',
-    children: [
-      { id: 'd5-f1', name: '设计原则.md', type: 'file', fileId: 'file-arch' },
-      { id: 'd5-folder-1', name: '基础组件', type: 'folder', expanded: false,
-        children: [
-          { id: 'd5-f1-1', name: '按钮规范.md', type: 'file', fileId: 'file-prompt-eng' },
-          { id: 'd5-f1-2', name: '表单组件.md', type: 'file', fileId: 'file-env' },
-          { id: 'd5-f1-3', name: '导航模式.md', type: 'file', fileId: 'file-workflow' }
-        ]
-      },
-      { id: 'd5-folder-2', name: '设计 Token', type: 'folder', expanded: false,
-        children: [
-          { id: 'd5-f2-1', name: '颜色系统.md', type: 'file', fileId: 'file-memory' },
-          { id: 'd5-f2-2', name: '间距与排版.md', type: 'file', fileId: 'file-tools' }
-        ]
+      return patterns[cover] || patterns.circuit;
+    }
+
+    function getFileContent(fileId) {
+      return DEMO_FILES[fileId] || '# 文档内容\n\n暂无内容。';
+    }
+
+    function findNode(tree, id) {
+      for (const n of tree) {
+        if (n.id === id) return n;
+        if (n.children) {
+          const found = findNode(n.children, id);
+          if (found) return found;
+        }
       }
-    ]
-  }
-];
-
-// ============================================================
-// STATE
-// ============================================================
-let state = {
-  kbs: JSON.parse(JSON.stringify(DEMO_DATA)),
-  viewMode: 'grid',
-  currentKbId: null,
-  currentFileId: null,
-  theme: 'light',
-  editing: false,
-  filterTag: null,
-  searchQuery: '',
-  fileSearchQuery: '',
-  draggedId: null,
-  renameTarget: null,    // { type: 'kb', id: '...' } | { type: 'file', id: '...', kbId: '...' }
-  deleteTarget: null,
-  selectedFileId: null,  // tree context menu target
-};
-
-let currentKb = null;
-
-// ============================================================
-// UTILITY
-// ============================================================
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function refreshIcons() {
-  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-}
-
-function getCoverHtml(cover) {
-  const accent = 'oklch(58% 0.18 255)';
-  const accentMuted = 'oklch(58% 0.18 255 / 0.25)';
-  const accentDim = 'oklch(58% 0.18 255 / 0.08)';
-  const patterns = {
-    circuit: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 48h40l20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20 20-20 20 20V0" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="40" cy="48" r="2" fill="${accent}"/><circle cx="100" cy="28" r="2" fill="${accent}"/><circle cx="180" cy="48" r="2" fill="${accent}"/><circle cx="260" cy="28" r="2" fill="${accent}"/><path d="M0 76h300" stroke="${accentMuted}" stroke-width="1"/></svg>`,
-    dots: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><circle cx="30" cy="24" r="3" fill="${accentMuted}"/><circle cx="80" cy="18" r="2" fill="${accentMuted}"/><circle cx="130" cy="30" r="4" fill="${accentMuted}"/><circle cx="180" cy="22" r="2.5" fill="${accentMuted}"/><circle cx="230" cy="28" r="3" fill="${accentMuted}"/><circle cx="280" cy="20" r="2" fill="${accentMuted}"/><circle cx="50" cy="60" r="2" fill="${accentMuted}"/><circle cx="100" cy="70" r="3" fill="${accentMuted}"/><circle cx="150" cy="58" r="2" fill="${accentMuted}"/><circle cx="200" cy="68" r="3.5" fill="${accentMuted}"/><circle cx="250" cy="62" r="2" fill="${accentMuted}"/></svg>`,
-    waves: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 50 C50 30 100 70 150 50 C200 30 250 70 300 50 V96 H0Z" fill="${accentMuted}" opacity="0.4"/><path d="M0 65 C50 50 100 80 150 65 C200 50 250 80 300 65 V96 H0Z" fill="${accent}" opacity="0.15"/></svg>`,
-    circles: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><circle cx="50" cy="48" r="38" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="130" cy="48" r="32" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="210" cy="48" r="38" stroke="${accentMuted}" stroke-width="1" fill="none"/><circle cx="90" cy="48" r="18" stroke="${accent}" stroke-width="1.5" fill="none"/><circle cx="170" cy="48" r="20" stroke="${accent}" stroke-width="1.5" fill="none"/></svg>`,
-    grid: `<svg viewBox="0 0 300 96" fill="none"><rect width="300" height="96" fill="${accentDim}"/><path d="M0 24h300M0 48h300M0 72h300" stroke="${accentMuted}" stroke-width="1"/><path d="M60 0v96M120 0v96M180 0v96M240 0v96" stroke="${accentMuted}" stroke-width="1"/><rect x="64" y="4" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/><rect x="124" y="28" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/><rect x="4" y="52" width="52" height="16" rx="2" fill="${accent}" opacity="0.12"/></svg>`
-  };
-  // Ensure all SVGs use slice for consistent thumbnail cropping
-  for (const key in patterns) {
-    patterns[key] = patterns[key].replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"');
-  }
-  return patterns[cover] || patterns.circuit;
-}
-
-function getFileContent(fileId) {
-  return DEMO_FILES[fileId] || '# 文档内容\n\n暂无内容。';
-}
-
-function findNode(tree, id) {
-  for (const n of tree) {
-    if (n.id === id) return n;
-    if (n.children) {
-      const found = findNode(n.children, id);
-      if (found) return found;
+      return null;
     }
-  }
-  return null;
-}
 
-function findParent(tree, id) {
-  for (const n of tree) {
-    if (n.children) {
-      if (n.children.some(c => c.id === id)) return n;
-      const found = findParent(n.children, id);
-      if (found) return found;
+    function findParent(tree, id) {
+      for (const n of tree) {
+        if (n.children) {
+          if (n.children.some(c => c.id === id)) return n;
+          const found = findParent(n.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
     }
-  }
-  return null;
-}
 
-function getAllFileIds(tree) {
-  let ids = [];
-  for (const n of tree) {
-    if (n.type === 'file' && n.fileId) ids.push(n.id);
-    if (n.children) ids = ids.concat(getAllFileIds(n.children));
-  }
-  return ids;
-}
-
-function getFolderPaths(tree, prefix = '') {
-  let paths = [];
-  for (const n of tree) {
-    if (n.type === 'folder') {
-      const path = prefix + n.name;
-      paths.push({ id: n.id, path });
-      if (n.children) paths = paths.concat(getFolderPaths(n.children, path + '/'));
+    function getAllFileIds(tree) {
+      let ids = [];
+      for (const n of tree) {
+        if (n.type === 'file' && n.fileId) ids.push(n.id);
+        if (n.children) ids = ids.concat(getAllFileIds(n.children));
+      }
+      return ids;
     }
-  }
-  return paths;
-}
 
-// ============================================================
-// MARKDOWN RENDERER
-// ============================================================
-function renderMarkdown(md) {
-  let html = md
-    // code block (must be first)
-    .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
-      const escaped = escapeHtml(code);
-      return `<pre><code>${escaped}</code></pre>`;
-    })
-    // inline code
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // headings
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    // blockquote
-    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-    // horizontal rule
-    .replace(/^---$/gm, '<hr>')
-    // bold & italic
-    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/_(.+?)_/g, '<em>$1</em>')
-    // tables
-    .replace(/\n((\|[^\n]+\|\n)((?:\|[^\n]+\|\n?)*))/g, (match) => {
-      const lines = match.trim().split('\n');
-      if (lines.length < 2) return match;
-      const headerCells = lines[0].split('|').filter(c => c.trim());
-      const header = headerCells.map(c => `<th>${c.trim()}</th>`).join('');
-      const sep = lines[1];
-      const rows = lines.slice(2).map(line => {
-        const cells = line.split('|').filter(c => c.trim());
-        return `<tr>${cells.map(c => `<td>${c.trim()}</td>`).join('')}</tr>`;
-      }).join('');
-      return `<table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
-    })
-    // images
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2" style="max-width:100%">')
-    // links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-    // unordered list
-    .replace(/^[\s]*[-*] (.+)$/gm, '<li>$1</li>')
-    // ordered list
-    .replace(/^[\s]*\d+\. (.+)$/gm, '<li>$1</li>')
-    // paragraphs: wrap remaining lines
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[hbp<ta]|<\/[hbp]|<li|<bl|<hr)(.+)$/gm, '$1');
+    function getFolderPaths(tree, prefix = '') {
+      let paths = [];
+      for (const n of tree) {
+        if (n.type === 'folder') {
+          const path = prefix + n.name;
+          paths.push({ id: n.id, path });
+          if (n.children) paths = paths.concat(getFolderPaths(n.children, path + '/'));
+        }
+      }
+      return paths;
+    }
 
-  // Wrap consecutive <li> in <ul>
-  html = html.replace(/(<li>.*?<\/li>(\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+    // ============================================================
+    // MARKDOWN RENDERER
+    // ============================================================
+    function renderMarkdown(md) {
+      let html = md
+        // code block (must be first)
+        .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+          const escaped = escapeHtml(code);
+          return `<pre><code>${escaped}</code></pre>`;
+        })
+        // inline code
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // headings
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // blockquote
+        .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+        // horizontal rule
+        .replace(/^---$/gm, '<hr>')
+        // bold & italic
+        .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/_(.+?)_/g, '<em>$1</em>')
+        // tables
+        .replace(/\n((\|[^\n]+\|\n)((?:\|[^\n]+\|\n?)*))/g, (match) => {
+          const lines = match.trim().split('\n');
+          if (lines.length < 2) return match;
+          const headerCells = lines[0].split('|').filter(c => c.trim());
+          const header = headerCells.map(c => `<th>${c.trim()}</th>`).join('');
+          const sep = lines[1];
+          const rows = lines.slice(2).map(line => {
+            const cells = line.split('|').filter(c => c.trim());
+            return `<tr>${cells.map(c => `<td>${c.trim()}</td>`).join('')}</tr>`;
+          }).join('');
+          return `<table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+        })
+        // images
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2" style="max-width:100%">')
+        // links
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+        // unordered list
+        .replace(/^[\s]*[-*] (.+)$/gm, '<li>$1</li>')
+        // ordered list
+        .replace(/^[\s]*\d+\. (.+)$/gm, '<li>$1</li>')
+        // paragraphs: wrap remaining lines
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hbp<ta]|<\/[hbp]|<li|<bl|<hr)(.+)$/gm, '$1');
 
-  // Wrap blockquotes that might have been split
-  html = html.replace(/(<blockquote>.*?<\/blockquote>(\s*<blockquote>.*?<\/blockquote>)*)/gs, match => {
-    return match.replace(/<\/blockquote>\s*<blockquote>/g, '<br>');
-  });
+      // Wrap consecutive <li> in <ul>
+      html = html.replace(/(<li>.*?<\/li>(\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
 
-  return `<p>${html}</p>`;
-}
+      // Wrap blockquotes that might have been split
+      html = html.replace(/(<blockquote>.*?<\/blockquote>(\s*<blockquote>.*?<\/blockquote>)*)/gs, match => {
+        return match.replace(/<\/blockquote>\s*<blockquote>/g, '<br>');
+      });
 
-// ============================================================
-// THEME
-// ============================================================
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  state.theme = isDark ? 'light' : 'dark';
-  document.getElementById('dark-toggle-list').innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" style="width:16px;height:16px"></i>';
-  document.getElementById('dark-toggle-detail').innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" style="width:16px;height:16px"></i>';
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-}
+      return `<p>${html}</p>`;
+    }
 
-// ============================================================
-// MODALS
-// ============================================================
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-});
+    // ============================================================
+    // THEME
+    // ============================================================
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      state.theme = isDark ? 'light' : 'dark';
+      document.getElementById('dark-toggle-list').innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" style="width:16px;height:16px"></i>';
+      document.getElementById('dark-toggle-detail').innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" style="width:16px;height:16px"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
 
-// ============================================================
-// KB LIST RENDER
-// ============================================================
-function getAllTags() {
-  const tags = new Set();
-  state.kbs.forEach(kb => kb.tags.forEach(t => tags.add(t)));
-  return [...tags].sort();
-}
-
-function renderTags() {
-  const container = document.getElementById('tags-filter');
-  const tags = getAllTags();
-  if (tags.length === 0) { container.innerHTML = ''; return; }
-  let html = '<span class="tag-chip' + (state.filterTag === null ? ' active' : '') + '" data-tag="">全部</span>';
-  tags.forEach(t => {
-    html += '<span class="tag-chip' + (state.filterTag === t ? ' active' : '') + '" data-tag="' + escapeHtml(t) + '">' + escapeHtml(t) + '</span>';
-  });
-  container.innerHTML = html;
-  container.querySelectorAll('.tag-chip').forEach(el => {
-    el.addEventListener('click', () => {
-      const tag = el.dataset.tag || null;
-      state.filterTag = tag;
-      renderTags();
-      renderKbList();
+    // ============================================================
+    // MODALS
+    // ============================================================
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+      el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
     });
-  });
-}
 
-function getFilteredKbs() {
-  let list = state.kbs;
-  if (state.filterTag) list = list.filter(kb => kb.tags.includes(state.filterTag));
-  if (state.searchQuery) {
-    const q = state.searchQuery.toLowerCase();
-    list = list.filter(kb =>
-      kb.name.toLowerCase().includes(q) || kb.description.toLowerCase().includes(q)
-    );
-  }
-  return list;
-}
+    // ============================================================
+    // KB LIST RENDER
+    // ============================================================
+    function getAllTags() {
+      const tags = new Set();
+      state.kbs.forEach(kb => kb.tags.forEach(t => tags.add(t)));
+      return [...tags].sort();
+    }
 
-function renderKbList() {
-  const container = document.getElementById('kb-container');
-  const list = getFilteredKbs();
+    function renderTags() {
+      const container = document.getElementById('tags-filter');
+      const tags = getAllTags();
+      if (tags.length === 0) { container.innerHTML = ''; return; }
+      let html = '<span class="tag-chip' + (state.filterTag === null ? ' active' : '') + '" data-tag="">全部</span>';
+      tags.forEach(t => {
+        html += '<span class="tag-chip' + (state.filterTag === t ? ' active' : '') + '" data-tag="' + escapeHtml(t) + '">' + escapeHtml(t) + '</span>';
+      });
+      container.innerHTML = html;
+      container.querySelectorAll('.tag-chip').forEach(el => {
+        el.addEventListener('click', () => {
+          const tag = el.dataset.tag || null;
+          state.filterTag = tag;
+          renderTags();
+          renderKbList();
+        });
+      });
+    }
 
-  if (list.length === 0) {
-    container.innerHTML = `<div class="empty-state"><i data-lucide="folder-open" style="width:40px;height:40px;opacity:0.5;color:var(--muted);margin-bottom:12px"></i><p>${state.searchQuery ? '没有匹配的知识库' : '还没有知识库，点击「+ 新建」创建一个'}</p></div>`;
-    return;
-  }
+    function getFilteredKbs() {
+      let list = state.kbs;
+      if (state.filterTag) list = list.filter(kb => kb.tags.includes(state.filterTag));
+      if (state.searchQuery) {
+        const q = state.searchQuery.toLowerCase();
+        list = list.filter(kb =>
+          kb.name.toLowerCase().includes(q) || kb.description.toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
 
-  let html = '';
-  list.forEach(kb => {
-    if (state.viewMode === 'grid') {
-      html += `
+    function renderKbList() {
+      const container = document.getElementById('kb-container');
+      const list = getFilteredKbs();
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i data-lucide="folder-open" style="width:40px;height:40px;opacity:0.5;color:var(--muted);margin-bottom:12px"></i><p>${state.searchQuery ? '没有匹配的知识库' : '还没有知识库，点击「+ 新建」创建一个'}</p></div>`;
+        return;
+      }
+
+      let html = '';
+      list.forEach(kb => {
+        if (state.viewMode === 'grid') {
+          html += `
         <div class="kb-card" draggable="true" data-kb-id="${kb.id}">
           <div class="kb-card-cover cover-${kb.cover || 'circuit'}">
             ${getCoverHtml(kb.cover)}
@@ -1665,8 +2084,8 @@ function renderKbList() {
             <span><i data-lucide="clock" style="width:13px;height:13px;vertical-align:middle"></i> ${kb.updatedAt}</span>
           </div>
         </div>`;
-    } else {
-      html += `
+        } else {
+          html += `
         <div class="kb-card" draggable="true" data-kb-id="${kb.id}">
           <div class="kb-card-cover cover-${kb.cover || 'circuit'}">
             ${getCoverHtml(kb.cover)}
@@ -1687,252 +2106,252 @@ function renderKbList() {
             </div>
           </div>
         </div>`;
-    }
-  });
-  container.innerHTML = html;
+        }
+      });
+      container.innerHTML = html;
 
-  // Click to navigate to detail
-  container.querySelectorAll('.kb-card').forEach(el => {
-    const kbId = el.dataset.kbId;
-    el.addEventListener('click', e => {
-      if (e.target.closest('.kb-menu')) return;
-      navigateToDetail(kbId);
+      // Click to navigate to detail
+      container.querySelectorAll('.kb-card').forEach(el => {
+        const kbId = el.dataset.kbId;
+        el.addEventListener('click', e => {
+          if (e.target.closest('.kb-menu')) return;
+          navigateToDetail(kbId);
+        });
+        // Drag
+        el.addEventListener('dragstart', e => {
+          state.draggedId = kbId;
+          el.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        el.addEventListener('dragend', () => {
+          el.classList.remove('dragging');
+          state.draggedId = null;
+        });
+        el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+        el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+        el.addEventListener('drop', e => {
+          e.preventDefault();
+          el.classList.remove('drag-over');
+          if (state.draggedId && state.draggedId !== kbId) {
+            const fromIdx = state.kbs.findIndex(k => k.id === state.draggedId);
+            const toIdx = state.kbs.findIndex(k => k.id === kbId);
+            if (fromIdx !== -1 && toIdx !== -1) {
+              const [moved] = state.kbs.splice(fromIdx, 1);
+              state.kbs.splice(toIdx, 0, moved);
+              renderKbList();
+            }
+          }
+        });
+      });
+
+      // KB menu dropdowns
+      document.querySelectorAll('[data-menu-btn]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const id = btn.dataset.menuBtn;
+          document.querySelectorAll('.kb-dropdown.open').forEach(d => {
+            if (d.dataset.dropdown !== id) d.classList.remove('open');
+          });
+          const dd = document.querySelector(`[data-dropdown="${id}"]`);
+          if (dd) dd.classList.toggle('open');
+        });
+      });
+      // Close dropdowns on outside click
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.kb-dropdown.open').forEach(d => d.classList.remove('open'));
+      }, true);
+
+      // Dropdown actions
+      document.querySelectorAll('[data-action="rename"]').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); renameKb(btn.dataset.id); });
+      });
+      document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); deleteKb(btn.dataset.id); });
+      });
+      refreshIcons();
+    }
+
+    // ============================================================
+    // KB CRUD
+    // ============================================================
+    function createKb() {
+      openModal('create-modal');
+      document.getElementById('new-kb-name').value = '';
+      document.getElementById('new-kb-desc').value = '';
+      document.getElementById('new-kb-tags').value = '';
+      // Reset cover picker to first option
+      document.querySelectorAll('#cover-picker .cover-option').forEach((el, i) => {
+        el.classList.toggle('active', i === 0);
+        if (i === 0) el.querySelector('input').checked = true;
+      });
+    }
+
+    // Cover picker interaction
+    document.getElementById('cover-picker').addEventListener('click', e => {
+      const option = e.target.closest('.cover-option');
+      if (!option) return;
+      document.querySelectorAll('#cover-picker .cover-option').forEach(el => el.classList.remove('active'));
+      option.classList.add('active');
+      option.querySelector('input').checked = true;
     });
-    // Drag
-    el.addEventListener('dragstart', e => {
-      state.draggedId = kbId;
-      el.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
+
+    document.getElementById('confirm-create').addEventListener('click', () => {
+      const name = document.getElementById('new-kb-name').value.trim();
+      const desc = document.getElementById('new-kb-desc').value.trim();
+      const tagsStr = document.getElementById('new-kb-tags').value.trim();
+      if (!name) return;
+      const tags = tagsStr ? tagsStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [];
+      const selectedCover = document.querySelector('#cover-picker input[name="kb-cover"]:checked');
+      const id = 'kb-' + Date.now();
+      state.kbs.unshift({
+        id,
+        name,
+        description: desc || '暂无描述',
+        tags,
+        fileCount: 0,
+        updatedAt: new Date().toISOString().slice(0, 10),
+        cover: selectedCover ? selectedCover.value : 'circuit',
+        children: []
+      });
+      closeModal('create-modal');
+      renderTags();
+      renderKbList();
     });
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      state.draggedId = null;
+
+    document.getElementById('create-kb-btn').addEventListener('click', createKb);
+    document.getElementById('cancel-create').addEventListener('click', () => closeModal('create-modal'));
+
+    function renameKb(id) {
+      const kb = state.kbs.find(k => k.id === id);
+      if (!kb) return;
+      state.renameTarget = { type: 'kb', id };
+      document.getElementById('rename-input').value = kb.name;
+      openModal('rename-modal');
+    }
+
+    document.getElementById('confirm-rename').addEventListener('click', () => {
+      const name = document.getElementById('rename-input').value.trim();
+      if (!name || !state.renameTarget) return;
+      if (state.renameTarget.type === 'kb') {
+        const kb = state.kbs.find(k => k.id === state.renameTarget.id);
+        if (kb) kb.name = name;
+      } else if (state.renameTarget.type === 'file') {
+        const kb = state.kbs.find(k => k.id === state.renameTarget.kbId);
+        if (kb) {
+          const node = findNode(kb.children, state.renameTarget.id);
+          if (node) node.name = name;
+        }
+        renderFileTree();
+        const fn = document.getElementById('editor-filename');
+        if (fn) fn.textContent = name;
+      }
+      state.renameTarget = null;
+      closeModal('rename-modal');
+      renderKbList();
+      if (state.currentKbId) {
+        const title = document.getElementById('detail-title');
+        const kb = state.kbs.find(k => k.id === state.currentKbId);
+        if (kb) title.textContent = kb.name;
+      }
     });
-    el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
-    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      el.classList.remove('drag-over');
-      if (state.draggedId && state.draggedId !== kbId) {
-        const fromIdx = state.kbs.findIndex(k => k.id === state.draggedId);
-        const toIdx = state.kbs.findIndex(k => k.id === kbId);
-        if (fromIdx !== -1 && toIdx !== -1) {
-          const [moved] = state.kbs.splice(fromIdx, 1);
-          state.kbs.splice(toIdx, 0, moved);
-          renderKbList();
+
+    document.getElementById('cancel-rename').addEventListener('click', () => {
+      state.renameTarget = null;
+      closeModal('rename-modal');
+    });
+
+    function deleteKb(id) {
+      const kb = state.kbs.find(k => k.id === id);
+      if (!kb) return;
+      state.deleteTarget = { type: 'kb', id };
+      document.getElementById('delete-msg').textContent = `确定要删除「${kb.name}」吗？此操作不可撤销。`;
+      openModal('delete-modal');
+    }
+
+    document.getElementById('confirm-delete').addEventListener('click', () => {
+      if (!state.deleteTarget) return;
+      if (state.deleteTarget.type === 'kb') {
+        state.kbs = state.kbs.filter(k => k.id !== state.deleteTarget.id);
+      } else if (state.deleteTarget.type === 'file') {
+        const kb = state.kbs.find(k => k.id === state.deleteTarget.kbId);
+        if (kb) {
+          const parent = findParent(kb.children, state.deleteTarget.id);
+          if (parent) {
+            parent.children = (parent.children || []).filter(c => c.id !== state.deleteTarget.id);
+          } else {
+            kb.children = kb.children.filter(c => c.id !== state.deleteTarget.id);
+          }
+          kb.fileCount = Math.max(0, kb.fileCount - 1);
+          renderFileTree();
         }
       }
+      state.deleteTarget = null;
+      closeModal('delete-modal');
+      renderKbList();
     });
-  });
 
-  // KB menu dropdowns
-  document.querySelectorAll('[data-menu-btn]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const id = btn.dataset.menuBtn;
-      document.querySelectorAll('.kb-dropdown.open').forEach(d => {
-        if (d.dataset.dropdown !== id) d.classList.remove('open');
-      });
-      const dd = document.querySelector(`[data-dropdown="${id}"]`);
-      if (dd) dd.classList.toggle('open');
+    document.getElementById('cancel-delete').addEventListener('click', () => {
+      state.deleteTarget = null;
+      closeModal('delete-modal');
     });
-  });
-  // Close dropdowns on outside click
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.kb-dropdown.open').forEach(d => d.classList.remove('open'));
-  }, true);
 
-  // Dropdown actions
-  document.querySelectorAll('[data-action="rename"]').forEach(btn => {
-    btn.addEventListener('click', e => { e.stopPropagation(); renameKb(btn.dataset.id); });
-  });
-  document.querySelectorAll('[data-action="delete"]').forEach(btn => {
-    btn.addEventListener('click', e => { e.stopPropagation(); deleteKb(btn.dataset.id); });
-  });
-  refreshIcons();
-}
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
+    function navigateToDetail(kbId) {
+      state.currentKbId = kbId;
+      currentKb = state.kbs.find(k => k.id === kbId);
+      if (!currentKb) return;
 
-// ============================================================
-// KB CRUD
-// ============================================================
-function createKb() {
-  openModal('create-modal');
-  document.getElementById('new-kb-name').value = '';
-  document.getElementById('new-kb-desc').value = '';
-  document.getElementById('new-kb-tags').value = '';
-  // Reset cover picker to first option
-  document.querySelectorAll('#cover-picker .cover-option').forEach((el, i) => {
-    el.classList.toggle('active', i === 0);
-    if (i === 0) el.querySelector('input').checked = true;
-  });
-}
+      document.getElementById('screen-list').classList.add('hidden');
+      document.getElementById('screen-detail').classList.remove('hidden');
+      document.getElementById('detail-title').textContent = currentKb.name;
+      state.currentFileId = null;
+      state.editing = false;
 
-// Cover picker interaction
-document.getElementById('cover-picker').addEventListener('click', e => {
-  const option = e.target.closest('.cover-option');
-  if (!option) return;
-  document.querySelectorAll('#cover-picker .cover-option').forEach(el => el.classList.remove('active'));
-  option.classList.add('active');
-  option.querySelector('input').checked = true;
-});
+      document.getElementById('content-empty').classList.remove('hidden');
+      document.getElementById('markdown-viewer').classList.add('hidden');
+      document.getElementById('editor-section').classList.add('hidden');
 
-document.getElementById('confirm-create').addEventListener('click', () => {
-  const name = document.getElementById('new-kb-name').value.trim();
-  const desc = document.getElementById('new-kb-desc').value.trim();
-  const tagsStr = document.getElementById('new-kb-tags').value.trim();
-  if (!name) return;
-  const tags = tagsStr ? tagsStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [];
-  const selectedCover = document.querySelector('#cover-picker input[name="kb-cover"]:checked');
-  const id = 'kb-' + Date.now();
-  state.kbs.unshift({
-    id,
-    name,
-    description: desc || '暂无描述',
-    tags,
-    fileCount: 0,
-    updatedAt: new Date().toISOString().slice(0, 10),
-    cover: selectedCover ? selectedCover.value : 'circuit',
-    children: []
-  });
-  closeModal('create-modal');
-  renderTags();
-  renderKbList();
-});
-
-document.getElementById('create-kb-btn').addEventListener('click', createKb);
-document.getElementById('cancel-create').addEventListener('click', () => closeModal('create-modal'));
-
-function renameKb(id) {
-  const kb = state.kbs.find(k => k.id === id);
-  if (!kb) return;
-  state.renameTarget = { type: 'kb', id };
-  document.getElementById('rename-input').value = kb.name;
-  openModal('rename-modal');
-}
-
-document.getElementById('confirm-rename').addEventListener('click', () => {
-  const name = document.getElementById('rename-input').value.trim();
-  if (!name || !state.renameTarget) return;
-  if (state.renameTarget.type === 'kb') {
-    const kb = state.kbs.find(k => k.id === state.renameTarget.id);
-    if (kb) kb.name = name;
-  } else if (state.renameTarget.type === 'file') {
-    const kb = state.kbs.find(k => k.id === state.renameTarget.kbId);
-    if (kb) {
-      const node = findNode(kb.children, state.renameTarget.id);
-      if (node) node.name = name;
-    }
-    renderFileTree();
-    const fn = document.getElementById('editor-filename');
-    if (fn) fn.textContent = name;
-  }
-  state.renameTarget = null;
-  closeModal('rename-modal');
-  renderKbList();
-  if (state.currentKbId) {
-    const title = document.getElementById('detail-title');
-    const kb = state.kbs.find(k => k.id === state.currentKbId);
-    if (kb) title.textContent = kb.name;
-  }
-});
-
-document.getElementById('cancel-rename').addEventListener('click', () => {
-  state.renameTarget = null;
-  closeModal('rename-modal');
-});
-
-function deleteKb(id) {
-  const kb = state.kbs.find(k => k.id === id);
-  if (!kb) return;
-  state.deleteTarget = { type: 'kb', id };
-  document.getElementById('delete-msg').textContent = `确定要删除「${kb.name}」吗？此操作不可撤销。`;
-  openModal('delete-modal');
-}
-
-document.getElementById('confirm-delete').addEventListener('click', () => {
-  if (!state.deleteTarget) return;
-  if (state.deleteTarget.type === 'kb') {
-    state.kbs = state.kbs.filter(k => k.id !== state.deleteTarget.id);
-  } else if (state.deleteTarget.type === 'file') {
-    const kb = state.kbs.find(k => k.id === state.deleteTarget.kbId);
-    if (kb) {
-      const parent = findParent(kb.children, state.deleteTarget.id);
-      if (parent) {
-        parent.children = (parent.children || []).filter(c => c.id !== state.deleteTarget.id);
-      } else {
-        kb.children = kb.children.filter(c => c.id !== state.deleteTarget.id);
-      }
-      kb.fileCount = Math.max(0, kb.fileCount - 1);
       renderFileTree();
     }
-  }
-  state.deleteTarget = null;
-  closeModal('delete-modal');
-  renderKbList();
-});
 
-document.getElementById('cancel-delete').addEventListener('click', () => {
-  state.deleteTarget = null;
-  closeModal('delete-modal');
-});
+    document.getElementById('back-btn').addEventListener('click', () => {
+      state.currentKbId = null;
+      state.currentFileId = null;
+      currentKb = null;
+      document.getElementById('screen-detail').classList.add('hidden');
+      document.getElementById('screen-list').classList.remove('hidden');
+      renderKbList();
+    });
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-function navigateToDetail(kbId) {
-  state.currentKbId = kbId;
-  currentKb = state.kbs.find(k => k.id === kbId);
-  if (!currentKb) return;
+    // ============================================================
+    // FILE TREE
+    // ============================================================
+    function renderFileTree() {
+      const container = document.getElementById('file-tree');
+      if (!currentKb) { container.innerHTML = ''; return; }
+      let html = buildTreeHtml(currentKb.children, 0);
+      container.innerHTML = html;
+      bindTreeEvents(currentKb.children);
+      refreshIcons();
+    }
 
-  document.getElementById('screen-list').classList.add('hidden');
-  document.getElementById('screen-detail').classList.remove('hidden');
-  document.getElementById('detail-title').textContent = currentKb.name;
-  state.currentFileId = null;
-  state.editing = false;
+    function buildTreeHtml(nodes, depth) {
+      let html = '';
+      const query = state.fileSearchQuery.toLowerCase();
+      for (const node of nodes) {
+        const isFolder = node.type === 'folder';
+        const nameMatch = !query || node.name.toLowerCase().includes(query);
 
-  document.getElementById('content-empty').classList.remove('hidden');
-  document.getElementById('markdown-viewer').classList.add('hidden');
-  document.getElementById('editor-section').classList.add('hidden');
+        if (isFolder) {
+          const childrenHtml = buildTreeHtml(node.children || [], depth + 1);
+          const hasVisibleChildren = !query || childrenHtml.includes('tree-node-content');
 
-  renderFileTree();
-}
+          if (query && !nameMatch && !hasVisibleChildren) continue;
 
-document.getElementById('back-btn').addEventListener('click', () => {
-  state.currentKbId = null;
-  state.currentFileId = null;
-  currentKb = null;
-  document.getElementById('screen-detail').classList.add('hidden');
-  document.getElementById('screen-list').classList.remove('hidden');
-  renderKbList();
-});
-
-// ============================================================
-// FILE TREE
-// ============================================================
-function renderFileTree() {
-  const container = document.getElementById('file-tree');
-  if (!currentKb) { container.innerHTML = ''; return; }
-  let html = buildTreeHtml(currentKb.children, 0);
-  container.innerHTML = html;
-  bindTreeEvents(currentKb.children);
-  refreshIcons();
-}
-
-function buildTreeHtml(nodes, depth) {
-  let html = '';
-  const query = state.fileSearchQuery.toLowerCase();
-  for (const node of nodes) {
-    const isFolder = node.type === 'folder';
-    const nameMatch = !query || node.name.toLowerCase().includes(query);
-
-    if (isFolder) {
-      const childrenHtml = buildTreeHtml(node.children || [], depth + 1);
-      const hasVisibleChildren = !query || childrenHtml.includes('tree-node-content');
-
-      if (query && !nameMatch && !hasVisibleChildren) continue;
-
-      const isExpanded = query ? true : node.expanded;
-      html += `<div class="tree-node" data-id="${node.id}" data-type="folder">
+          const isExpanded = query ? true : node.expanded;
+          html += `<div class="tree-node" data-id="${node.id}" data-type="folder">
         <div class="tree-node-content${state.currentFileId === node.id ? ' active' : ''}">
           <span class="tree-node-toggle${isExpanded ? ' expanded' : ''}${(!node.children || node.children.length === 0) ? ' hidden-toggle' : ''}"><i data-lucide="chevron-right" style="width:12px;height:12px"></i></span>
           <span class="tree-node-icon folder-icon"><i data-lucide="folder" style="width:14px;height:14px"></i></span>
@@ -1942,271 +2361,272 @@ function buildTreeHtml(nodes, depth) {
           ${childrenHtml}
         </div>
       </div>`;
-    } else {
-      if (query && !nameMatch) continue;
-      html += `<div class="tree-node" data-id="${node.id}" data-type="file">
+        } else {
+          if (query && !nameMatch) continue;
+          html += `<div class="tree-node" data-id="${node.id}" data-type="file">
         <div class="tree-node-content${state.currentFileId === node.id ? ' active' : ''}">
           <span class="tree-node-toggle hidden-toggle"><i data-lucide="chevron-right" style="width:12px;height:12px"></i></span>
           <span class="tree-node-icon"><i data-lucide="file-text" style="width:14px;height:14px"></i></span>
           <span class="tree-node-name">${escapeHtml(node.name)}</span>
         </div>
       </div>`;
-    }
-  }
-  return html;
-}
-
-function bindTreeEvents(nodes) {
-  const container = document.getElementById('file-tree');
-  container.querySelectorAll('.tree-node-content').forEach(el => {
-    const nodeDiv = el.closest('.tree-node');
-    if (!nodeDiv) return;
-    const id = nodeDiv.dataset.id;
-    const type = nodeDiv.dataset.type;
-
-    el.addEventListener('click', e => {
-      if (type === 'folder') {
-        const toggle = el.querySelector('.tree-node-toggle');
-        const children = nodeDiv.querySelector('.tree-children');
-        if (children) {
-          const isOpen = children.style.display !== 'none';
-          children.style.display = isOpen ? 'none' : 'block';
-          if (toggle) toggle.classList.toggle('expanded');
-          const node = findNode(nodes, id);
-          if (node) node.expanded = !isOpen;
         }
-      } else {
-        openFile(id);
       }
-    });
-
-    el.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      if (type !== 'file') return;
-      state.selectedFileId = id;
-      const menu = document.getElementById('tree-context-menu');
-      menu.style.left = e.clientX + 'px';
-      menu.style.top = e.clientY + 'px';
-      menu.classList.add('open');
-    });
-  });
-}
-
-// Close tree context menu
-document.addEventListener('click', () => {
-  document.getElementById('tree-context-menu').classList.remove('open');
-});
-
-document.querySelectorAll('#tree-context-menu .kb-dropdown-item').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const action = btn.dataset.action;
-    const id = state.selectedFileId;
-    if (!id || !currentKb) return;
-    const node = findNode(currentKb.children, id);
-    if (!node) return;
-
-    if (action === 'rename-file') {
-      state.renameTarget = { type: 'file', id, kbId: currentKb.id };
-      document.getElementById('rename-file-input').value = node.name;
-      openModal('rename-file-modal');
-    } else if (action === 'delete-file') {
-      state.deleteTarget = { type: 'file', id, kbId: currentKb.id };
-      document.getElementById('delete-msg').textContent = `确定要删除「${node.name}」吗？`;
-      openModal('delete-modal');
+      return html;
     }
-    document.getElementById('tree-context-menu').classList.remove('open');
-  });
-});
 
-document.getElementById('confirm-rename-file').addEventListener('click', () => {
-  const name = document.getElementById('rename-file-input').value.trim();
-  if (!name || !state.renameTarget) return;
-  const kb = state.kbs.find(k => k.id === state.renameTarget.kbId);
-  if (kb) {
-    const node = findNode(kb.children, state.renameTarget.id);
-    if (node) node.name = name;
-  }
-  state.renameTarget = null;
-  closeModal('rename-file-modal');
-  renderFileTree();
-  document.getElementById('editor-filename').textContent = name;
-});
+    function bindTreeEvents(nodes) {
+      const container = document.getElementById('file-tree');
+      container.querySelectorAll('.tree-node-content').forEach(el => {
+        const nodeDiv = el.closest('.tree-node');
+        if (!nodeDiv) return;
+        const id = nodeDiv.dataset.id;
+        const type = nodeDiv.dataset.type;
 
-document.getElementById('cancel-rename-file').addEventListener('click', () => {
-  state.renameTarget = null;
-  closeModal('rename-file-modal');
-});
+        el.addEventListener('click', e => {
+          if (type === 'folder') {
+            const toggle = el.querySelector('.tree-node-toggle');
+            const children = nodeDiv.querySelector('.tree-children');
+            if (children) {
+              const isOpen = children.style.display !== 'none';
+              children.style.display = isOpen ? 'none' : 'block';
+              if (toggle) toggle.classList.toggle('expanded');
+              const node = findNode(nodes, id);
+              if (node) node.expanded = !isOpen;
+            }
+          } else {
+            openFile(id);
+          }
+        });
 
-// ============================================================
-// FILE OPEN / VIEW / EDIT
-// ============================================================
-function openFile(fileId) {
-  state.currentFileId = fileId;
-  state.editing = false;
-  const node = currentKb ? findNode(currentKb.children, fileId) : null;
-  if (!node) return;
+        el.addEventListener('contextmenu', e => {
+          e.preventDefault();
+          if (type !== 'file') return;
+          state.selectedFileId = id;
+          const menu = document.getElementById('tree-context-menu');
+          menu.style.left = e.clientX + 'px';
+          menu.style.top = e.clientY + 'px';
+          menu.classList.add('open');
+        });
+      });
+    }
 
-  // Update tree active state
-  renderFileTree();
+    // Close tree context menu
+    document.addEventListener('click', () => {
+      document.getElementById('tree-context-menu').classList.remove('open');
+    });
 
-  const content = getFileContent(node.fileId);
+    document.querySelectorAll('#tree-context-menu .kb-dropdown-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        const id = state.selectedFileId;
+        if (!id || !currentKb) return;
+        const node = findNode(currentKb.children, id);
+        if (!node) return;
 
-  document.getElementById('content-empty').classList.add('hidden');
-  document.getElementById('markdown-viewer').classList.remove('hidden');
-  document.getElementById('editor-section').classList.add('hidden');
+        if (action === 'rename-file') {
+          state.renameTarget = { type: 'file', id, kbId: currentKb.id };
+          document.getElementById('rename-file-input').value = node.name;
+          openModal('rename-file-modal');
+        } else if (action === 'delete-file') {
+          state.deleteTarget = { type: 'file', id, kbId: currentKb.id };
+          document.getElementById('delete-msg').textContent = `确定要删除「${node.name}」吗？`;
+          openModal('delete-modal');
+        }
+        document.getElementById('tree-context-menu').classList.remove('open');
+      });
+    });
 
-  const viewer = document.getElementById('markdown-viewer');
-  viewer.innerHTML = renderMarkdown(content);
+    document.getElementById('confirm-rename-file').addEventListener('click', () => {
+      const name = document.getElementById('rename-file-input').value.trim();
+      if (!name || !state.renameTarget) return;
+      const kb = state.kbs.find(k => k.id === state.renameTarget.kbId);
+      if (kb) {
+        const node = findNode(kb.children, state.renameTarget.id);
+        if (node) node.name = name;
+      }
+      state.renameTarget = null;
+      closeModal('rename-file-modal');
+      renderFileTree();
+      document.getElementById('editor-filename').textContent = name;
+    });
 
-  // Breadcrumb
-  const parent = findParent(currentKb.children, fileId);
-  const breadcrumb = parent
-    ? `<div class="breadcrumb"><span>${escapeHtml(parent.name)}</span><span>/</span><span>${escapeHtml(node.name)}</span></div>`
-    : `<div class="breadcrumb"><span>${escapeHtml(node.name)}</span></div>`;
-  viewer.innerHTML = breadcrumb + viewer.innerHTML;
+    document.getElementById('cancel-rename-file').addEventListener('click', () => {
+      state.renameTarget = null;
+      closeModal('rename-file-modal');
+    });
 
-  // Edit button in viewer toolbar
-  const toolbar = `<div class="editor-toolbar" style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+    // ============================================================
+    // FILE OPEN / VIEW / EDIT
+    // ============================================================
+    function openFile(fileId) {
+      state.currentFileId = fileId;
+      state.editing = false;
+      const node = currentKb ? findNode(currentKb.children, fileId) : null;
+      if (!node) return;
+
+      // Update tree active state
+      renderFileTree();
+
+      const content = getFileContent(node.fileId);
+
+      document.getElementById('content-empty').classList.add('hidden');
+      document.getElementById('markdown-viewer').classList.remove('hidden');
+      document.getElementById('editor-section').classList.add('hidden');
+
+      const viewer = document.getElementById('markdown-viewer');
+      viewer.innerHTML = renderMarkdown(content);
+
+      // Breadcrumb
+      const parent = findParent(currentKb.children, fileId);
+      const breadcrumb = parent
+        ? `<div class="breadcrumb"><span>${escapeHtml(parent.name)}</span><span>/</span><span>${escapeHtml(node.name)}</span></div>`
+        : `<div class="breadcrumb"><span>${escapeHtml(node.name)}</span></div>`;
+      viewer.innerHTML = breadcrumb + viewer.innerHTML;
+
+      // Edit button in viewer toolbar
+      const toolbar = `<div class="editor-toolbar" style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
     <span style="font-size:13px;font-weight:510;flex:1;color:var(--fg)">${escapeHtml(node.name)}</span>
     <button class="btn-secondary" id="start-edit-btn"><i data-lucide="pencil" style="width:13px;height:13px"></i> 编辑</button>
   </div>`;
-  viewer.innerHTML = toolbar + viewer.innerHTML;
-  refreshIcons();
+      viewer.innerHTML = toolbar + viewer.innerHTML;
+      refreshIcons();
 
-  document.getElementById('start-edit-btn').addEventListener('click', startEditing);
-}
-
-function startEditing() {
-  state.editing = true;
-  const node = currentKb ? findNode(currentKb.children, state.currentFileId) : null;
-  if (!node) return;
-
-  const content = getFileContent(node.fileId);
-
-  document.getElementById('markdown-viewer').classList.add('hidden');
-  document.getElementById('editor-section').classList.remove('hidden');
-  document.getElementById('editor-filename').textContent = node.name;
-  document.getElementById('editor-textarea').value = content;
-}
-
-document.getElementById('save-edit-btn').addEventListener('click', () => {
-  state.editing = false;
-  const content = document.getElementById('editor-textarea').value;
-  const node = currentKb ? findNode(currentKb.children, state.currentFileId) : null;
-  if (node) {
-    // Save back (in-memory for prototype)
-    const fileId = node.fileId;
-    DEMO_FILES[fileId] = content;
-  }
-  // Switch back to viewer
-  document.getElementById('editor-section').classList.add('hidden');
-  document.getElementById('markdown-viewer').classList.remove('hidden');
-  openFile(state.currentFileId); // re-render viewer
-});
-
-document.getElementById('cancel-edit-btn').addEventListener('click', () => {
-  state.editing = false;
-  document.getElementById('editor-section').classList.add('hidden');
-  document.getElementById('markdown-viewer').classList.remove('hidden');
-  openFile(state.currentFileId);
-});
-
-// ============================================================
-// UPLOAD FILE
-// ============================================================
-document.getElementById('upload-file-btn').addEventListener('click', () => {
-  if (!currentKb) return;
-  const select = document.getElementById('upload-folder');
-  select.innerHTML = '<option value="__root__">/ (根目录)</option>';
-  const folders = getFolderPaths(currentKb.children);
-  folders.forEach(f => {
-    select.innerHTML += `<option value="${f.id}">${escapeHtml(f.path)}</option>`;
-  });
-  document.getElementById('upload-filename').value = '';
-  openModal('upload-modal');
-});
-
-document.getElementById('confirm-upload').addEventListener('click', () => {
-  const name = document.getElementById('upload-filename').value.trim();
-  if (!name || !currentKb) return;
-  const folderId = document.getElementById('upload-folder').value;
-  const fileId = 'file-' + Date.now();
-
-  DEMO_FILES[fileId] = '# 新建文档\n\n内容待补充。\n';
-
-  const newNode = { id: 'f-' + Date.now(), name, type: 'file', fileId };
-  if (folderId === '__root__') {
-    currentKb.children.push(newNode);
-  } else {
-    const parent = findNode(currentKb.children, folderId);
-    if (parent) {
-      if (!parent.children) parent.children = [];
-      parent.children.push(newNode);
+      document.getElementById('start-edit-btn').addEventListener('click', startEditing);
     }
-  }
-  currentKb.fileCount = (currentKb.fileCount || 0) + 1;
-  closeModal('upload-modal');
-  renderFileTree();
-  renderKbList();
-});
 
-document.getElementById('cancel-upload').addEventListener('click', () => closeModal('upload-modal'));
+    function startEditing() {
+      state.editing = true;
+      const node = currentKb ? findNode(currentKb.children, state.currentFileId) : null;
+      if (!node) return;
 
-// ============================================================
-// SEARCH
-// ============================================================
-document.getElementById('kb-search').addEventListener('input', e => {
-  state.searchQuery = e.target.value;
-  renderKbList();
-});
+      const content = getFileContent(node.fileId);
 
-document.getElementById('file-search').addEventListener('input', e => {
-  state.fileSearchQuery = e.target.value;
-  renderFileTree();
-});
+      document.getElementById('markdown-viewer').classList.add('hidden');
+      document.getElementById('editor-section').classList.remove('hidden');
+      document.getElementById('editor-filename').textContent = node.name;
+      document.getElementById('editor-textarea').value = content;
+    }
 
-document.getElementById('search-files-btn').addEventListener('click', () => {
-  const input = document.getElementById('file-search');
-  input.focus();
-  input.select();
-});
+    document.getElementById('save-edit-btn').addEventListener('click', () => {
+      state.editing = false;
+      const content = document.getElementById('editor-textarea').value;
+      const node = currentKb ? findNode(currentKb.children, state.currentFileId) : null;
+      if (node) {
+        // Save back (in-memory for prototype)
+        const fileId = node.fileId;
+        DEMO_FILES[fileId] = content;
+      }
+      // Switch back to viewer
+      document.getElementById('editor-section').classList.add('hidden');
+      document.getElementById('markdown-viewer').classList.remove('hidden');
+      openFile(state.currentFileId); // re-render viewer
+    });
 
-// ============================================================
-// VIEW TOGGLE
-// ============================================================
-document.querySelectorAll('.view-toggle .icon-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.view-toggle .icon-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    state.viewMode = btn.dataset.view;
-    const container = document.getElementById('kb-container');
-    container.className = state.viewMode === 'grid' ? 'kb-grid' : 'kb-list';
+    document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+      state.editing = false;
+      document.getElementById('editor-section').classList.add('hidden');
+      document.getElementById('markdown-viewer').classList.remove('hidden');
+      openFile(state.currentFileId);
+    });
+
+    // ============================================================
+    // UPLOAD FILE
+    // ============================================================
+    document.getElementById('upload-file-btn').addEventListener('click', () => {
+      if (!currentKb) return;
+      const select = document.getElementById('upload-folder');
+      select.innerHTML = '<option value="__root__">/ (根目录)</option>';
+      const folders = getFolderPaths(currentKb.children);
+      folders.forEach(f => {
+        select.innerHTML += `<option value="${f.id}">${escapeHtml(f.path)}</option>`;
+      });
+      document.getElementById('upload-filename').value = '';
+      openModal('upload-modal');
+    });
+
+    document.getElementById('confirm-upload').addEventListener('click', () => {
+      const name = document.getElementById('upload-filename').value.trim();
+      if (!name || !currentKb) return;
+      const folderId = document.getElementById('upload-folder').value;
+      const fileId = 'file-' + Date.now();
+
+      DEMO_FILES[fileId] = '# 新建文档\n\n内容待补充。\n';
+
+      const newNode = { id: 'f-' + Date.now(), name, type: 'file', fileId };
+      if (folderId === '__root__') {
+        currentKb.children.push(newNode);
+      } else {
+        const parent = findNode(currentKb.children, folderId);
+        if (parent) {
+          if (!parent.children) parent.children = [];
+          parent.children.push(newNode);
+        }
+      }
+      currentKb.fileCount = (currentKb.fileCount || 0) + 1;
+      closeModal('upload-modal');
+      renderFileTree();
+      renderKbList();
+    });
+
+    document.getElementById('cancel-upload').addEventListener('click', () => closeModal('upload-modal'));
+
+    // ============================================================
+    // SEARCH
+    // ============================================================
+    document.getElementById('kb-search').addEventListener('input', e => {
+      state.searchQuery = e.target.value;
+      renderKbList();
+    });
+
+    document.getElementById('file-search').addEventListener('input', e => {
+      state.fileSearchQuery = e.target.value;
+      renderFileTree();
+    });
+
+    document.getElementById('search-files-btn').addEventListener('click', () => {
+      const input = document.getElementById('file-search');
+      input.focus();
+      input.select();
+    });
+
+    // ============================================================
+    // VIEW TOGGLE
+    // ============================================================
+    document.querySelectorAll('.view-toggle .icon-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle .icon-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.viewMode = btn.dataset.view;
+        const container = document.getElementById('kb-container');
+        container.className = state.viewMode === 'grid' ? 'kb-grid' : 'kb-list';
+        renderKbList();
+      });
+    });
+
+    // ============================================================
+    // DARK MODE
+    // ============================================================
+    document.getElementById('dark-toggle-list').addEventListener('click', toggleTheme);
+    document.getElementById('dark-toggle-detail').addEventListener('click', toggleTheme);
+
+    // ============================================================
+    // KEYBOARD SHORTCUTS
+    // ============================================================
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+        document.getElementById('tree-context-menu').classList.remove('open');
+      }
+    });
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    renderTags();
     renderKbList();
-  });
-});
-
-// ============================================================
-// DARK MODE
-// ============================================================
-document.getElementById('dark-toggle-list').addEventListener('click', toggleTheme);
-document.getElementById('dark-toggle-detail').addEventListener('click', toggleTheme);
-
-// ============================================================
-// KEYBOARD SHORTCUTS
-// ============================================================
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-    document.getElementById('tree-context-menu').classList.remove('open');
-  }
-});
-
-// ============================================================
-// INIT
-// ============================================================
-renderTags();
-renderKbList();
-refreshIcons();
-</script>
+    refreshIcons();
+  </script>
 </body>
+
 </html>
