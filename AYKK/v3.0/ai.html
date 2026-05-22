@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙博士 - AI口腔助手</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* 语音录制脉冲动画 */
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(0.8);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1.6);
+        opacity: 0;
+      }
+    }
+
+    @keyframes wave-bar {
+
+      0%,
+      100% {
+        height: 4px;
+      }
+
+      50% {
+        height: 16px;
+      }
+    }
+
+    .pulse-ring::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 3px solid #ef4444;
+      animation: pulse-ring 1.5s ease-out infinite;
+    }
+
+    .wave-bar {
+      animation: wave-bar 0.8s ease-in-out infinite;
+    }
+
+    .wave-bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .wave-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .wave-bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .wave-bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    /* 工具调用闪烁 */
+    @keyframes tool-pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .tool-calling {
+      animation: tool-pulse 1.2s ease-in-out infinite;
+    }
+
+    /* 打字效果光标 */
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .typing-cursor::after {
+      content: '|';
+      animation: blink 0.8s infinite;
+      color: #3b82f6;
+      font-weight: 300;
+    }
+
+    /* 卡片渐变边框 */
+    .card-glow {
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.15), 0 4px 24px rgba(59, 130, 246, 0.1);
+    }
+
+    /* 录音按钮样式 */
+    .record-btn {
+      transition: all 0.3s ease;
+    }
+
+    .record-btn.recording {
+      background: #ef4444;
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.2);
+    }
+
+    /* 牙齿位置指示 */
+    .tooth-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      position: absolute;
+    }
+
+    .tooth-dot.warning {
+      background: #f59e0b;
+      box-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
+    }
+
+    .tooth-dot.danger {
+      background: #ef4444;
+      box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+    }
+
+    .tooth-dot.healthy {
+      background: #10b981;
+    }
+  </style>
+</head>
+
+<body class="flex flex-wrap justify-center gap-10 p-10 min-h-screen items-center">
+
+  <!-- ================= 爱牙博士：LLM对话页面 ================= -->
+  <div
+    class="relative w-[375px] h-[812px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-gray-900 box-border flex flex-col">
+
+    <!-- iOS 状态栏 -->
+    <div class="h-11 w-full flex justify-between items-end px-6 pb-1.5 z-50 absolute top-0 left-0">
+      <span class="text-black text-sm font-semibold">9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="ri-signal-wifi-fill text-black text-sm"></i>
+        <i class="ri-battery-charge-fill text-black text-sm"></i>
+      </div>
+    </div>
+
+    <!-- ====== 顶部导航栏 ====== -->
+    <div class="pt-12 px-4 flex items-center justify-between bg-white z-10">
+    </div>
+
+    <!-- ====== 对话内容区 ====== -->
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-[#f2f3f7] px-4 py-3 space-y-4" id="chatArea">
+
+      <!-- 时间分割线 -->
+      <div class="flex justify-center">
+        <span class="text-gray-400 text-[11px] bg-white px-3 py-0.5 rounded-full border border-gray-100">今天 14:30</span>
+      </div>
+
+      <!-- ====== 系统欢迎消息 ====== -->
+      <div class="flex items-start gap-2">
+        <div class="max-w-[260px]">
+          <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-gray-100">
+            <p class="text-gray-700 text-[13px] leading-relaxed">你好！我是爱牙博士，你的AI口腔健康助手。你可以随时问我口腔检查结果、刷牙建议、牙齿健康等问题 😊</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== 用户追问文本 ====== -->
+      <div class="flex items-start gap-2 justify-end">
+        <div class="max-w-[260px]">
+          <div class="bg-blue-500 text-white rounded-2xl rounded-tr-sm px-4 py-2.5">
+            <p class="text-[13px] leading-relaxed">我的口腔检查结果怎么样？</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== AI结构化回复 - 口腔检查结果卡片 ====== -->
+      <div class="flex items-start gap-2">
+        <div class="max-w-[295px] flex-1">
+          <div class="flex items-center gap-2 tool-calling">
+            <div class="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center">
+              <i class="ri-tools-fill text-blue-500 text-xs"></i>
+            </div>
+            <p class="text-gray-500 text-[12px]">正在调用口腔检查系统...</p>
+          </div>
+          <!-- AI 文字说明 -->
+          <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-gray-100 mb-2">
+            <p class="text-gray-700 text-[13px] leading-relaxed">好的，这是你最近一次口腔检查的综合评估报告：</p>
+          </div>
+
+          <!-- ======== 检查结果主卡片 ======== -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-glow">
+
+            <!-- 卡片头部 - 综合评分 -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-4 border-b border-gray-100">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-1.5">
+                  <i class="ri-file-search-line text-blue-600 text-sm"></i>
+                  <span class="text-gray-700 font-bold text-[13px]">口腔检查报告</span>
+                </div>
+                <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-medium">AI 分析</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-[11px]">综合评分</p>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-4xl font-extrabold text-gray-800">82</span>
+                    <span class="text-gray-400 text-sm">/ 100</span>
+                  </div>
+                </div>
+                <div class="w-16 h-16 relative">
+                  <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+                    <circle cx="32" cy="32" r="26" fill="none" stroke="#e5e7eb" stroke-width="6" />
+                    <circle cx="32" cy="32" r="26" fill="none" stroke="url(#gradeGrad)" stroke-width="6"
+                      stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="32.67" />
+                    <defs>
+                      <linearGradient id="gradeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#3b82f6" />
+                        <stop offset="100%" stop-color="#6366f1" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <span class="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-blue-600"
+                    style="transform: none;">良好</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 检查详情 -->
+            <div class="px-5 py-4 space-y-3">
+              <p class="text-gray-400 text-[10px] uppercase tracking-wide font-medium">异常发现：牙釉质矿化度降低，存在早期龋齿风险</p>
+
+              <!-- 发现项 1 -->
+              <!-- <div class="flex items-start gap-3 p-3 bg-red-50 rounded-xl border border-red-100">
+                <div class="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-gray-800 font-bold text-[13px]">#16 右上第一磨牙</span>
+                    <span class="bg-red-100 text-red-600 text-[10px] px-1.5 py-0.5 rounded font-medium">需关注</span>
+                  </div>
+                  <p class="text-gray-500 text-[12px] leading-relaxed">牙釉质矿化度降低，存在早期龋齿风险</p>
+                  <p class="text-gray-400 text-[10px] mt-1 flex items-center gap-1">
+                    <i class="ri-links-line text-[10px]"></i> 引用：牙釉质矿化度光谱分析
+                  </p>
+                </div>
+              </div> -->
+
+              <!-- 发现项 2 -->
+              <!-- <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
+                <div class="w-2 h-2 rounded-full bg-orange-500 mt-1.5 shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-gray-800 font-bold text-[13px]">#36 左下第一磨牙</span>
+                    <span
+                      class="bg-orange-100 text-orange-600 text-[10px] px-1.5 py-0.5 rounded font-medium">建议改善</span>
+                  </div>
+                  <p class="text-gray-500 text-[12px] leading-relaxed">牙菌斑堆积量偏高，建议加强该区域清洁</p>
+                  <p class="text-gray-400 text-[10px] mt-1 flex items-center gap-1">
+                    <i class="ri-links-line text-[10px]"></i> 引用：荧光牙菌斑检测图像 #36区域
+                  </p>
+                </div>
+              </div> -->
+            </div>
+
+            <!-- 建议 -->
+            <!-- <div class="px-5 py-4 border-t border-gray-100 bg-gray-50/50">
+              <p class="text-gray-400 text-[10px] uppercase tracking-wide font-medium mb-2">AI 建议</p>
+              <div class="space-y-2">
+                <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                  <i class="ri-checkbox-circle-fill text-blue-500 text-sm"></i>
+                  加强 <span class="text-gray-800 font-semibold">#16、#36</span> 牙位清洁力度
+                </div>
+                <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                  <i class="ri-checkbox-circle-fill text-blue-500 text-sm"></i>
+                  建议使用 <span class="text-gray-800 font-semibold">含氟牙膏</span>，增强牙釉质再矿化
+                </div>
+                <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                  <i class="ri-checkbox-circle-fill text-blue-500 text-sm"></i>
+                  坚持每日 <span class="text-gray-800 font-semibold">早晚刷牙 2 分钟</span>，配合牙线清洁
+                </div>
+                <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                  <i class="ri-checkbox-circle-fill text-blue-500 text-sm"></i>
+                  <span class="text-gray-800 font-semibold">3 个月后</span>复查，追踪异常牙位恢复情况
+                </div>
+              </div>
+            </div> -->
+
+            <!-- 引用脚注 -->
+            <!-- <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 rounded-b-2xl">
+              <div class="flex items-start gap-1.5 text-[10px] text-gray-400 leading-relaxed">
+                <i class="ri-information-line shrink-0 mt-0.5"></i>
+                <div>
+                  <p><span class="font-semibold text-gray-500">数据来源：</span>AYKK 口腔AI检测系统 v3.0</p>
+                  <p class="mt-0.5"><span class="font-semibold text-gray-500">报告编号：</span>OR-20260520-001</p>
+                  <p><span class="font-semibold text-gray-500">检查时间：</span>2026年5月20日 08:42</p>
+                  <p><span class="font-semibold text-gray-500">设备编号：</span>AYKK-Visual-S1 (固件 v2.3.1)</p>
+                </div>
+              </div>
+            </div> -->
+
+          </div>
+          <!-- 检查结果卡片结束 -->
+
+        </div>
+      </div>
+
+      <!-- ====== AI 追问题问 ====== -->
+      <div class="flex items-start gap-2">
+        <div class="max-w-[260px]">
+          <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-gray-100">
+            <p class="text-gray-700 text-[13px] leading-relaxed">需要我针对具体的牙齿问题给出更详细的护理方案吗？</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== 用户回复 ====== -->
+      <div class="flex items-start gap-2 justify-end">
+        <div class="max-w-[260px]">
+          <div class="bg-blue-500 text-white rounded-2xl rounded-tr-sm px-4 py-2.5">
+            <p class="text-[13px] leading-relaxed">好的，请问牙龈出血怎么办？</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== AI 详细建议卡片 ====== -->
+      <div class="flex items-start gap-2">
+        <div class="max-w-[295px]">
+          <div class="bg-white rounded-2xl rounded-tl-sm shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="px-4 py-3 border-gray-100">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-800 font-bold text-[13px]">护理方案：</span>
+              </div>
+            </div>
+
+            <div class="px-4 py-3 space-y-3">
+              <div class="flex gap-3">
+                <span class="text-blue-400 text-lg shrink-0">•</span>
+                <div>
+                  <p class="text-gray-800 text-[12px] font-semibold">刷牙角度调整</p>
+                  <p class="text-gray-400 text-[11px] mt-0.5">将刷毛与牙面呈 45° 角朝向牙龈方向，等等等。</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <span class="text-blue-400 text-lg shrink-0">•</span>
+                <div>
+                  <p class="text-gray-800 text-[12px] font-semibold">延长刷牙时间</p>
+                  <p class="text-gray-400 text-[11px] mt-0.5">右上区域停留时间从 15 秒延长至 30 秒，等等等。</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <span class="text-blue-400 text-lg shrink-0">•</span>
+                <div>
+                  <p class="text-gray-800 text-[12px] font-semibold">推荐含氟牙膏</p>
+                  <p class="text-gray-400 text-[11px] mt-0.5">使用含氟量等等等的牙膏，等等等。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-4 py-2.5 bg-gray-50 border-t border-gray-100">
+              <p class="text-[10px] text-gray-400 flex items-center gap-1">
+                <i class="ri-links-line"></i> 引用：权威口腔护理知识库 · 牙龈出血怎么办？
+              </p>
+              <p class="text-[10px] text-gray-400 flex items-center gap-1">
+                <i class="ri-links-line"></i> 引用：权威口腔护理知识库 · 牙龈出血咋办？
+              </p>
+              <p class="text-[10px] text-gray-400 flex items-center gap-1">
+                <i class="ri-links-line"></i> 引用：权威口腔护理知识库 · 牙龈出血砸办？
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部留白 -->
+      <div class="h-2"></div>
+
+    </div>
+
+    <!-- ====== 底部输入区域 ====== -->
+    <div class="glass px-3 pt-2.5 pb-1 z-10">
+
+      <!-- 快捷操作栏 -->
+      <!-- <div class="flex gap-2 mb-2.5 overflow-x-auto no-scrollbar">
+        <button class="shrink-0 bg-blue-50 text-blue-600 text-[11px] px-3 py-1.5 rounded-full font-medium flex items-center gap-1 active:scale-95 transition-transform">
+          <i class="ri-file-search-line text-xs"></i> 口腔检查
+        </button>
+        <button class="shrink-0 bg-gray-100 text-gray-600 text-[11px] px-3 py-1.5 rounded-full font-medium flex items-center gap-1 active:scale-95 transition-transform">
+          <i class="ri-lightbulb-line text-xs"></i> 刷牙建议
+        </button>
+        <button class="shrink-0 bg-gray-100 text-gray-600 text-[11px] px-3 py-1.5 rounded-full font-medium flex items-center gap-1 active:scale-95 transition-transform">
+          <i class="ri-calendar-check-line text-xs"></i> 预约复查
+        </button>
+        <button class="shrink-0 bg-gray-100 text-gray-600 text-[11px] px-3 py-1.5 rounded-full font-medium flex items-center gap-1 active:scale-95 transition-transform">
+          <i class="ri-question-line text-xs"></i> 常见问题
+        </button>
+      </div> -->
+
+      <!-- 文本输入行 -->
+      <div class="flex items-end gap-2 pb-1">
+        <!-- 语音按钮 -->
+        <button
+          class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 active:scale-95 transition-all hover:bg-gray-200"
+          id="voiceBtn" onclick="toggleRecording()">
+          <i class="ri-mic-line text-gray-600 text-lg" id="voiceIcon"></i>
+        </button>
+
+        <!-- 输入框 -->
+        <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-2.5 flex items-center relative">
+          <input type="text" placeholder="输入口腔健康问题..."
+            class="w-full bg-transparent text-[13px] text-gray-800 outline-none placeholder-gray-400" id="textInput">
+        </div>
+
+        <!-- 发送按钮 -->
+        <button
+          class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shrink-0 active:scale-95 transition-all hover:bg-blue-600"
+          id="sendBtn">
+          <i class="ri-send-plane-fill text-white text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Home Indicator -->
+      <div class="w-32 h-1 bg-gray-300 rounded-full mx-auto mt-2"></div>
+    </div>
+
+    <!-- ====== 录音浮层 (默认隐藏) ====== -->
+    <div id="recordingOverlay"
+      class="absolute inset-0 bg-black/60 z-50 flex flex-col items-center justify-center hidden">
+      <div class="bg-white rounded-3xl px-10 py-10 flex flex-col items-center gap-6 shadow-2xl">
+        <!-- 波形条 -->
+        <div class="flex items-end gap-[3px] h-12">
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:16px;animation-delay:0s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:28px;animation-delay:0.1s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:12px;animation-delay:0.2s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:36px;animation-delay:0.15s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:20px;animation-delay:0.25s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:32px;animation-delay:0.05s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:10px;animation-delay:0.35s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:24px;animation-delay:0.2s"></div>
+          <div class="w-1 bg-blue-500 rounded-full wave-bar" style="height:6px;animation-delay:0.3s"></div>
+        </div>
+        <p class="text-gray-700 font-semibold text-sm" id="recordHint">正在聆听...</p>
+        <p class="text-gray-400 text-xs" id="recordTimer">00:02</p>
+        <button class="w-14 h-14 rounded-full bg-red-500 flex items-center justify-center pulse-ring relative"
+          onclick="toggleRecording()">
+          <i class="ri-stop-fill text-white text-xl"></i>
+        </button>
+        <p class="text-gray-400 text-[11px]">点击停止录音</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ====== 录音交互 ======
+    let isRecording = false;
+    let recordTimer = null;
+    let seconds = 0;
+
+    function toggleRecording() {
+      const overlay = document.getElementById('recordingOverlay');
+      const voiceBtn = document.getElementById('voiceBtn');
+      const voiceIcon = document.getElementById('voiceIcon');
+
+      if (!isRecording) {
+        // 开始录音
+        isRecording = true;
+        overlay.classList.remove('hidden');
+        voiceBtn.classList.add('recording');
+        voiceIcon.className = 'ri-mic-fill text-white text-lg';
+        seconds = 0;
+        updateRecordTimer();
+        recordTimer = setInterval(() => {
+          seconds++;
+          updateRecordTimer();
+        }, 1000);
+      } else {
+        // 停止录音
+        isRecording = false;
+        overlay.classList.add('hidden');
+        voiceBtn.classList.remove('recording');
+        voiceIcon.className = 'ri-mic-line text-gray-600 text-lg';
+        clearInterval(recordTimer);
+        // 模拟发送语音消息
+        addVoiceMessage(seconds);
+      }
+    }
+
+    function updateRecordTimer() {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      document.getElementById('recordTimer').textContent =
+        String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    }
+
+    function addVoiceMessage(duration) {
+      const mins = Math.floor(duration / 60);
+      const secs = duration % 60;
+      const durStr = mins > 0
+        ? String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0')
+        : '0:' + String(secs).padStart(2, '0');
+
+      const chatArea = document.getElementById('chatArea');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start gap-2 justify-end';
+      msgDiv.innerHTML = `
+        <div class="max-w-[260px]">
+          <div class="bg-blue-500 text-white rounded-2xl rounded-tr-sm px-4 py-3">
+            <div class="flex items-center gap-2">
+              <i class="ri-mic-fill text-white text-sm"></i>
+              <div class="flex items-end gap-[2px]">
+                <div class="w-[3px] bg-white/80 rounded-full wave-bar" style="height:8px"></div>
+                <div class="w-[3px] bg-white/80 rounded-full wave-bar" style="height:14px"></div>
+                <div class="w-[3px] bg-white/80 rounded-full wave-bar" style="height:6px"></div>
+                <div class="w-[3px] bg-white/80 rounded-full wave-bar" style="height:12px"></div>
+                <div class="w-[3px] bg-white/80 rounded-full wave-bar" style="height:4px"></div>
+              </div>
+              <span class="text-white/70 text-[11px] ml-1">${durStr}</span>
+            </div>
+          </div>
+          <p class="text-gray-400 text-[11px] mt-1 px-1 flex items-center gap-1">
+            <i class="ri-mic-fill text-xs"></i> 语音转文字
+          </p>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shrink-0 mt-0.5">
+          <span class="text-white text-[11px] font-bold">豆</span>
+        </div>
+      `;
+      chatArea.appendChild(msgDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // ====== 发送文本消息 ======
+    document.getElementById('sendBtn').addEventListener('click', sendTextMessage);
+    document.getElementById('textInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') sendTextMessage();
+    });
+
+    function sendTextMessage() {
+      const input = document.getElementById('textInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatArea = document.getElementById('chatArea');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start gap-2 justify-end';
+      msgDiv.innerHTML = `
+        <div class="max-w-[260px]">
+          <div class="bg-blue-500 text-white rounded-2xl rounded-tr-sm px-4 py-2.5">
+            <p class="text-[13px] leading-relaxed">${escapeHtml(text)}</p>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shrink-0 mt-0.5">
+          <span class="text-white text-[11px] font-bold">豆</span>
+        </div>
+      `;
+      chatArea.appendChild(msgDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      input.value = '';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ====== 快捷按钮点击 ======
+    document.querySelectorAll('.shrink-0.bg-blue-50, .shrink-0.bg-gray-100').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const text = this.textContent.trim();
+        document.getElementById('textInput').value = text;
+        document.getElementById('textInput').focus();
+      });
+    });
+
+    // ====== 自动滚动到底部 ======
+    const chatArea = document.getElementById('chatArea');
+    chatArea.scrollTop = chatArea.scrollHeight;
+  </script>
+
+</body>
+
+</html>
