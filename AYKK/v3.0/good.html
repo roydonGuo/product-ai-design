@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>爱牙看看 - 商城页面</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- RemixIcon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f3f4f6;
+    }
+
+    *::-webkit-scrollbar {
+      display: none;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(20px);
+    }
+
+    .gradient-blue {
+      background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+    }
+
+    .gradient-light {
+      background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+    }
+  </style>
+</head>
+
+<body class="flex flex-wrap justify-center gap-10 p-10 min-h-screen items-center">
+
+  <!-- ================= 商城首页 ================= -->
+  <div
+    class="relative w-[375px] h-[812px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-gray-900 box-border flex flex-col">
+
+    <!-- iOS 状态栏 -->
+    <div class="h-11 w-full flex justify-between items-end px-6 pb-1.5 absolute top-0 left-0 z-50">
+      <span class="text-black text-sm font-semibold">9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="ri-signal-wifi-fill text-black text-sm"></i>
+        <i class="ri-battery-charge-fill text-black text-sm"></i>
+      </div>
+    </div>
+
+    <!-- 顶部 -->
+    <div class="pt-8 px-5 pb-4 gradient-light">
+      <!-- <div class="flex items-center justify-between">
+        <div>
+          <p class="text-black text-[26px] font-bold tracking-tight">
+            爱牙商城
+          </p>
+          <p class="text-black text-xs mt-1 opacity-60">
+            健康牙齿 · 智能护理
+          </p>
+        </div>
+
+      </div> -->
+
+      <!-- Banner -->
+      <!-- <div class="mt-5 rounded-[30px] overflow-hidden relative h-[170px] shadow-xl">
+        <img src="./good-teeth.png" class="w-full h-full object-cover" />
+
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent p-6 flex flex-col justify-end">
+          <p class="text-white text-[24px] font-bold leading-tight">
+            智能声波<br />
+            深层洁牙
+          </p>
+
+          <button class="mt-4 w-[120px] h-10 rounded-full bg-white text-black text-sm font-semibold">
+            立即选购
+          </button>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- 内容 -->
+    <div class="flex-1 overflow-y-auto px-5 pb-24">
+
+      <!-- 儿童系列 -->
+      <div class="mt-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-black text-xl font-bold">
+              儿童护牙系列
+            </p>
+            <p class="text-black text-xs opacity-50 mt-1">
+              温和刷牙 · 呵护乳牙
+            </p>
+          </div>
+
+        </div>
+
+        <div class="bg-white rounded-[28px] p-4 shadow-lg border border-gray-100">
+          <img src="./good-teeth.png" class="w-full h-[300px] object-cover rounded-[22px]" />
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <p class="text-black text-lg font-bold">
+                爱牙儿童牙刷 V2
+              </p>
+
+              <span class="text-black text-sm font-semibold bg-blue-50 px-3 py-1 rounded-full">
+                ¥129
+              </span>
+            </div>
+
+            <p class="text-black text-sm opacity-60 leading-6 mt-2">
+              360°柔软刷毛，智能震动护牙，适合3-12岁儿童日常清洁。
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="bg-white rounded-[28px] p-4 shadow-lg border border-gray-100 mt-4">
+          <img src="./good-teeth.png" class="w-full h-[170px] object-cover rounded-[22px]" />
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <p class="text-black text-lg font-bold">
+                爱牙儿童牙刷
+              </p>
+
+              <span class="text-black text-sm font-semibold bg-blue-50 px-3 py-1 rounded-full">
+                ¥129
+              </span>
+            </div>
+
+            <p class="text-black text-sm opacity-60 leading-6 mt-2">
+              360°柔软刷毛，智能震动护牙，适合3-12岁儿童日常清洁。
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 成人系列 -->
+      <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-black text-xl font-bold">
+              成人爱牙牙刷系列
+            </p>
+            <p class="text-black text-xs opacity-50 mt-1">
+              智能清洁 · 深层护理
+            </p>
+          </div>
+
+        </div>
+
+        <div class="bg-white rounded-[28px] p-4 shadow-lg border border-gray-100">
+          <img src="./good-teeth.png" class="w-full h-[430px] object-cover rounded-[22px]" />
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <p class="text-black text-lg font-bold">
+                Pro 智能电动牙刷
+              </p>
+
+              <span class="text-black text-sm font-semibold bg-blue-50 px-3 py-1 rounded-full">
+                ¥299
+              </span>
+            </div>
+
+            <p class="text-black text-sm opacity-60 leading-6 mt-2">
+              高频声波震动，AI智能护牙方案，支持蓝牙连接与刷牙分析。
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配件专区 -->
+      <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-black text-xl font-bold">
+              配件专区
+            </p>
+            <p class="text-black text-xs opacity-50 mt-1">
+              日常护理配件
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+
+          <div class="bg-white rounded-[24px] p-3 shadow-lg border border-gray-100">
+            <img src="./good-teeth.png" class="w-full h-[110px] rounded-[18px] object-cover" />
+
+            <p class="text-black text-sm font-bold mt-3">
+              便携消毒盒
+            </p>
+
+            <p class="text-black text-xs opacity-50 mt-1">
+              紫外线消毒
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-[24px] p-3 shadow-lg border border-gray-100">
+            <img src="./good-teeth.png" class="w-full h-[110px] rounded-[18px] object-cover" />
+
+            <p class="text-black text-sm font-bold mt-3">
+              漱口护理套装
+            </p>
+
+            <p class="text-black text-xs opacity-50 mt-1">
+              清新口气
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 刷头系列 -->
+      <div class="mt-8 pb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-black text-xl font-bold">
+              刷头系列
+            </p>
+
+            <p class="text-black text-xs opacity-50 mt-1">
+              定期更换更健康
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+
+          <div class="bg-white rounded-[24px] p-3 shadow-lg border border-gray-100">
+            <img src="./good-teeth.png" class="w-full h-[110px] rounded-[18px] object-cover" />
+
+            <p class="text-black text-sm font-bold mt-3">
+              柔护刷头
+            </p>
+
+            <p class="text-black text-xs opacity-50 mt-1">
+              敏感牙龈适用
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-[24px] p-3 shadow-lg border border-gray-100">
+            <img src="./good-teeth.png" class="w-full h-[110px] rounded-[18px] object-cover" />
+
+            <p class="text-black text-sm font-bold mt-3">
+              深洁刷头
+            </p>
+
+            <p class="text-black text-xs opacity-50 mt-1">
+              高频深洁
+            </p>
+
+            <button
+              class="mt-4 w-full h-10 rounded-full gradient-blue text-white text-xs font-semibold flex justify-center items-center">
+              立即购买
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
