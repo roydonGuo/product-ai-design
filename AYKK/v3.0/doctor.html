@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 - 医生列表</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe 0%, #f8fafc 45%, #eef4ff 100%);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .glass-header {
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .card-shadow {
+      box-shadow: 0 4px 20px rgba(96, 144, 255, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .gradient-blue {
+      background: linear-gradient(135deg, #4f8cff 0%, #77a6ff 100%);
+    }
+
+    .bottom-blur {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* 医生卡片动画 */
+    .doctor-card {
+      transition: all 0.3s ease;
+    }
+
+    .doctor-card:active {
+      transform: scale(0.98);
+    }
+
+    /* 头像渐变色环 */
+    .avatar-ring {
+      box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.25);
+    }
+
+    /* 标签选中指示器 */
+    .tab-indicator {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 骨架屏脉冲 */
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e8ecf4 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    /* 呼叫按钮波纹 */
+    @keyframes call-ripple {
+      0% {
+        box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 0 12px rgba(52, 199, 89, 0);
+      }
+    }
+
+    .call-btn {
+      animation: call-ripple 2s ease-in-out infinite;
+    }
+
+    /* 自定义分割线 */
+    .divider-gradient {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(79, 140, 255, 0.12) 50%, transparent 100%);
+    }
+  </style>
+</head>
+
+<body class="flex justify-center items-center min-h-screen p-4">
+
+  <!-- ===== 手机外框 ===== -->
+  <div
+    class="relative w-[375px] h-[812px] bg-[#f5f7fb] rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-gray-900 flex flex-col">
+
+    <!-- 状态栏 -->
+    <div class="h-11 w-full flex justify-between items-end px-7 pb-1.5 absolute top-0 left-0 z-30">
+      <span class="text-black text-sm font-semibold tracking-tight">9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="ri-signal-wifi-fill text-black text-[13px]"></i>
+        <i class="ri-battery-charge-fill text-black text-sm"></i>
+      </div>
+    </div>
+
+    <!-- ===== 主内容区 ===== -->
+    <div class="flex-1 flex flex-col pt-11 overflow-hidden">
+
+      <!-- 顶部导航栏 -->
+      <div class="glass-header px-4 py-3 border-b border-blue-100/30 flex-shrink-0">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <i
+              class="ri-arrow-left-s-line text-2xl text-gray-800 cursor-pointer active:scale-90 transition-transform"></i>
+            <h1 class="text-lg font-bold text-gray-900 tracking-tight">医生列表</h1>
+          </div>
+          <!-- <div class="flex items-center gap-3">
+            <i class="ri-search-line text-xl text-gray-500 cursor-pointer active:scale-90 transition-transform"></i>
+            <i class="ri-filter-3-line text-xl text-gray-500 cursor-pointer active:scale-90 transition-transform"></i>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- 科室分类标签 -->
+      <!-- <div class="flex-shrink-0 px-4 py-3 bg-white/60">
+        <div class="flex gap-2 overflow-x-auto no-scrollbar">
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-600 text-white shadow-sm cursor-pointer active:scale-95 transition-transform">
+            全部</div>
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-white/70 border border-gray-200/60 cursor-pointer active:scale-95 transition-transform hover:bg-blue-50 hover:border-blue-200">
+            口腔外科</div>
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-white/70 border border-gray-200/60 cursor-pointer active:scale-95 transition-transform hover:bg-blue-50 hover:border-blue-200">
+            正畸科</div>
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-white/70 border border-gray-200/60 cursor-pointer active:scale-95 transition-transform hover:bg-blue-50 hover:border-blue-200">
+            修复科</div>
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-white/70 border border-gray-200/60 cursor-pointer active:scale-95 transition-transform hover:bg-blue-50 hover:border-blue-200">
+            牙周科</div>
+          <div
+            class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-white/70 border border-gray-200/60 cursor-pointer active:scale-95 transition-transform hover:bg-blue-50 hover:border-blue-200">
+            儿童口腔</div>
+        </div>
+      </div> -->
+
+      <!-- 医生列表 -->
+      <div class="flex-1 overflow-y-auto px-4 pt-2 pb-2 no-scrollbar space-y-3">
+
+        <!-- 医生卡片 1 -->
+        <div class="doctor-card bg-white rounded-2xl p-4 card-shadow cursor-pointer">
+          <div class="flex items-start gap-3.5">
+            <!-- 头像 -->
+            <div class="relative flex-shrink-0">
+              <div
+                class="w-14 h-14 rounded-full avatar-ring overflow-hidden bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white text-xl font-bold">
+                张
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-green-500 rounded-full border-2 border-white">
+              </div>
+            </div>
+            <!-- 信息 -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900">张明华</h3>
+                <!-- <span class="text-[11px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full font-medium">副主任医师</span> -->
+              </div>
+              <!-- <p class="text-sm text-gray-500 mt-1">口腔外科 · 从业18年</p> -->
+              <!-- <div class="flex items-center gap-3 mt-1.5">
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-star-fill text-yellow-500 text-[11px]"></i>
+                  <span>4.9</span>
+                  <span class="text-gray-300">·</span>
+                  <span>216评价</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-team-line text-gray-400 text-[11px]"></i>
+                  <span>接诊3260+</span>
+                </div>
+              </div> -->
+              <!-- 电话与操作 -->
+              <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
+                <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                  <i class="ri-phone-line text-green-500 text-sm"></i>
+                  <span class="font-mono text-gray-600">138-5678-9012</span>
+                </div>
+                <!-- <div class="flex gap-2">
+                  <button
+                    class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all">预约</button>
+                  <button
+                    class="call-btn w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 active:scale-90 transition-all">
+                    <i class="ri-phone-fill text-xs"></i>
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 医生卡片 2 -->
+        <div class="doctor-card bg-white rounded-2xl p-4 card-shadow cursor-pointer">
+          <div class="flex items-start gap-3.5">
+            <div class="relative flex-shrink-0">
+              <div
+                class="w-14 h-14 rounded-full avatar-ring overflow-hidden bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center text-white text-xl font-bold">
+                李
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-green-500 rounded-full border-2 border-white">
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900">李雨晴</h3>
+                <!-- <span class="text-[11px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full font-medium">主任医师</span> -->
+              </div>
+              <!-- <p class="text-sm text-gray-500 mt-1">正畸科 · 从业15年</p> -->
+              <!-- <div class="flex items-center gap-3 mt-1.5">
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-star-fill text-yellow-500 text-[11px]"></i>
+                  <span>4.9</span>
+                  <span class="text-gray-300">·</span>
+                  <span>389评价</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-team-line text-gray-400 text-[11px]"></i>
+                  <span>接诊4120+</span>
+                </div>
+              </div> -->
+              <!-- 电话与操作 -->
+              <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
+                <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                  <i class="ri-phone-line text-green-500 text-sm"></i>
+                  <span class="font-mono text-gray-600">139-1234-5678</span>
+                </div>
+                <!-- <div class="flex gap-2">
+                  <button class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all">预约</button>
+                  <button class="call-btn w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 active:scale-90 transition-all">
+                    <i class="ri-phone-fill text-xs"></i>
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 医生卡片 3 -->
+        <div class="doctor-card bg-white rounded-2xl p-4 card-shadow cursor-pointer">
+          <div class="flex items-start gap-3.5">
+            <div class="relative flex-shrink-0">
+              <div
+                class="w-14 h-14 rounded-full avatar-ring overflow-hidden bg-gradient-to-br from-cyan-400 to-sky-400 flex items-center justify-center text-white text-xl font-bold">
+                王
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-green-500 rounded-full border-2 border-white">
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900">王建国</h3>
+                <!-- <span class="text-[11px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full font-medium">副主任医师</span> -->
+              </div>
+              <!-- <p class="text-sm text-gray-500 mt-1">修复科 · 从业22年</p> -->
+              <!-- <div class="flex items-center gap-3 mt-1.5">
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-star-fill text-yellow-500 text-[11px]"></i>
+                  <span>4.8</span>
+                  <span class="text-gray-300">·</span>
+                  <span>174评价</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-team-line text-gray-400 text-[11px]"></i>
+                  <span>接诊2830+</span>
+                </div>
+              </div> -->
+              <!-- 电话与操作 -->
+              <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
+                <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                  <i class="ri-phone-line text-green-500 text-sm"></i>
+                  <span class="font-mono text-gray-600">137-9876-5432</span>
+                </div>
+                <!-- <div class="flex gap-2">
+                  <button class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all">预约</button>
+                  <button class="call-btn w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 active:scale-90 transition-all">
+                    <i class="ri-phone-fill text-xs"></i>
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 医生卡片 4 -->
+        <div class="doctor-card bg-white rounded-2xl p-4 card-shadow cursor-pointer">
+          <div class="flex items-start gap-3.5">
+            <div class="relative flex-shrink-0">
+              <div
+                class="w-14 h-14 rounded-full avatar-ring overflow-hidden bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center text-white text-xl font-bold">
+                陈
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-green-500 rounded-full border-2 border-white">
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900">陈晓雅</h3>
+                <!-- <span class="text-[11px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full font-medium">主治医师</span> -->
+              </div>
+              <!-- <p class="text-sm text-gray-500 mt-1">牙周科 · 从业10年</p> -->
+              <!-- <div class="flex items-center gap-3 mt-1.5">
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-star-fill text-yellow-500 text-[11px]"></i>
+                  <span>4.7</span>
+                  <span class="text-gray-300">·</span>
+                  <span>132评价</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <i class="ri-team-line text-gray-400 text-[11px]"></i>
+                  <span>接诊1580+</span>
+                </div>
+              </div> -->
+              <!-- 电话与操作 -->
+              <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
+                <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                  <i class="ri-phone-line text-green-500 text-sm"></i>
+                  <span class="font-mono text-gray-600">136-5432-1098</span>
+                </div>
+                <!-- <div class="flex gap-2">
+                  <button class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all">预约</button>
+                  <button class="call-btn w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 active:scale-90 transition-all">
+                    <i class="ri-phone-fill text-xs"></i>
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- 底部留白 -->
+        <div class="h-4"></div>
+
+      </div>
+
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="absolute bottom-0 w-full glass h-[84px] flex justify-around items-start pt-3 z-30">
+      <div class="flex flex-col items-center gap-0.5 cursor-pointer opacity-40">
+        <i class="ri-home-5-line text-2xl text-gray-600"></i>
+        <span class="text-gray-500 text-[10px] font-medium">首页</span>
+      </div>
+      <div class="flex flex-col items-center gap-0.5 cursor-pointer">
+        <i class="ri-robot-line text-2xl text-blue-600"></i>
+        <span class="text-blue-600 text-[10px] font-medium">爱牙</span>
+      </div>
+      <div class="flex flex-col items-center gap-0.5 cursor-pointer relative">
+        <i class="ri-stethoscope-line text-2xl text-blue-600"></i>
+        <span class="text-blue-600 text-[10px] font-medium">医生</span>
+        <!-- 当前页指示器 -->
+        <div class="w-4 h-0.5 bg-blue-600 rounded-full mt-0.5"></div>
+      </div>
+      <div class="flex flex-col items-center gap-0.5 cursor-pointer opacity-40">
+        <i class="ri-shopping-bag-3-line text-2xl text-gray-600"></i>
+        <span class="text-gray-500 text-[10px] font-medium">健康</span>
+      </div>
+      <div class="flex flex-col items-center gap-0.5 cursor-pointer opacity-40">
+        <i class="ri-user-3-line text-2xl text-gray-600"></i>
+        <span class="text-gray-500 text-[10px] font-medium">我的</span>
+      </div>
+    </div>
+
+    <!-- Home Indicator -->
+    <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-gray-800/20 rounded-full z-30"></div>
+
+  </div>
+
+</body>
+
+</html>
