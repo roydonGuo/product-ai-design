@@ -65,13 +65,10 @@
           <i class="ri-arrow-down-s-line text-black"></i>
         </div>
       </div>
-      <div
+      <!-- <div
         class="px-2 h-10 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-        <!-- <img
-          src="https://images.unsplash.com/photo-1519689680058-324335c77eba?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-          alt="Avatar" class="w-full h-full object-cover"> -->
         <span class="text-black font-bold text-sm">设备管理</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- 滚动内容区 -->
@@ -109,17 +106,24 @@
 
         <!-- 统计指标卡片组 -->
         <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+
+            <p class="text-gray-400 text-[10px]">刷牙得分</p>
+            <p class="text-black font-extrabold text-xl leading-tight">91</p>
+            <div class="flex items-center gap-0.5 mt-1">
+              <span class="text-green-500 text-[10px] font-medium">优秀</span>
+            </div>
+          </div>
           <!-- 今日时长 -->
           <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center text-center">
             <!-- <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center mb-2">
               <i class="ri-timer-line text-blue-500 text-lg"></i>
             </div> -->
-            <p class="text-gray-400 text-[10px]">今日时长</p>
+            <p class="text-gray-400 text-[10px]">刷牙时长</p>
             <p class="text-black font-extrabold text-xl leading-tight">2:18</p>
-            <!-- <div class="flex items-center gap-0.5 mt-1">
-              <i class="ri-arrow-up-s-fill text-green-500 text-xs"></i>
-              <span class="text-green-500 text-[10px] font-medium">12%</span>
-            </div> -->
+            <div class="flex items-center gap-0.5 mt-1">
+              <span class="text-green-500 text-[10px] font-medium">优秀</span>
+            </div>
           </div>
 
           <!-- 覆盖率 -->
@@ -129,27 +133,25 @@
             </div> -->
             <p class="text-gray-400 text-[10px]">覆盖率</p>
             <p class="text-black font-extrabold text-xl leading-tight">87%</p>
-            <!-- <div class="flex items-center gap-0.5 mt-1">
-              <i class="ri-arrow-up-s-fill text-green-500 text-xs"></i>
-              <span class="text-green-500 text-[10px] font-medium">5%</span>
-            </div> -->
+            <div class="flex items-center gap-0.5 mt-1">
+              <span class="text-orange-500 text-[10px] font-medium">良好</span>
+            </div>
           </div>
 
-          <!-- 力度 -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-            <!-- <div class="w-9 h-9 rounded-full bg-purple-50 flex items-center justify-center mb-2">
-              <i class="ri-speed-mini-line text-purple-500 text-lg"></i>
+        </div>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+          <!-- <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center mb-2">
+              <i class="ri-timer-line text-blue-500 text-lg"></i>
             </div> -->
-            <p class="text-gray-400 text-[10px]">刷牙力度</p>
-            <p class="text-black font-extrabold text-xl leading-tight">适中</p>
-            <!-- <div class="flex items-center gap-0.5 mt-1">
-              <span class="text-gray-400 text-[10px]">正常范围</span>
-            </div> -->
+          <p class="text-gray-400 text-[10px]">覆盖范围</p>
+          <img src="./teeth-cover.png" class="w-full h-[250px] rounded-[16px]" />
+          <div class="flex items-center gap-0.5 mt-1">
+            <span class="text-green-500 text-[10px] font-medium">优秀</span>
           </div>
         </div>
 
         <!-- 本周趋势图表 -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mt-4">
           <div class="flex items-center justify-between mb-4">
             <span class="text-black font-bold text-sm">本周刷牙时长趋势</span>
             <div class="flex items-center gap-2">
@@ -403,7 +405,7 @@
       </div>
       <div class="flex flex-col items-center gap-1 cursor-pointer ">
         <i class="ri-text-line text-blue-600 text-2xl"></i>
-        <span class="text-blue-600 text-[10px] font-medium">爱牙博士</span>
+        <span class="text-blue-600 text-[16px] font-medium">爱牙博士</span>
       </div>
       <div class="flex flex-col items-center gap-1 cursor-pointer opacity-40">
         <i class="ri-shopping-bag-3-line text-black text-2xl"></i>
