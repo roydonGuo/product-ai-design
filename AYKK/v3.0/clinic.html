@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱牙看看 - 附近门诊</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe 0%, #f8fafc 45%, #eef4ff 100%);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(96, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .gradient-blue {
+      background: linear-gradient(135deg, #4f8cff 0%, #77a6ff 100%);
+    }
+
+    .bottom-blur {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* 诊所卡片悬停效果 */
+    .clinic-card {
+      transition: all 0.3s ease;
+    }
+
+    .clinic-card:active {
+      transform: scale(0.98);
+    }
+
+    /* 评分星星 */
+    .star-filled {
+      color: #f59e0b;
+    }
+
+    .star-empty {
+      color: #d1d5db;
+    }
+
+    /* 地图大头针脉冲 */
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.7;
+        transform: scale(1.3);
+      }
+    }
+
+    .map-pin-pulse {
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="flex flex-wrap justify-center gap-10 p-10 min-h-screen items-center">
+
+  <!-- ================= 附近门诊 ================= -->
+  <div
+    class="relative w-[375px] h-[812px] bg-gray-50 rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-gray-900 box-border flex flex-col">
+
+    <!-- iOS 状态栏 -->
+    <div class="h-12 w-full flex justify-between items-end px-6 pb-2 z-50 absolute top-0 left-0">
+      <span class="text-black text-sm font-semibold">9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i class="ri-signal-wifi-fill text-black text-sm"></i>
+        <i class="ri-battery-charge-fill text-black text-sm"></i>
+      </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <!-- <div class="pt-14 pb-3 px-5 bg-white/95 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="ri-arrow-left-s-line text-2xl text-gray-700"></i>
+        <h1 class="text-lg font-bold text-gray-900">附近门诊</h1>
+      </div>
+      <button class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
+        <i class="ri-map-2-line text-blue-500 text-lg"></i>
+      </button>
+    </div> -->
+
+    <!-- 搜索栏 + 定位 -->
+    <!-- <div class="px-5 py-3 bg-white border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="flex-1 relative">
+          <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input type="text" placeholder="搜索口腔医院、诊所..." class="w-full h-10 pl-10 pr-4 bg-gray-100 rounded-full text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+        </div>
+        <button class="shrink-0 flex items-center gap-1 px-3 py-2 bg-blue-50 rounded-full text-blue-500 text-xs font-medium">
+          <i class="ri-filter-3-line text-sm"></i>
+          筛选
+        </button>
+      </div>
+      <div class="flex items-center gap-1.5 mt-2.5">
+        <i class="ri-map-pin-2-fill text-blue-500 text-xs"></i>
+        <span class="text-xs text-gray-500">当前定位：</span>
+        <span class="text-xs text-gray-700 font-medium">杭州市西湖区文三路</span>
+        <button class="ml-auto text-blue-500 text-xs font-medium flex items-center gap-0.5">
+          <i class="ri-refresh-line text-xs"></i> 重新定位
+        </button>
+      </div>
+    </div> -->
+
+    <!-- 快捷筛选标签 -->
+    <div class="flex gap-2 pt-14 px-5 py-3 bg-white border-b border-gray-100 overflow-x-auto no-scrollbar">
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-blue-500 text-white text-xs font-medium">全部</span>
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">口腔医院</span>
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">牙科诊所</span>
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">医保定点</span>
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">可预约</span>
+      <span class="shrink-0 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">夜间急诊</span>
+    </div>
+
+    <!-- 微缩地图区域 -->
+    <!-- <div class="relative h-36 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden"> 
+      <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#93c5fd 1px, transparent 1px), linear-gradient(90deg, #93c5fd 1px, transparent 1px); background-size: 30px 30px;"></div>
+     
+      <div class="absolute left-[28%] top-[30%]">
+        <div class="relative flex flex-col items-center">
+          <span class="text-[10px] bg-white px-1.5 py-0.5 rounded-full shadow text-gray-700 font-medium mb-0.5 whitespace-nowrap">口腔医院</span>
+          <i class="ri-map-pin-2-fill text-blue-500 text-xl map-pin-pulse"></i>
+        </div>
+      </div>
+      <div class="absolute left-[55%] top-[50%]">
+        <div class="relative flex flex-col items-center">
+          <span class="text-[10px] bg-white px-1.5 py-0.5 rounded-full shadow text-gray-700 font-medium mb-0.5 whitespace-nowrap">牙科诊所</span>
+          <i class="ri-map-pin-2-fill text-red-400 text-xl"></i>
+        </div>
+      </div>
+      <div class="absolute left-[70%] top-[25%]">
+        <div class="relative flex flex-col items-center">
+          <span class="text-[10px] bg-white px-1.5 py-0.5 rounded-full shadow text-gray-700 font-medium mb-0.5 whitespace-nowrap">齿科</span>
+          <i class="ri-map-pin-2-fill text-blue-400 text-xl"></i>
+        </div>
+      </div>
+      <div class="absolute left-[40%] top-[70%]">
+        <div class="relative flex flex-col items-center">
+          <span class="text-[10px] bg-white px-1.5 py-0.5 rounded-full shadow text-gray-700 font-medium mb-0.5 whitespace-nowrap">综合门诊</span>
+          <i class="ri-map-pin-2-fill text-orange-400 text-xl"></i>
+        </div>
+      </div> 
+      <div class="absolute left-[48%] top-[45%] z-10">
+        <div class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+          <div class="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow"></div>
+        </div>
+      </div> 
+      <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-50/80 to-transparent"></div>
+      
+      <div class="absolute right-2 bottom-2 flex flex-col gap-0.5">
+        <button class="w-7 h-7 rounded-lg bg-white shadow flex items-center justify-center text-gray-600 text-sm font-bold">+</button>
+        <button class="w-7 h-7 rounded-lg bg-white shadow flex items-center justify-center text-gray-600 text-lg font-bold">−</button>
+      </div>
+    </div> -->
+
+    <!-- 结果统计 -->
+    <!-- <div class="flex items-center justify-between px-5 py-2.5 bg-white border-b border-gray-50">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-gray-800">共找到 <span class="text-blue-500">12</span> 家附近诊所</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <span class="flex items-center gap-1 text-blue-500 font-medium"><i class="ri-road-map-line"></i> 距离最近</span>
+        <span class="text-gray-300">|</span>
+        <span class="flex items-center gap-1"><i class="ri-star-s-line"></i> 评分最高</span>
+      </div>
+    </div> -->
+
+    <!-- 门诊列表（可滚动） -->
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-gray-50/80 pb-24">
+
+      <div class="px-5 py-4 space-y-4">
+
+        <!-- ===== 诊所卡片 1 ===== -->
+        <div class="clinic-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900 truncate">杭州口腔医院（平海院区）</h3>
+                <span class="shrink-0 px-1.5 py-0.5 rounded bg-green-50 text-green-600 text-[9px] font-medium">三甲</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1.5">
+                <div class="flex items-center">
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-half-fill star-filled text-xs"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">4.6</span>
+                <span class="text-[10px] text-gray-400">· 328条评价</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right ml-3">
+              <div class="text-xs text-blue-500 font-semibold flex items-center gap-0.5 justify-end">
+                <i class="ri-map-pin-line text-[10px]"></i> 1.2km
+              </div>
+              <!-- <div class="mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[10px] font-medium">营业中</div> -->
+            </div>
+          </div>
+          <div class="flex items-start gap-1.5 mt-2.5 text-xs text-gray-500">
+            <i class="ri-map-pin-line text-gray-300 mt-0.5"></i>
+            <span class="flex-1 truncate">杭州市上城区平海路57号</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-time-line text-gray-300"></i>
+            <span>08:00 - 20:00</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-phone-line text-gray-300"></i>
+            <span>0571-8721-XXXX</span>
+          </div>
+          <!-- 标签 -->
+          <div class="flex items-center gap-1.5 mt-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[9px] font-medium">医保定点</span>
+            <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-500 text-[9px] font-medium">可预约</span>
+            <span class="px-2 py-0.5 rounded-full bg-orange-50 text-orange-500 text-[9px] font-medium">周末营业</span>
+          </div>
+          <!-- 操作按钮 -->
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50">
+            <!-- <button
+              class="flex-1 h-9 rounded-full gradient-blue text-white text-xs font-medium shadow-sm shadow-blue-200">
+              立即预约
+            </button> -->
+            <!-- <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line text-sm"></i>
+            </button> -->
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-navigation-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== 诊所卡片 2 ===== -->
+        <div class="clinic-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900 truncate">雅致口腔门诊部</h3>
+                <span
+                  class="shrink-0 px-1.5 py-0.5 rounded bg-yellow-50 text-yellow-600 text-[9px] font-medium">连锁</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1.5">
+                <div class="flex items-center">
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-line star-empty text-xs"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">4.3</span>
+                <span class="text-[10px] text-gray-400">· 156条评价</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right ml-3">
+              <div class="text-xs text-blue-500 font-semibold flex items-center gap-0.5 justify-end">
+                <i class="ri-map-pin-line text-[10px]"></i> 0.8km
+              </div>
+              <!-- <div class="mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[10px] font-medium">营业中</div> -->
+            </div>
+          </div>
+          <div class="flex items-start gap-1.5 mt-2.5 text-xs text-gray-500">
+            <i class="ri-map-pin-line text-gray-300 mt-0.5"></i>
+            <span class="flex-1 truncate">杭州市西湖区文三路478号华星科技大厦3楼</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-time-line text-gray-300"></i>
+            <span>09:00 - 18:00</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-phone-line text-gray-300"></i>
+            <span>0571-8886-XXXX</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[9px] font-medium">医保定点</span>
+            <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-500 text-[9px] font-medium">可预约</span>
+            <span class="px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 text-[9px] font-medium">儿童齿科</span>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50">
+            <!-- <button
+              class="flex-1 h-9 rounded-full gradient-blue text-white text-xs font-medium shadow-sm shadow-blue-200">
+              立即预约
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line text-sm"></i>
+            </button> -->
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-navigation-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== 诊所卡片 3 ===== -->
+        <div class="clinic-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900 truncate">美莱口腔（西湖旗舰店）</h3>
+                <span class="shrink-0 px-1.5 py-0.5 rounded bg-green-50 text-green-600 text-[9px] font-medium">旗舰</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1.5">
+                <div class="flex items-center">
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">4.8</span>
+                <span class="text-[10px] text-gray-400">· 521条评价</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right ml-3">
+              <div class="text-xs text-blue-500 font-semibold flex items-center gap-0.5 justify-end">
+                <i class="ri-map-pin-line text-[10px]"></i> 2.3km
+              </div>
+              <!-- <div class="mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[10px] font-medium">营业中</div> -->
+            </div>
+          </div>
+          <div class="flex items-start gap-1.5 mt-2.5 text-xs text-gray-500">
+            <i class="ri-map-pin-line text-gray-300 mt-0.5"></i>
+            <span class="flex-1 truncate">杭州市西湖区学院路77号黄龙万科中心H座</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-time-line text-gray-300"></i>
+            <span>08:30 - 21:00</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-phone-line text-gray-300"></i>
+            <span>0571-8899-XXXX</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[9px] font-medium">医保定点</span>
+            <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-500 text-[9px] font-medium">可预约</span>
+            <span class="px-2 py-0.5 rounded-full bg-orange-50 text-orange-500 text-[9px] font-medium">夜间急诊</span>
+            <span class="px-2 py-0.5 rounded-full bg-teal-50 text-teal-500 text-[9px] font-medium">种植牙</span>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50">
+            <button
+              class="flex-1 h-9 rounded-full gradient-blue text-white text-xs font-medium shadow-sm shadow-blue-200">
+              立即预约
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line text-sm"></i>
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-navigation-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== 诊所卡片 4 ===== -->
+        <div class="clinic-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900 truncate">浙江中医药大学附属口腔医院</h3>
+                <span class="shrink-0 px-1.5 py-0.5 rounded bg-green-50 text-green-600 text-[9px] font-medium">三甲</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1.5">
+                <div class="flex items-center">
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-half-fill star-filled text-xs"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">4.5</span>
+                <span class="text-[10px] text-gray-400">· 247条评价</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right ml-3">
+              <div class="text-xs text-blue-500 font-semibold flex items-center gap-0.5 justify-end">
+                <i class="ri-map-pin-line text-[10px]"></i> 1.8km
+              </div>
+              <!-- <div class="mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[10px] font-medium">营业中</div> -->
+            </div>
+          </div>
+          <div class="flex items-start gap-1.5 mt-2.5 text-xs text-gray-500">
+            <i class="ri-map-pin-line text-gray-300 mt-0.5"></i>
+            <span class="flex-1 truncate">杭州市滨江区浦沿路428号</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-time-line text-gray-300"></i>
+            <span>08:00 - 17:30</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-phone-line text-gray-300"></i>
+            <span>0571-8661-XXXX</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[9px] font-medium">医保定点</span>
+            <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-500 text-[9px] font-medium">可刷医保</span>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50">
+            <button
+              class="flex-1 h-9 rounded-full gradient-blue text-white text-xs font-medium shadow-sm shadow-blue-200">
+              立即预约
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line text-sm"></i>
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-navigation-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== 诊所卡片 5（距离最近，推荐优先） ===== -->
+        <div class="clinic-card bg-white rounded-2xl p-4 shadow-sm border border-blue-100 cursor-pointer relative">
+          <!-- 推荐标签 -->
+          <div
+            class="absolute -top-2 left-4 px-2.5 py-0.5 rounded-full gradient-blue text-white text-[9px] font-medium shadow-sm shadow-blue-200">
+            距您最近
+          </div>
+          <div class="flex items-start justify-between mt-1.5">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-gray-900 truncate">洁美佳口腔诊所</h3>
+                <span
+                  class="shrink-0 px-1.5 py-0.5 rounded bg-yellow-50 text-yellow-600 text-[9px] font-medium">连锁</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1.5">
+                <div class="flex items-center">
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-fill star-filled text-xs"></i>
+                  <i class="ri-star-line star-empty text-xs"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">4.2</span>
+                <span class="text-[10px] text-gray-400">· 89条评价</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right ml-3">
+              <div class="text-xs text-blue-500 font-semibold flex items-center gap-0.5 justify-end">
+                <i class="ri-map-pin-line text-[10px]"></i> 350m
+              </div>
+              <!-- <div class="mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[10px] font-medium">营业中</div> -->
+            </div>
+          </div>
+          <div class="flex items-start gap-1.5 mt-2.5 text-xs text-gray-500">
+            <i class="ri-map-pin-line text-gray-300 mt-0.5"></i>
+            <span class="flex-1 truncate">杭州市西湖区文三路453号中茵大厦1楼</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-time-line text-gray-300"></i>
+            <span>09:00 - 19:00</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+            <i class="ri-phone-line text-gray-300"></i>
+            <span>0571-8805-XXXX</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-500 text-[9px] font-medium">可预约</span>
+            <span class="px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 text-[9px] font-medium">儿童齿科</span>
+            <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-500 text-[9px] font-medium">洗牙优惠</span>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50">
+            <button
+              class="flex-1 h-9 rounded-full gradient-blue text-white text-xs font-medium shadow-sm shadow-blue-200">
+              立即预约
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line text-sm"></i>
+            </button>
+            <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400">
+              <i class="ri-navigation-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 加载更多 -->
+      <div class="flex justify-center pb-4">
+        <button
+          class="px-8 py-2.5 bg-white rounded-full text-xs text-gray-500 font-medium shadow-sm border border-gray-100 flex items-center gap-1.5">
+          加载更多门诊
+          <i class="ri-arrow-down-s-line"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="absolute bottom-0 w-full glass h-[88px] flex justify-around items-start pt-4 z-50">
+      <div class="flex flex-col items-center gap-1 cursor-pointer opacity-40">
+        <i class="ri-home-5-fill text-black text-2xl"></i>
+        <span class="text-black text-[10px] font-medium">首页</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 cursor-pointer">
+        <i class="ri-robot-line text-blue-600 text-2xl"></i>
+        <span class="text-blue-600 text-[10px] font-medium">爱牙</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 cursor-pointer">
+        <i class="ri-text-line text-blue-600 text-2xl"></i>
+        <span class="text-blue-600 text-[16px] font-medium">门店</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 cursor-pointer opacity-40">
+        <i class="ri-shopping-bag-3-line text-black text-2xl"></i>
+        <span class="text-black text-[10px] font-medium">健康</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 cursor-pointer opacity-40">
+        <i class="ri-user-3-line text-black text-2xl"></i>
+        <span class="text-black text-[10px] font-medium">我的</span>
+      </div>
+    </div>
+
+    <!-- Home Indicator -->
+    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-black rounded-full z-50"></div>
+  </div>
+
+</body>
+
+</html>
