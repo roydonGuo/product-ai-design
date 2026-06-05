@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多Agent协同流式对话平台 - UI/UX设计图</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --surface: #ffffff;
+            --surface-alt: #f8f9fc;
+            --border: #e2e7f0;
+            --text: #1a1d28;
+            --text-secondary: #5a6072;
+            --text-muted: #8b90a0;
+            --orch-color: #6c5ce7;
+            --orch-glow: rgba(108, 92, 231, 0.35);
+            --search-color: #3b82f6;
+            --search-glow: rgba(59, 130, 246, 0.35);
+            --analysis-color: #10b981;
+            --analysis-glow: rgba(16, 185, 129, 0.35);
+            --writer-color: #f59e0b;
+            --writer-glow: rgba(245, 158, 11, 0.35);
+            --factcheck-color: #ef4444;
+            --factcheck-glow: rgba(239, 68, 68, 0.3);
+            --memory-color: #8b5cf6;
+            --memory-glow: rgba(139, 92, 246, 0.3);
+            --user-bubble: #eef2ff;
+            --stream-cursor: #6c5ce7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --radius-sm: 8px;
+            --radius: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 24px rgba(108, 92, 231, 0.25);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            --font-sans: 'Inter', 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: #e8ecf2;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(108, 92, 231, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 75% 60%, rgba(59, 130, 246, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============ 整体容器 ============ */
+        .platform-container {
+            width: 100%;
+            max-width: 1400px;
+            min-width: 1100px;
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        /* ============ 顶部标题栏 ============ */
+        .header {
+            background: linear-gradient(135deg, #1a1d2e 0%, #252a3e 40%, #1e2235 100%);
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 10;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #6c5ce7 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(108, 92, 231, 0.4);
+            position: relative;
+        }
+        .header-logo::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 11px;
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            animation: logoPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.06);
+            }
+        }
+        .header-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+        .header-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-top: 1px;
+        }
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .header-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            animation: dotBlink 1.8s ease-in-out infinite;
+        }
+        @keyframes dotBlink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.25;
+            }
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .header-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.75);
+            padding: 7px 14px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+        }
+        .header-btn.active {
+            background: rgba(108, 92, 231, 0.3);
+            border-color: rgba(108, 92, 231, 0.5);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(108, 92, 231, 0.2);
+        }
+
+        /* ============ 主体区域 ============ */
+        .main-body {
+            display: flex;
+            flex: 1;
+            min-height: 580px;
+            max-height: 620px;
+            position: relative;
+        }
+
+        /* ============ 左侧：流式对话面板 ============ */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fafbfd;
+            border-right: 1px solid var(--border);
+            position: relative;
+            min-width: 0;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        /* 消息气泡 */
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 88%;
+            animation: msgSlideIn 0.4s ease-out;
+        }
+        @keyframes msgSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message.system {
+            align-self: flex-start;
+        }
+        .msg-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .msg-avatar.user-av {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+        .msg-avatar.orch-av {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            box-shadow: 0 2px 8px var(--orch-glow);
+        }
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 13.5px;
+            line-height: 1.65;
+            position: relative;
+            letter-spacing: 0.01em;
+        }
+        .message.user .msg-bubble {
+            background: var(--user-bubble);
+            color: #1e293b;
+            border-bottom-right-radius: 4px;
+            border: 1px solid #dde3f0;
+        }
+        .message.system .msg-bubble {
+            background: #fff;
+            color: #1e293b;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #e8ecf3;
+            box-shadow: var(--shadow-sm);
+        }
+        .msg-bubble .agent-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-right: 4px;
+            letter-spacing: 0.03em;
+            vertical-align: middle;
+        }
+        .agent-tag.orch {
+            background: #f3f0ff;
+            color: #6c5ce7;
+        }
+        .agent-tag.search {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+        .agent-tag.analysis {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+        .agent-tag.writer {
+            background: #fffbeb;
+            color: #d97706;
+        }
+        .agent-tag.factcheck {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+        .agent-tag.memory {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        /* 流式打字光标 */
+        .stream-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 15px;
+            background: var(--stream-cursor);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: cursorBlink 0.8s step-end infinite;
+            border-radius: 1px;
+        }
+        @keyframes cursorBlink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+        .streaming-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: #6c5ce7;
+            font-weight: 500;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+        @keyframes fadeInOut {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .streaming-dots {
+            display: inline-flex;
+            gap: 3px;
+        }
+        .streaming-dots span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #6c5ce7;
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+        .streaming-dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .streaming-dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        @keyframes dotBounce {
+            0%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+        }
+
+        /* 阶段分隔标记 */
+        .phase-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            font-size: 10px;
+            color: #8b90a0;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .phase-divider::before,
+        .phase-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e8ef;
+        }
+        .phase-divider .phase-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #c4c9d4;
+            flex-shrink: 0;
+        }
+
+        /* 输入区 */
+        .chat-input-area {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            font-size: 13px;
+            font-family: var(--font-sans);
+            outline: none;
+            transition: var(--transition);
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: default;
+            letter-spacing: 0.01em;
+        }
+        .chat-input:focus {
+            border-color: #c4b5fd;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.08);
+        }
+        .send-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #6c5ce7, #7c3aed);
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4);
+        }
+
+        /* ============ 右侧：Agent可视化面板 ============ */
+        .viz-panel {
+            width: 440px;
+            min-width: 440px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            overflow-y: auto;
+            padding: 16px 18px;
+            gap: 16px;
+        }
+        .viz-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .viz-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .viz-panel::-webkit-scrollbar-thumb {
+            background: #e0e4ea;
+            border-radius: 10px;
+        }
+
+        /* 拓扑图容器 */
+        .topo-card {
+            background: #fafbfd;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+        .topo-card-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #3a3f50;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .topo-card-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            border-radius: 2px;
+            background: #6c5ce7;
+        }
+        .topo-svg {
+            width: 100%;
+            height: 320px;
+            display: block;
+        }
+
+        /* 图例卡片 */
+        .legend-card {
+            background: #fafbfd;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .legend-card-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #3a3f50;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 10.5px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #5a6072;
+        }
+        .legend-line {
+            width: 22px;
+            height: 2px;
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+        .legend-line.solid {
+            border-top: 2.5px solid #6c5ce7;
+        }
+        .legend-line.dashed {
+            border-top: 2px dashed #3b82f6;
+        }
+        .legend-line.dotted {
+            border-top: 2px dotted #f59e0b;
+        }
+        .legend-line.bidirectional {
+            position: relative;
+        }
+        .legend-line.bidirectional::after {
+            content: '⇄';
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            font-size: 9px;
+            color: #6c5ce7;
+        }
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .legend-dot.orch {
+            background: #6c5ce7;
+        }
+        .legend-dot.search {
+            background: #3b82f6;
+        }
+        .legend-dot.analysis {
+            background: #10b981;
+        }
+        .legend-dot.writer {
+            background: #f59e0b;
+        }
+        .legend-dot.factcheck {
+            background: #ef4444;
+        }
+        .legend-dot.memory {
+            background: #8b5cf6;
+        }
+
+        /* 活跃Agent状态面板 */
+        .active-agents-card {
+            background: #fafbfd;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .active-agents-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #3a3f50;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+        .active-agent-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 0;
+            font-size: 11px;
+            color: #5a6072;
+            border-bottom: 1px solid #f0f1f5;
+            transition: var(--transition);
+        }
+        .active-agent-row:last-child {
+            border-bottom: none;
+        }
+        .active-agent-row .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .status-dot.idle {
+            background: #c4c9d4;
+        }
+        .status-dot.active {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            animation: dotBlink 1.2s ease-in-out infinite;
+        }
+        .status-dot.processing {
+            background: #f59e0b;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+            animation: dotBlink 0.7s ease-in-out infinite;
+        }
+        .agent-role-tag {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            color: #6b7280;
+            margin-left: auto;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        /* 通信协议标注 */
+        .protocol-note {
+            position: absolute;
+            font-size: 9px;
+            color: #6c5ce7;
+            font-weight: 600;
+            pointer-events: none;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* ============ 底部状态栏 ============ */
+        .status-bar {
+            background: #f8f9fc;
+            border-top: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 10.5px;
+            color: #8b90a0;
+            letter-spacing: 0.02em;
+            flex-wrap: wrap;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-item .mini-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+        .status-divider {
+            width: 1px;
+            height: 12px;
+            background: #dde1e8;
+        }
+        .status-highlight {
+            color: #6c5ce7;
+            font-weight: 600;
+        }
+
+        /* ============ 响应式提示 ============ */
+        @media (max-width: 1150px) {
+            .platform-container {
+                min-width: auto;
+                max-width: 100%;
+            }
+            .viz-panel {
+                width: 360px;
+                min-width: 360px;
+            }
+        }
+
+        /* ============ SVG动画类 ============ */
+        .comm-line {
+            stroke-dasharray: 6 3;
+            animation: dashFlow 0.8s linear infinite;
+        }
+        @keyframes dashFlow {
+            to {
+                stroke-dashoffset: -18;
+            }
+        }
+        .comm-line-active {
+            stroke-dasharray: 4 2;
+            animation: dashFlowFast 0.4s linear infinite;
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 4px currentColor);
+        }
+        @keyframes dashFlowFast {
+            to {
+                stroke-dashoffset: -12;
+            }
+        }
+        .node-glow {
+            animation: nodeGlowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes nodeGlowPulse {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 18px currentColor);
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* tooltip样式 */
+        .tooltip-trigger {
+            cursor: help;
+            border-bottom: 1px dotted #8b90a0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="platform-container" id="platform">
+        <!-- ==================== 顶部标题栏 ==================== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-logo" title="Multi-Agent Orchestrator">⚡</div>
+                <div>
+                    <div class="header-title">多Agent协同流式对话平台</div>
+                    <div class="header-subtitle">Multi-Agent Collaborative Streaming Dialogue</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="header-badge">
+                    <span class="dot"></span> 系统运行中 · 6 Agent就绪
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn active" id="btnDemo" onclick="restartDemo()" title="重新播放演示">▶ 演示模式</button>
+                    <button class="header-btn" onclick="toggleSpeed()" id="btnSpeed" title="切换播放速度">⏱ 1x</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== 主体 ==================== -->
+        <div class="main-body">
+            <!-- 左侧：流式对话面板 -->
+            <div class="chat-panel" id="chatPanel">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- 动态填充 -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" readonly
+                    value="帮我调研2024年AI Agent领域的最新进展，分析关键趋势并生成一份简明报告"
+                    title="演示用户输入（只读）">
+                    <button class="send-btn" title="发送">➤</button>
+                </div>
+            </div>
+
+            <!-- 右侧：可视化面板 -->
+            <div class="viz-panel" id="vizPanel">
+                <!-- Agent拓扑图 -->
+                <div class="topo-card">
+                    <div class="topo-card-title">Agent协作拓扑图（实时）</div>
+                    <svg class="topo-svg" viewBox="0 0 400 320" id="topoSvg">
+                        <!-- 背景网格 -->
+                        <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eef0f5" stroke-width="0.5"/>
+                            </pattern>
+                            <radialGradient id="orchGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#8b7cf0"/>
+                                <stop offset="100%" stop-color="#6c5ce7"/>
+                            </radialGradient>
+                            <radialGradient id="searchGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#60a5fa"/>
+                                <stop offset="100%" stop-color="#3b82f6"/>
+                            </radialGradient>
+                            <radialGradient id="analysisGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#34d399"/>
+                                <stop offset="100%" stop-color="#10b981"/>
+                            </radialGradient>
+                            <radialGradient id="writerGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#fbbf24"/>
+                                <stop offset="100%" stop-color="#f59e0b"/>
+                            </radialGradient>
+                            <radialGradient id="factcheckGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#f87171"/>
+                                <stop offset="100%" stop-color="#ef4444"/>
+                            </radialGradient>
+                            <radialGradient id="memoryGrad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#a78bfa"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </radialGradient>
+                            <filter id="glowOrch">
+                                <feGaussianBlur stdDeviation="3" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <filter id="glowActive">
+                                <feGaussianBlur stdDeviation="4" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <marker id="arrowOrch" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6 Z" fill="#6c5ce7"/>
+                            </marker>
+                            <marker id="arrowSearch" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6 Z" fill="#3b82f6"/>
+                            </marker>
+                            <marker id="arrowAnalysis" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6 Z" fill="#10b981"/>
+                            </marker>
+                            <marker id="arrowWriter" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6 Z" fill="#f59e0b"/>
+                            </marker>
+                        </defs>
+                        <rect width="400" height="320" fill="url(#grid)" opacity="0.6"/>
+
+                        <!-- 连线（Orchestrator到各Agent） -->
+                        <!-- Orch -> Search (左上) -->
+                        <line id="lineOrchSearch" x1="200" y1="150" x2="70" y2="55" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 3" opacity="0.5" marker-end="url(#arrowSearch)"/>
+                        <!-- Orch -> Analysis (右上) -->
+                        <line id="lineOrchAnalysis" x1="200" y1="150" x2="330" y2="55" stroke="#10b981" stroke-width="2" stroke-dasharray="6 3" opacity="0.5" marker-end="url(#arrowAnalysis)"/>
+                        <!-- Orch -> Writer (右下) -->
+                        <line id="lineOrchWriter" x1="200" y1="150" x2="330" y2="250" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 3" opacity="0.5" marker-end="url(#arrowWriter)"/>
+                        <!-- Orch -> FactCheck (左下) -->
+                        <line id="lineOrchFactCheck" x1="200" y1="150" x2="70" y2="250" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 3" opacity="0.5" marker-end="url(#arrowOrch)"/>
+                        <!-- Orch -> Memory (正下) -->
+                        <line id="lineOrchMemory" x1="200" y1="150" x2="200" y2="275" stroke="#8b5cf6" stroke-width="1.8" stroke-dasharray="5 4" opacity="0.45"/>
+
+                        <!-- 通信标注 -->
+                        <text x="128" y="92" font-size="8" fill="#3b82f6" opacity="0.7" font-weight="500">gRPC双向流</text>
+                        <text x="260" y="92" font-size="8" fill="#10b981" opacity="0.7" font-weight="500">gRPC双向流</text>
+                        <text x="262" y="208" font-size="8" fill="#f59e0b" opacity="0.7" font-weight="500">SSE推送</text>
+                        <text x="88" y="208" font-size="8" fill="#ef4444" opacity="0.7" font-weight="500">请求-响应</text>
+
+                        <!-- Agent节点 -->
+                        <!-- Orchestrator 中心 -->
+                        <circle cx="200" cy="150" r="30" fill="url(#orchGrad)" stroke="#5a4bd1" stroke-width="2.5" id="nodeOrch" filter="url(#glowOrch)" style="cursor:pointer;"/>
+                        <text x="200" y="146" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">编排者</text>
+                        <text x="200" y="160" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.85)">Orchestrator</text>
+                        <title>Orchestrator Agent - 任务分解与调度中心</title>
+
+                        <!-- Search Agent 左上 -->
+                        <circle cx="70" cy="55" r="22" fill="url(#searchGrad)" stroke="#2563eb" stroke-width="2" id="nodeSearch" style="cursor:pointer;"/>
+                        <text x="70" y="52" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">搜索</text>
+                        <text x="70" y="64" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.8)">Search</text>
+                        <title>Search Agent - 信息检索与网页抓取</title>
+
+                        <!-- Analysis Agent 右上 -->
+                        <circle cx="330" cy="55" r="22" fill="url(#analysisGrad)" stroke="#059669" stroke-width="2" id="nodeAnalysis" style="cursor:pointer;"/>
+                        <text x="330" y="52" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">分析</text>
+                        <text x="330" y="64" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.8)">Analysis</text>
+                        <title>Analysis Agent - 数据分析与趋势识别</title>
+
+                        <!-- Writer Agent 右下 -->
+                        <circle cx="330" cy="250" r="22" fill="url(#writerGrad)" stroke="#d97706" stroke-width="2" id="nodeWriter" style="cursor:pointer;"/>
+                        <text x="330" y="247" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">写作</text>
+                        <text x="330" y="259" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.8)">Writer</text>
+                        <title>Writer Agent - 内容生成与报告撰写</title>
+
+                        <!-- FactCheck Agent 左下 -->
+                        <circle cx="70" cy="250" r="22" fill="url(#factcheckGrad)" stroke="#dc2626" stroke-width="2" id="nodeFactCheck" style="cursor:pointer;"/>
+                        <text x="70" y="247" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">核查</text>
+                        <text x="70" y="259" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.8)">FactCheck</text>
+                        <title>FactCheck Agent - 事实核查与信息验证</title>
+
+                        <!-- Memory Agent 正下方 -->
+                        <circle cx="200" cy="275" r="18" fill="url(#memoryGrad)" stroke="#7c3aed" stroke-width="1.8" id="nodeMemory" style="cursor:pointer;"/>
+                        <text x="200" y="273" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">记忆</text>
+                        <text x="200" y="284" text-anchor="middle" font-size="6.5" fill="rgba(255,255,255,0.8)">Memory</text>
+                        <title>Memory Agent - 上下文记忆与会话持久化</title>
+
+                        <!-- 数据流粒子（动态） -->
+                        <circle r="3" fill="#6c5ce7" id="particle1" opacity="0" style="transition: all 0.3s;"/>
+                        <circle r="3" fill="#3b82f6" id="particle2" opacity="0" style="transition: all 0.3s;"/>
+                        <circle r="3" fill="#10b981" id="particle3" opacity="0" style="transition: all 0.3s;"/>
+                    </svg>
+                    <!-- 协议标注浮层 -->
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:9px;color:#8b90a0;">
+                        <span>🔗 通信协议：<strong style="color:#6c5ce7;">gRPC Bidirectional Streaming</strong></span>
+                        <span>📦 消息格式：<strong style="color:#3b82f6;">Protobuf</strong></span>
+                        <span>🔄 流式推送：<strong style="color:#f59e0b;">SSE / WebSocket</strong></span>
+                    </div>
+                </div>
+
+                <!-- 图例卡片 -->
+                <div class="legend-card">
+                    <div class="legend-card-title">📋 图例说明</div>
+                    <div class="legend-grid">
+                        <div class="legend-item"><span class="legend-dot orch"></span> Orchestrator 编排者</div>
+                        <div class="legend-item"><span class="legend-dot search"></span> Search 搜索Agent</div>
+                        <div class="legend-item"><span class="legend-dot analysis"></span> Analysis 分析Agent</div>
+                        <div class="legend-item"><span class="legend-dot writer"></span> Writer 写作Agent</div>
+                        <div class="legend-item"><span class="legend-dot factcheck"></span> FactCheck 核查Agent</div>
+                        <div class="legend-item"><span class="legend-dot memory"></span> Memory 记忆Agent</div>
+                        <div class="legend-item" style="grid-column:1/-1;border-top:1px solid #eef0f5;padding-top:6px;margin-top:2px;">
+                            <span class="legend-line solid"></span> 同步gRPC流式调用
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line dashed"></span> 异步消息推送
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line dotted"></span> 事件通知(发布-订阅)
+                        </div>
+                        <div class="legend-item">
+                            <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.5);"></span> 活跃状态
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 活跃Agent状态面板 -->
+                <div class="active-agents-card" id="activeAgentsCard">
+                    <div class="active-agents-title">🔴 实时Agent状态监控</div>
+                    <div class="active-agent-row" id="statusOrch">
+                        <span class="status-dot idle" id="dotOrch"></span>
+                        <span>Orchestrator</span>
+                        <span class="agent-role-tag">调度中</span>
+                    </div>
+                    <div class="active-agent-row" id="statusSearch">
+                        <span class="status-dot idle" id="dotSearch"></span>
+                        <span>Search Agent</span>
+                        <span class="agent-role-tag">信息检索</span>
+                    </div>
+                    <div class="active-agent-row" id="statusAnalysis">
+                        <span class="status-dot idle" id="dotAnalysis"></span>
+                        <span>Analysis Agent</span>
+                        <span class="agent-role-tag">数据分析</span>
+                    </div>
+                    <div class="active-agent-row" id="statusWriter">
+                        <span class="status-dot idle" id="dotWriter"></span>
+                        <span>Writer Agent</span>
+                        <span class="agent-role-tag">内容生成</span>
+                    </div>
+                    <div class="active-agent-row" id="statusFactCheck">
+                        <span class="status-dot idle" id="dotFactCheck"></span>
+                        <span>FactCheck Agent</span>
+                        <span class="agent-role-tag">事实核查</span>
+                    </div>
+                    <div class="active-agent-row" id="statusMemory">
+                        <span class="status-dot idle" id="dotMemory"></span>
+                        <span>Memory Agent</span>
+                        <span class="agent-role-tag">上下文记忆</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 底部状态栏 ==================== -->
+        <div class="status-bar" id="statusBar">
+            <div class="status-item"><span class="mini-dot"></span> 系统正常</div>
+            <span class="status-divider"></span>
+            <div class="status-item">通信延迟：<span class="status-highlight">12ms</span></div>
+            <span class="status-divider"></span>
+            <div class="status-item">流式吞吐：<span class="status-highlight">3.2 KB/s</span></div>
+            <span class="status-divider"></span>
+            <div class="status-item">当前阶段：<span class="status-highlight" id="statusPhase">就绪</span></div>
+            <span class="status-divider"></span>
+            <div class="status-item">消息总数：<span id="msgCount" style="color:#6c5ce7;font-weight:600;">0</span></div>
+            <span class="status-divider"></span>
+            <div class="status-item" style="margin-left:auto;">🕐 <span id="demoTimer">00:00</span></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ============ DOM引用 ============
+            const chatMessages = document.getElementById('chatMessages');
+            const statusPhase = document.getElementById('statusPhase');
+            const msgCountEl = document.getElementById('msgCount');
+            const demoTimer = document.getElementById('demoTimer');
+            const topoSvg = document.getElementById('topoSvg');
+
+            // Agent节点
+            const nodeOrch = document.getElementById('nodeOrch');
+            const nodeSearch = document.getElementById('nodeSearch');
+            const nodeAnalysis = document.getElementById('nodeAnalysis');
+            const nodeWriter = document.getElementById('nodeWriter');
+            const nodeFactCheck = document.getElementById('nodeFactCheck');
+            const nodeMemory = document.getElementById('nodeMemory');
+
+            // 连线
+            const lineOrchSearch = document.getElementById('lineOrchSearch');
+            const lineOrchAnalysis = document.getElementById('lineOrchAnalysis');
+            const lineOrchWriter = document.getElementById('lineOrchWriter');
+            const lineOrchFactCheck = document.getElementById('lineOrchFactCheck');
+            const lineOrchMemory = document.getElementById('lineOrchMemory');
+
+            // 状态指示点
+            const dotOrch = document.getElementById('dotOrch');
+            const dotSearch = document.getElementById('dotSearch');
+            const dotAnalysis = document.getElementById('dotAnalysis');
+            const dotWriter = document.getElementById('dotWriter');
+            const dotFactCheck = document.getElementById('dotFactCheck');
+            const dotMemory = document.getElementById('dotMemory');
+
+            // 粒子
+            const particle1 = document.getElementById('particle1');
+            const particle2 = document.getElementById('particle2');
+            const particle3 = document.getElementById('particle3');
+
+            let msgCount = 0;
+            let demoStartTime = null;
+            let demoTimerInterval = null;
+            let speedMultiplier = 1;
+            let demoRunning = false;
+            let demoTimeoutIds = [];
+
+            // ============ 工具函数 ============
+            function setAgentStatus(agent, status) {
+                const dotMap = {
+                    'orch': dotOrch,
+                    'search': dotSearch,
+                    'analysis': dotAnalysis,
+                    'writer': dotWriter,
+                    'factcheck': dotFactCheck,
+                    'memory': dotMemory
+                };
+                const dot = dotMap[agent];
+                if (!dot) return;
+                dot.className = 'status-dot ' + status;
+            }
+
+            function highlightNode(node, active) {
+                if (!node) return;
+                if (active) {
+                    node.setAttribute('filter', 'url(#glowActive)');
+                    node.style.strokeWidth = '3.5';
+                    node.classList.add('node-glow');
+                } else {
+                    node.setAttribute('filter', agentFilterMap[node.id] || 'none');
+                    node.style.strokeWidth = '';
+                    node.classList.remove('node-glow');
+                }
+            }
+
+            const agentFilterMap = {
+                'nodeOrch': 'url(#glowOrch)',
+                'nodeSearch': 'none',
+                'nodeAnalysis': 'none',
+                'nodeWriter': 'none',
+                'nodeFactCheck': 'none',
+                'nodeMemory': 'none',
+            };
+
+            function highlightLine(line, active) {
+                if (!line) return;
+                if (active) {
+                    line.classList.add('comm-line-active');
+                    line.style.opacity = '1';
+                    line.style.strokeWidth = '3';
+                } else {
+                    line.classList.remove('comm-line-active');
+                    line.style.opacity = '0.5';
+                    line.style.strokeWidth = '';
+                }
+            }
+
+            function moveParticle(particle, x, y, opacity) {
+                if (!particle) return;
+                particle.setAttribute('cx', x);
+                particle.setAttribute('cy', y);
+                particle.setAttribute('opacity', opacity);
+            }
+
+            function resetAllVisuals() {
+                [nodeOrch, nodeSearch, nodeAnalysis, nodeWriter, nodeFactCheck, nodeMemory].forEach(n => highlightNode(
+                    n, false));
+                [lineOrchSearch, lineOrchAnalysis, lineOrchWriter, lineOrchFactCheck, lineOrchMemory].forEach(l =>
+                    highlightLine(l, false));
+                ['orch', 'search', 'analysis', 'writer', 'factcheck', 'memory'].forEach(a => setAgentStatus(a,
+                'idle'));
+                moveParticle(particle1, 200, 150, 0);
+                moveParticle(particle2, 200, 150, 0);
+                moveParticle(particle3, 200, 150, 0);
+                statusPhase.textContent = '就绪';
+            }
+
+            function addMessage(type, html, tagClass = '') {
+                msgCount++;
+                msgCountEl.textContent = msgCount;
+                const div = document.createElement('div');
+                div.className = 'message ' + type;
+                if (type === 'user') {
+                    div.innerHTML = `
+                        <div class="msg-avatar user-av">👤</div>
+                        <div class="msg-bubble">${html}</div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="msg-avatar orch-av">⚙</div>
+                        <div class="msg-bubble">${tagClass ? `<span class="agent-tag ${tagClass}"></span>` : ''}${html}</div>
+                    `;
+                }
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return div;
+            }
+
+            function addPhaseDivider(text) {
+                const div = document.createElement('div');
+                div.className = 'phase-divider';
+                div.innerHTML = `<span class="phase-dot"></span> ${text} <span class="phase-dot"></span>`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function streamText(element, fullText, speed = 35, onChar, onComplete) {
+                let i = 0;
+                const adjustedSpeed = speed / speedMultiplier;
+                const existingHTML = element.querySelector('.agent-tag') ? element.querySelector('.agent-tag')
+                    .outerHTML : '';
+                const textSpan = document.createElement('span');
+                textSpan.className = 'stream-text';
+                element.appendChild(textSpan);
+
+                const cursor = document.createElement('span');
+                cursor.className = 'stream-cursor';
+                element.appendChild(cursor);
+
+                function type() {
+                    if (i < fullText.length) {
+                        textSpan.textContent += fullText.charAt(i);
+                        if (onChar) onChar(i, fullText.charAt(i));
+                        i++;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        const tid = setTimeout(type, adjustedSpeed);
+                        demoTimeoutIds.push(tid);
+                    } else {
+                        cursor.remove();
+                        if (onComplete) onComplete();
+                    }
+                }
+                const tid = setTimeout(type, adjustedSpeed);
+                demoTimeoutIds.push(tid);
+                return { element, cursor };
+            }
+
+            function delay(ms) {
+                return new Promise(resolve => {
+                    const tid = setTimeout(resolve, ms / speedMultiplier);
+                    demoTimeoutIds.push(tid);
+                });
+            }
+
+            function updateTimer() {
+                if (!demoStartTime) return;
+                const elapsed = Math.floor((Date.now() - demoStartTime) / 1000);
+                const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const secs = (elapsed % 60).toString().padStart(2, '0');
+                demoTimer.textContent = `${mins}:${secs}`;
+            }
+
+            // ============ 主演示流程 ============
+            async function runDemo() {
+                if (demoRunning) return;
+                demoRunning = true;
+                demoStartTime = Date.now();
+                demoTimerInterval = setInterval(updateTimer, 500);
+                resetAllVisuals();
+                chatMessages.innerHTML = '';
+                msgCount = 0;
+                msgCountEl.textContent = '0';
+                demoTimeoutIds = [];
+
+                // === 阶段1：用户发送消息 ===
+                statusPhase.textContent = '接收用户请求';
+                addMessage('user',
+                    '帮我调研<strong>2024年AI Agent领域的最新进展</strong>，分析关键趋势并生成一份简明报告。📊');
+                await delay(800);
+
+                // === 阶段2：Orchestrator接收并分解任务 ===
+                statusPhase.textContent = 'Orchestrator 任务分解中';
+                setAgentStatus('orch', 'active');
+                highlightNode(nodeOrch, true);
+                moveParticle(particle1, 200, 150, 0.8);
+
+                addPhaseDivider('🔍 阶段一：任务接收与分解');
+                const orchMsg = addMessage('system',
+                    '正在分析请求... 识别到<strong>3个子任务</strong>：<br>① 信息检索（Search）② 趋势分析（Analysis）③ 报告撰写（Writer）',
+                    'orch');
+                await delay(1200);
+                moveParticle(particle1, 200, 150, 0);
+                setAgentStatus('orch', 'processing');
+                highlightNode(nodeOrch, false);
+
+                // === 阶段3：Search Agent工作 ===
+                statusPhase.textContent = 'Search Agent 检索中';
+                setAgentStatus('search', 'active');
+                highlightNode(nodeSearch, true);
+                highlightLine(lineOrchSearch, true);
+                moveParticle(particle2, 135, 100, 0.9);
+
+                addPhaseDivider('🔎 阶段二：信息检索（Search Agent）');
+                const searchMsg = addMessage('system', '', 'search');
+                const searchTag = searchMsg.querySelector('.agent-tag');
+                if (searchTag) searchTag.textContent = 'Search Agent';
+                await delay(400);
+                await new Promise(resolve => {
+                    streamText(searchMsg,
+                        '正在搜索2024年AI Agent相关的最新信息...\n✓ 检索到 arXiv 论文 23 篇\n✓ 行业报告 8 份\n✓ 技术博客 45 篇\n✓ GitHub 热门项目 12 个\n\n已提取关键信息，准备传递给 Analysis Agent...',
+                        28, null, resolve);
+                });
+                await delay(600);
+                setAgentStatus('search', 'idle');
+                highlightNode(nodeSearch, false);
+                highlightLine(lineOrchSearch, false);
+                moveParticle(particle2, 135, 100, 0);
+
+                // === 阶段4：Analysis Agent工作 ===
+                statusPhase.textContent = 'Analysis Agent 分析中';
+                setAgentStatus('analysis', 'active');
+                highlightNode(nodeAnalysis, true);
+                highlightLine(lineOrchAnalysis, true);
+                moveParticle(particle3, 265, 100, 0.9);
+
+                addPhaseDivider('📊 阶段三：数据分析（Analysis Agent）');
+                const analysisMsg = addMessage('system', '', 'analysis');
+                const analysisTag = analysisMsg.querySelector('.agent-tag');
+                if (analysisTag) analysisTag.textContent = 'Analysis Agent';
+                await delay(350);
+                await new Promise(resolve => {
+                    streamText(analysisMsg,
+                        '正在分析检索结果，识别关键趋势...\n\n📈 关键发现：\n• 多Agent协作框架成为主流（LangGraph、AutoGen等）\n• 流式通信架构采用率增长 340%\n• RAG+Agent混合模式成为标配\n• 企业级Agent平台需求激增\n\n分析完成，提交至 FactCheck 核查...',
+                        25, null, resolve);
+                });
+                await delay(500);
+                setAgentStatus('analysis', 'idle');
+                highlightNode(nodeAnalysis, false);
+                highlightLine(lineOrchAnalysis, false);
+                moveParticle(particle3, 265, 100, 0);
+
+                // === 阶段5：FactCheck Agent ===
+                statusPhase.textContent = 'FactCheck Agent 核查中';
+                setAgentStatus('factcheck', 'active');
+                highlightNode(nodeFactCheck, true);
+                highlightLine(lineOrchFactCheck, true);
+                moveParticle(particle1, 135, 200, 0.85);
+
+                addPhaseDivider('✅ 阶段四：事实核查（FactCheck Agent）');
+                const factMsg = addMessage('system', '', 'factcheck');
+                const factTag = factMsg.querySelector('.agent-tag');
+                if (factTag) factTag.textContent = 'FactCheck Agent';
+                await delay(300);
+                await new Promise(resolve => {
+                    streamText(factMsg,
+                        '正在交叉验证分析结果...\n✓ 数据来源可靠性：高\n✓ 统计数字核实：通过\n✓ 趋势判断一致性：良好\n✓ 引用准确性：已验证\n\n核查通过 ✓ 数据可信，移交 Writer Agent...',
+                        22, null, resolve);
+                });
+                await delay(400);
+                setAgentStatus('factcheck', 'idle');
+                highlightNode(nodeFactCheck, false);
+                highlightLine(lineOrchFactCheck, false);
+                moveParticle(particle1, 135, 200, 0);
+
+                // === 阶段6：Writer Agent生成报告（流式输出） ===
+                statusPhase.textContent = 'Writer Agent 生成报告中';
+                setAgentStatus('writer', 'active');
+                highlightNode(nodeWriter, true);
+                highlightLine(lineOrchWriter, true);
+                moveParticle(particle2, 265, 200, 0.9);
+                setAgentStatus('orch', 'active');
+                highlightNode(nodeOrch, true);
+
+                addPhaseDivider('📝 阶段五：报告生成（Writer Agent → 流式输出）');
+                const writerMsg = addMessage('system', '', 'writer');
+                const writerTag = writerMsg.querySelector('.agent-tag');
+                if (writerTag) writerTag.textContent = 'Writer Agent';
+                await delay(400);
+
+                const reportText = `正在生成报告...\n\n📋 **2024年AI Agent领域进展报告（摘要）**\n\n` +
+                    `**1. 多Agent协作框架成熟**\n2024年，以LangGraph、AutoGen、CrewAI为代表的框架使多Agent系统构建成本降低70%。Agent间通过标准化协议实现高效协同。\n\n` +
+                    `**2. 流式通信成为核心架构**\n基于gRPC双向流和SSE的实时通信方案成为主流，延迟降低至毫秒级，用户体验大幅提升。\n\n` +
+                    `**3. RAG+Agent深度融合**\n检索增强生成与Agent的结合使信息准确性提升45%，幻觉率显著下降。\n\n` +
+                    `**4. 企业级部署加速**\n超过60%的科技企业已启动Agent平台建设，预计2025年市场规模达$180亿。\n\n` +
+                    `━━━━━━━━━━━━━━━━\n✅ 报告生成完毕 | 经由 Orchestrator 流式推送至用户界面`;
+
+                await new Promise(resolve => {
+                    streamText(writerMsg, reportText, 18, function(i) {
+                        // 流式过程中持续高亮Writer
+                        if (i % 20 === 0) {
+                            highlightNode(nodeWriter, true);
+                            moveParticle(particle2, 265, 200, 0.7 + Math.random() * 0.3);
+                        }
+                    }, resolve);
+                });
+
+                await delay(500);
+                setAgentStatus('writer', 'idle');
+                setAgentStatus('orch', 'idle');
+                highlightNode(nodeWriter, false);
+                highlightNode(nodeOrch, false);
+                highlightLine(lineOrchWriter, false);
+                moveParticle(particle2, 265, 200, 0);
+
+                // === 完成 ===
+                statusPhase.textContent = '对话完成 ✓';
+                addPhaseDivider('✨ 对话完成 — 6个Agent协同工作，流式输出最终结果');
+                await delay(600);
+                resetAllVisuals();
+                statusPhase.textContent = '就绪（可重新播放）';
+                demoRunning = false;
+                clearInterval(demoTimerInterval);
+                updateTimer();
+            }
+
+            // ============ 控制函数 ============
+            window.restartDemo = function() {
+                // 清除所有等待中的定时器
+                demoTimeoutIds.forEach(tid => clearTimeout(tid));
+                demoTimeoutIds = [];
+                demoRunning = false;
+                clearInterval(demoTimerInterval);
+                demoStartTime = null;
+                demoTimer.textContent = '00:00';
+                resetAllVisuals();
+                chatMessages.innerHTML = '';
+                msgCount = 0;
+                msgCountEl.textContent = '0';
+                statusPhase.textContent = '初始化中...';
+                document.getElementById('btnDemo').classList.add('active');
+                setTimeout(() => runDemo(), 300);
+            };
+
+            window.toggleSpeed = function() {
+                const btn = document.getElementById('btnSpeed');
+                if (speedMultiplier === 1) {
+                    speedMultiplier = 2;
+                    btn.textContent = '⏱ 2x';
+                } else if (speedMultiplier === 2) {
+                    speedMultiplier = 0.5;
+                    btn.textContent = '⏱ 0.5x';
+                } else {
+                    speedMultiplier = 1;
+                    btn.textContent = '⏱ 1x';
+                }
+                btn.classList.add('active');
+                setTimeout(() => btn.classList.remove('active'), 400);
+            };
+
+            // ============ SVG节点hover交互 ============
+            const allNodes = [nodeOrch, nodeSearch, nodeAnalysis, nodeWriter, nodeFactCheck, nodeMemory];
+            const nodeInfoMap = {
+                'nodeOrch': { name: 'Orchestrator 编排者Agent', role: '核心调度中心',
+                    desc: '负责任务分解、子任务分发、结果聚合与流式推送。通过gRPC双向流与其他Agent通信，是整个系统的消息总线。',
+                    comm: 'gRPC Bidirectional Stream → 所有Agent' },
+                'nodeSearch': { name: 'Search Agent 搜索Agent', role: '信息检索专家',
+                    desc: '负责网页抓取、学术搜索、数据库查询。接收Orchestrator的搜索指令，以流式方式返回检索结果。',
+                    comm: '← gRPC Stream (Orchestrator)→' },
+                'nodeAnalysis': { name: 'Analysis Agent 分析Agent', role: '数据分析专家',
+                    desc: '对检索数据进行统计分析、趋势识别、模式挖掘。输出结构化分析结果供Writer使用。', comm: '← gRPC Stream (Orchestrator)→' },
+                'nodeWriter': { name: 'Writer Agent 写作Agent', role: '内容生成专家',
+                    desc: '基于分析结果生成自然语言报告。支持流式逐字输出，通过SSE推送到前端。', comm: '← SSE推送 (Orchestrator)→ 用户' },
+                'nodeFactCheck': { name: 'FactCheck Agent 核查Agent', role: '事实核查员',
+                    desc: '交叉验证数据来源、核对统计数字、确保信息准确性。采用请求-响应模式。', comm: '← 请求-响应 (Orchestrator)→' },
+                'nodeMemory': { name: 'Memory Agent 记忆Agent', role: '上下文管理者',
+                    desc: '维护会话上下文、存储历史对话、提供长期记忆能力。通过发布-订阅模式接收事件。', comm: '← 事件通知 Pub/Sub →' },
+            };
+
+            allNodes.forEach(node => {
+                if (!node) return;
+                node.addEventListener('mouseenter', function(e) {
+                    const info = nodeInfoMap[node.id];
+                    if (!info) return;
+                    // 创建tooltip
+                    let tooltip = document.getElementById('nodeTooltip');
+                    if (!tooltip) {
+                        tooltip = document.createElement('div');
+                        tooltip.id = 'nodeTooltip';
+                        tooltip.style.cssText = `
+                            position: fixed;
+                            background: #1a1d2e;
+                            color: #fff;
+                            padding: 12px 16px;
+                            border-radius: 12px;
+                            font-size: 11px;
+                            line-height: 1.5;
+                            z-index: 1000;
+                            pointer-events: none;
+                            max-width: 260px;
+                            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+                            border: 1px solid rgba(255,255,255,0.15);
+                            letter-spacing: 0.01em;
+                        `;
+                        document.body.appendChild(tooltip);
+                    }
+                    tooltip.innerHTML = `
+                        <div style="font-weight:700;font-size:12px;margin-bottom:4px;color:#a78bfa;">${info.name}</div>
+                        <div style="color:#c4c9d4;margin-bottom:4px;">📌 角色：${info.role}</div>
+                        <div style="color:#d1d5db;margin-bottom:6px;">${info.desc}</div>
+                        <div style="color:#60a5fa;font-size:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:5px;">🔗 ${info.comm}</div>
+                    `;
+                    tooltip.style.left = (e.clientX + 16) + 'px';
+                    tooltip.style.top = (e.clientY - 10) + 'px';
+                    tooltip.style.display = 'block';
+                    tooltip.style.opacity = '1';
+                });
+                node.addEventListener('mousemove', function(e) {
+                    const tooltip = document.getElementById('nodeTooltip');
+                    if (tooltip) {
+                        tooltip.style.left = (e.clientX + 16) + 'px';
+                        tooltip.style.top = (e.clientY - 10) + 'px';
+                    }
+                });
+                node.addEventListener('mouseleave', function() {
+                    const tooltip = document.getElementById('nodeTooltip');
+                    if (tooltip) {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.display = 'none';
+                    }
+                });
+            });
+
+            // ============ 初始化 ============
+            function init() {
+                resetAllVisuals();
+                statusPhase.textContent = '准备就绪 — 点击演示按钮开始';
+                // 自动开始演示
+                setTimeout(() => runDemo(), 600);
+            }
+
+            // 页面加载完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            // ============ 键盘快捷键 ============
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'r' && e.ctrlKey) {
+                    e.preventDefault();
+                    window.restartDemo();
+                }
+                if (e.key === 's' && e.ctrlKey) {
+                    e.preventDefault();
+                    window.toggleSpeed();
+                }
+            });
+
+            console.log('🤖 多Agent协同流式对话平台 - UI/UX设计图已就绪');
+            console.log('   ⌨ 快捷键: Ctrl+R 重新演示 | Ctrl+S 切换速度');
+            console.log('   🖱 悬停Agent节点查看详细信息');
+            console.log('   📋 右侧面板展示完整的Agent关系、通信方式和图例');
+        })();
+    </script>
+</body>
+</html>
